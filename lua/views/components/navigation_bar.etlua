@@ -1,0 +1,44 @@
+<% --[[ %>
+  @ required user_name: string
+
+  Elements with class names that start with "-c-" are front end components
+<% ]] %>
+<nav class="-c-navigation-bar">
+  <div class="logo">
+    <a href="https://tmspnn.com">
+      <% render("views/icons/view_grid") %>
+    </a>
+  </div>
+  <ul>
+    <li>
+      <a href="<%= user_name and ("/" .. user_name) or "/sign-in" %>">
+        <% render("views/icons/home") %>
+        <span>主页</span>
+      </a>
+    </li>
+    <li>
+      <a href="/">
+        <% render("views/icons/globe") %>
+        <span>发现</span>
+      </a>
+    </li>
+    <li>
+      <a href="<%= user_name and ("/" .. user_name .. "/followings") or "/sign-in" %>">
+        <% render("views/icons/star") %>
+        <span>关注</span>
+      </a>
+    </li>
+    <li>
+      <a href="<%= user_name and ("/" .. user_name .. "/followers") or "/sign-in" %>">
+        <% render("views/icons/user_group") %>
+        <span>粉丝</span>
+      </a>
+    </li>
+    <li>
+      <a href="<%= user_name and ("/" .. user_name .. "/messages") or "/sign-in" %>">
+        <% render("views/icons/mail") %>
+        <span>信息</span>
+      </a>
+    </li>
+  </ul>
+</nav>

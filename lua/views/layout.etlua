@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <% --[[ %>
+      tags_in_head: itable {
+        tag: string,
+        attributes: table
+      }
+    <% ]] %>
+    <% if type(tags_in_head) == "table" then %>
+      <% for i, element in ipairs(tags_in_head) do %>
+        <% render("views.components.html_tag", element) %>
+      <% end %>
+    <% end %>
+
+    <title><%= page_title or "tmspnn" %></title>
+  </head>
+  <body>
+    <% content_for("inner") %>
+  </body>
+</html>
