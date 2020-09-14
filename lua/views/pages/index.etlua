@@ -4,10 +4,10 @@
   version: string
 <% ]] %>
 
-<div class="container">
+<div class="-page-container">
   <% render("views/components/navigation_bar") %>
   <div class="center">Center</div>
   <div class="right">Right</div>
 </div>
 <script type="application/json" id="page-data"><%- page_data_json_str %></script>
-<script src="<%= js_path %>/index-<%= version %>.js"></script>
+<script src="<%= js_path .. "/" .. page_name .. "-" .. version .. ".js" %>"></script>

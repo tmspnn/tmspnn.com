@@ -1,9 +1,9 @@
 <% --[[ %>
   @ required user_name: string
 
-  Elements with class names that start with "-c-" are front end components
+  Elements with class names that start with "-" are front end components
 <% ]] %>
-<nav class="-c-navigation-bar">
+<nav class="-navigation-bar">
   <div class="logo">
     <a href="https://tmspnn.com">
       <% render("views/icons/view_grid") %>

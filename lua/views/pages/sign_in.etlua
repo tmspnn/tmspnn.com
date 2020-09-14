@@ -1,0 +1,6 @@
+<div class="-page-container">
+    <h1>Sign in</h1>
+    <p>sign in, sign in, sign in</p>
+</div>
+<script type="application/json" id="page-data"><%- page_data_json_str %></script>
+<script src="<%= js_path .. "/" .. page_name .. "-" .. version .. ".js"%>"></script>
