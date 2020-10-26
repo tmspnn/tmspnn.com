@@ -1,0 +1,7 @@
+<div class="-search-bar">
+  <div class="input-container">
+    <input maxlength="80" />
+    <% render("views/icons/search") %>
+    <ul hidden></ul>
+  </div>
+</div>

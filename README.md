@@ -4,6 +4,9 @@ Backend of tmspnn.com
 
 ## Dependencies
 
+- basexx
+- date
 - lapis
-- pgmoon
 - moses
+- pgmoon
+- sha1

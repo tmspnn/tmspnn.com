@@ -4,9 +4,9 @@ local CORS = {}
 -- Trust subdomains
 CORS.trusted_origin_patterns = {"\\.tmspnn.com$"}
 
-function CORS.add_headers_if_necessary(self)
-    local origin = self.req.headers.origin
-    local http_method = self.req.cmd_mth
+function CORS.add_headers_if_necessary(app)
+    local origin = app.req.headers.origin
+    local http_method = app.req.cmd_mth
 
     if origin == nil then
         return
@@ -14,13 +14,13 @@ function CORS.add_headers_if_necessary(self)
 
     for i, pattern in ipairs(CORS.trusted_origin_patterns) do
         if string.match(origin, pattern) ~= nil then
-            self.res.headers["access-control-allow-origin"] = origin
-            self.res.headers["access-control-allow-credentials"] = true
+            app.res.headers["access-control-allow-origin"] = origin
+            app.res.headers["access-control-allow-credentials"] = true
             if http_method == "OPTIONS" then
-                self.res.headers["access-control-allow-methods"] = "GET,POST,PUT,POST"
-                self.res.headers["access-control-allow-headers"] = "x-requested-with,content-type"
-                self.res.headers["access-control-max-age"] = 60 * 60 * 24 * 7 * 4 -- 4 weeks
-                self:write({
+                app.res.headers["access-control-allow-methods"] = "GET,POST,PUT,POST"
+                app.res.headers["access-control-allow-headers"] = "x-requested-with,content-type"
+                app.res.headers["access-control-max-age"] = 60 * 60 * 24 * 7 * 4 -- 4 weeks
+                app:write({
                     status = 204
                 })
             end

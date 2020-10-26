@@ -3,8 +3,8 @@ local device = {
     is_mobile = false
 }
 
-function device.detect(self)
-    local ua = self.req.headers["user-agent"]
+function device.detect(app)
+    local ua = app.req.headers["user-agent"]
     if string.match(ua, "iPhone") ~= nil or string.match(ua, "iPad") ~= nil then
         device.os = "iOS"
         device.is_mobile = true
@@ -21,7 +21,7 @@ function device.detect(self)
         device.os = "Linux"
         device.is_mobile = false
     end
-    self.device = device
+    app.device = device
 end
 
 return device

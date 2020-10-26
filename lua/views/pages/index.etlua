@@ -1,13 +1,26 @@
 <% --[[ %>
-  page_data: string
+  page_data: table {
+    feeds: itable { Feed }
+  }
   js_path: string
   version: string
 <% ]] %>
 
 <div class="-page-container">
   <% render("views/components/navigation_bar") %>
-  <div class="center">Center</div>
-  <div class="right">Right</div>
+  <div class="main">
+    <% render("views/components/search_bar") %>
+    <div class="feeds">
+      <% for i, feed in ipairs(page_data.feeds) do %>
+        <% render("views/components/feed", feed) %>
+      <% end %>
+    </div>
+  </div>
+  <div class="etc">
+    <div>recommended authors</div>
+    <div>hot topics</div>
+    <div>footer</div>
+  </div>
 </div>
 <script type="application/json" id="page-data"><%- page_data_json_str %></script>
 <script src="<%= js_path .. "/" .. page_name .. "-" .. version .. ".js" %>"></script>
