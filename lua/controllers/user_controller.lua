@@ -3,6 +3,8 @@ local basexx = require("basexx")
 local date = require("date")
 local sha1 = require("sha1")
 local to_json = require("lapis.util").to_json
+local encoding = require("lapis.util.encoding")
+local encode_base64 = encoding.encode_base64
 local user_controller = {}
 
 -- @returns user_name: nil | string

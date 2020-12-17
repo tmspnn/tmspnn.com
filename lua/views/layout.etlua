@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <% --[[ %>
-      tags_in_head: itable {
-        tag: string,
-        attributes: table
-      }
-    <% ]] %>
-    <% if type(tags_in_head) == "table" then %>
-      <% for i, element in ipairs(tags_in_head) do %>
-        <% render("views.components.html_tag", element) %>
-      <% end %>
-    <% end %>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <% if ctx.tags_in_head then -%>
+  <% for i, el in ipairs(ctx.tags_in_head) do -%>
+  <% render("views.components.html_tag", el) %>
+  <% end -%>
+  <% end -%>
+  <title><%= ctx.page_title or "拾刻阅读 |" %></title>
+</head>
 
-    <title><%= page_title or "tmspnn" %></title>
-  </head>
-  <body>
-    <% content_for("inner") %>
-  </body>
+<body>
+  <% content_for("inner") %>
+  <% if ctx.tags_in_body then -%>
+  <% for i, el in ipairs(ctx.tags_in_body) do -%>
+  <% render("views.components.html_tag", el) %>
+  <% end -%>
+  <% end -%>
+</body>
+
 </html>

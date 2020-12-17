@@ -1,5 +1,5 @@
--- The Nginx interface provided by OpenResty
-local ngx = require("ngx")
+-- External modules
+local ngx = require "ngx" -- The Nginx interface provided by OpenResty
 
 -- Local module
 local exception = {}
@@ -11,15 +11,15 @@ function exception.handle_404()
     }
 end
 
--- app: lapis.Application
--- err: string
--- trace: string
 function exception.handle_error(app, err, trace)
-    if (app.res.status == nil) then
+    -- app: lapis.Application
+    -- err: string
+    -- trace: string
+    if not app.res.status then
         app.res.status = 500
     end
 
-    ngx.log(ngx.ERR, err, "\r\n", trace)
+    ngx.log(ngx.ERR, err, trace)
 
     return {
         status = app.res.status,

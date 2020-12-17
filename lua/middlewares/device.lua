@@ -1,27 +1,33 @@
-local device = {
-    os = nil,
-    is_mobile = false
-}
+-- External modules
+local ngx = require "ngx" -- The Nginx interface provided by OpenResty
+
+-- Local modules
+local device = {}
 
 function device.detect(app)
+    app.ctx.device = {
+        os = nil,
+        is_mobile = false
+    }
+
     local ua = app.req.headers["user-agent"]
-    if string.match(ua, "iPhone") ~= nil or string.match(ua, "iPad") ~= nil then
-        device.os = "iOS"
-        device.is_mobile = true
+
+    if string.match(ua, "iPhone") or string.match(ua, "iPad") then
+        app.ctx.device.os = "iOS"
+        app.ctx.device.is_mobile = true
     elseif string.match(ua, "Android") ~= nil then
-        device.os = "Android"
-        device.is_mobile = true
+        app.ctx.device.os = "Android"
+        app.ctx.device.is_mobile = true
     elseif string.match(ua, "Windows NT") ~= nil then
-        device.os = "Windows"
-        device.is_mobile = false
+        app.ctx.device.os = "Windows"
+        app.ctx.device.is_mobile = false
     elseif string.match(ua, "Macintosh") ~= nil then
-        device.os = "Mac OS"
-        device.is_mobile = false
+        app.ctx.device.os = "Mac OS"
+        app.ctx.device.is_mobile = false
     elseif string.match(ua, "X11") ~= nil then
-        device.os = "Linux"
-        device.is_mobile = false
+        app.ctx.device.os = "Linux"
+        app.ctx.device.is_mobile = false
     end
-    app.device = device
 end
 
 return device

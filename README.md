@@ -7,6 +7,5 @@ Backend of tmspnn.com
 - basexx
 - date
 - lapis
-- moses
 - pgmoon
 - sha1
