@@ -7,6 +7,7 @@ config("production", {
     logging = false,
     postgres = {
         host = ngx.var.redis_host,
+        user = "tms",
         password = ngx.var.pg_password,
         database = "tmspnn"
     }

@@ -7,6 +7,8 @@ local to_json = lapis_util.to_json
 -- Local modules
 local util = require "util"
 local controller = require "controllers/controller"
+local Article = require "models/article"
+local User = require "models/user"
 
 -- Initialization
 local page_ctrl = controller:new()
@@ -69,30 +71,21 @@ local function get_meta_data(app, data_source)
 end
 
 local function index_data_source(app)
-    -- local feeds = {}
-
-    -- for i = 1, 10 do
-    --     table.insert(feeds, {
-    --         id = nil,
-    --         uid = nil,
-    --         title = "这是一个Feed的测试标题",
-    --         cover = "https://oss.tmspnn.com/public/WechatIMG30.jpeg",
-    --         author = "tmspnn",
-    --         profile = nil,
-    --         created_at = date(2020, 6, 4, 14, 52):fmt("%Y/%m/%d %I:%M"),
-    --         updated_at = date(2020, 10, 4, 9, 18):fmt("%Y/%m/%d %I:%M"),
-    --         tags = {"随笔", "编程"},
-    --         pageview = 213,
-    --         score = 7.2,
-    --         summary = "The summary of the article",
-    --         content = "a lot of html ... content ..."
-    --     })
-    -- end
+    -- Todo: user, feeds, authors, keywords
+    local uid = app.ctx.uid
+    local latest_feeds = Article:get_latest()
+    local latest_authors = User:get_recommended()
+    local recommended_topics = Article:get_recommended_topics()
 
     return {
         page_name = "index",
-        page_title = "title for index.html",
-        feeds = {}
+        page_title = "拾刻阅读 | 首页",
+        user = {
+            id = uid
+        },
+        feeds = latest_feeds,
+        recommended_authors = latest_authors,
+        recommended_topics = recommended_topics
     }
 end
 
@@ -102,14 +95,6 @@ util.push_back(page_ctrl.routes, {
     handler = function(app)
         return get_meta_data(app, index_data_source)
     end
-}, {
-    method = "post",
-    path = "",
-    handler = nil
-}, {
-    method = "post",
-    path = "",
-    handler = nil
 })
 
 return page_ctrl

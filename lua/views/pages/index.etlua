@@ -3,9 +3,9 @@
   <div class="main">
     <% render("views/components/search_bar") %>
     <div class="feeds">
-      <% for i, feed in ipairs(ctx.data.feeds) do %>
-      <% render("views/components/feed", feed) %>
-      <% end %>
+      <% for i, fd in ipairs(ctx.data.feeds) do -%>
+      <% render("views/components/feed", fd) %>
+      <% end -%>
     </div>
   </div>
   <div class="etc">
@@ -14,3 +14,5 @@
     <div>footer</div>
   </div>
 </div>
+<% render("views/components/xhr") %>
+<script id="_data" type="application/json"><%- ctx.data_json %></script>
