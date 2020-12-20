@@ -1,0 +1,20 @@
+@import "colors.scss";
+
+.-richtext {
+  line-height: 1.6;
+
+  p {
+    margin: 0;
+    padding: 0 2rem;
+  }
+
+  code {
+    font-family: monospace;
+    background: $light;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+}

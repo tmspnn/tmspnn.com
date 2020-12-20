@@ -1,24 +1,17 @@
-local ngx = require("ngx")
-local basexx = require("basexx")
-local date = require("date")
-local sha1 = require("sha1")
-local to_json = require("lapis.util").to_json
-local encoding = require("lapis.util.encoding")
-local encode_base64 = encoding.encode_base64
-local user_controller = {}
+-- External modules
+local ngx = require "ngx" -- The Nginx interface provided by OpenResty
+local basexx = require "basexx"
+local date = require "date"
+local sha1 = require "sha1"
+local lapis_util = require "lapis.util"
+local to_json = lapis_util.to_json
 
--- @returns user_name: nil | string
-function user_controller.get_user_name_by_token(token)
-    if token == nil then
-        return nil
-    end
+-- Local modules
+local controller = require "controllers/controller"
 
-    return nil
-end
+-- Initialization
+local user_controller = controller:new()
 
--- uid: int
--- @returns policy: string
--- @returns signature: string
 function user_controller.generate_oss_upload_token(uid)
     -- https://support.huaweicloud.com/api-obs/obs_04_0012.html
     local current_date = date()
@@ -29,10 +22,10 @@ function user_controller.generate_oss_upload_token(uid)
             ["x-obs-acl"] = "public-read"
         }, {
             ["bucket"] = "tmspnn"
-        }, {"starts-with", "$key", "users/" .. uid}}
+        }, {"starts-with", "$key", "public/users/" .. uid}, {"starts-with", "$Content-Type", ""}}
     })
     local string_to_sign = basexx.to_base64(oss_policy)
-    local signature = basexx.to_base64(sha1.hmac(ngx.var.oss_secret_key, string_to_sign))
+    local signature = basexx.to_base64(sha1.hmac_binary(ngx.var.oss_secret_key, string_to_sign))
     return string_to_sign, signature
 end
 

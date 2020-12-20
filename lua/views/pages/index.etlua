@@ -1,3 +1,18 @@
+<% --[[ -%>
+ctx: {
+-- page_name: string
+-- page_title: string
+-- tags_in_head: array { tag: string, attributes: table }
+-- tags_in_body: array { tag: string, attributes: table }
+-- data: {
+-- -- user: { id?: number }
+-- -- feeds: array db::article
+-- -- recommended_authors: array db::user
+-- -- recommended_topics: array string
+-- }
+-- data_json: string
+}
+<% --]] -%>
 <div class="-page-container">
   <% render("views/components/navigation_bar") %>
   <div class="main">

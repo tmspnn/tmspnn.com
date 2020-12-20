@@ -44,3 +44,9 @@ certs
 
 # Static assets
 assets
+
+# MacOS
+.DS_Store
+
+# Frontend dependency repo
+node_modules

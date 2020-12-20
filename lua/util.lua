@@ -2,11 +2,9 @@ local util = {}
 
 function util.keys(t)
     local keys = {}
-
     for k, v in pairs(t) do
         table.insert(keys, k)
     end
-
     table.sort(keys)
     return keys
 end
@@ -25,13 +23,11 @@ end
 
 function util.assign(target, ...)
     local params = {...}
-
     for _, p in ipairs(params) do
         for k, v in pairs(p) do
             target[k] = v
         end
     end
-
     return target
 end
 
@@ -45,7 +41,6 @@ function util.has_value(t, v)
             return true
         end
     end
-
     return false
 end
 
@@ -68,13 +63,20 @@ function util.join(t, s)
     return table.concat(t, s)
 end
 
+function util.split(s, d)
+    local t = {}
+    local ptn = string.format("([^%s]+)", d)
+    for w in string.gmatch(s, ptn) do
+        table.insert(t, w)
+    end
+    return t
+end
+
 function util.map(t, f)
     local mapped = {}
-
     for k, v in pairs(t) do
         mapped[k] = f(v)
     end
-
     return mapped
 end
 

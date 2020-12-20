@@ -1,0 +1,30 @@
+@import "colors.scss";
+
+.-user-meta {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1rem 1rem 2rem;
+
+  .profile {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-size: cover;
+    box-shadow: 0 0 5px $light;
+  }
+
+  .meta {
+    padding-left: 1rem;
+
+    .statistics {
+      display: flex;
+      align-items: center;
+      font-size: 0.9em;
+      color: $grey-dark;
+
+      > div:last-child {
+        padding-left: 1rem;
+      }
+    }
+  }
+}

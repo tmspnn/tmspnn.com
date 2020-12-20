@@ -1,0 +1,7 @@
+<% --[[ -%>
+text: string
+<% --]] -%>
+<a href="/topics/<%= ctx.escape(text) %>" class="-topic">
+    <% render("views/icons/hashtag") %>
+    <span><%= text %></span>
+</a>

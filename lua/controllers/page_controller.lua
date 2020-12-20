@@ -71,11 +71,15 @@ local function get_meta_data(app, data_source)
 end
 
 local function index_data_source(app)
-    -- Todo: user, feeds, authors, keywords
     local uid = app.ctx.uid
     local latest_feeds = Article:get_latest()
     local latest_authors = User:get_recommended()
     local recommended_topics = Article:get_recommended_topics()
+
+    for _, fd in ipairs(latest_feeds) do
+        fd.created_at = date(fd.created_at):fmt("%Y/%m/%d %H:%M")
+        fd.keywords = util.split(fd.keywords, ",")
+    end
 
     return {
         page_name = "index",

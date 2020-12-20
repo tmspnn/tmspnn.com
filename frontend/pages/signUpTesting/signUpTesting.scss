@@ -1,0 +1,86 @@
+@import "base.scss";
+@import "button.scss";
+@import "logoHeader.scss";
+
+body {
+  overflow: hidden;
+}
+
+.main {
+  margin: 0 auto;
+  padding: 1rem 0;
+  width: 100%;
+  max-width: 15rem;
+
+  .-logo {
+    > a {
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    padding: 1.2rem 0;
+
+    &:last-child {
+      display: block;
+      padding-top: 1.5rem;
+      font-size: 0.9rem;
+      a {
+        margin-left: 0.1rem;
+        text-decoration: none;
+        color: $link;
+      }
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.8;
+      font-size: 0.9rem;
+      color: $grey-dark;
+
+      svg {
+        position: relative;
+        top: -0.13rem;
+        width: 1.2rem;
+        height: 1.22rem;
+        vertical-align: middle;
+        color: $black;
+      }
+    }
+
+    label {
+      width: 2rem;
+      text-align: right;
+      padding-right: 1rem;
+      color: $grey-dark;
+
+      svg {
+        width: 1.2rem;
+        height: 1.2rem;
+        vertical-align: middle;
+      }
+    }
+
+    input {
+      width: 13rem;
+      border: none;
+      border-bottom: 1px solid $grey-dark;
+
+      &:focus {
+        border-bottom: 1px solid $link;
+      }
+
+      &.small {
+        width: 9rem;
+      }
+    }
+  }
+
+  button {
+    display: block;
+    margin-top: 2rem;
+    width: 15rem;
+  }
+}

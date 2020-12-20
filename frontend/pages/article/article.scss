@@ -1,0 +1,231 @@
+@import "base.scss";
+@import "footer.scss";
+@import "button.scss";
+@import "topic.scss";
+@import "richtext.scss";
+@import "comment.scss";
+@import "userMeta.scss";
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+.block {
+  flex: 1;
+  max-height: 100%;
+}
+
+.-page-container {
+  width: 100%;
+  max-width: 1280px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+
+  .logo-rating-comment {
+    @extend .block;
+    border-right: 1px solid $light;
+
+    .logo {
+      a {
+        display: flex;
+        align-items: center;
+        color: $grey-dark;
+        text-decoration: none;
+      }
+
+      svg {
+        width: 4rem;
+        height: 4rem;
+        color: $link;
+      }
+
+      h1 {
+        font-size: 2.2rem;
+        font-weight: lighter;
+        font-style: italic;
+        color: $black;
+        margin: 0;
+      }
+    }
+
+    .rating {
+      border-top: 1px solid $light;
+
+      h4 {
+        margin: 0;
+        padding: 1rem 1.1rem;
+        font-size: 1rem;
+        font-weight: lighter;
+        color: $grey-dark;
+      }
+
+      .stars {
+        display: flex;
+        align-items: center;
+        padding: 0 0.8rem;
+
+        svg {
+          width: 2rem;
+          height: 2rem;
+          color: $grey-light;
+        }
+      }
+
+      button {
+        margin: 1rem 1.2rem 5rem;
+      }
+    }
+
+    .comment {
+      border-top: 1px solid $light;
+
+      h4 {
+        margin: 0;
+        padding: 1rem 1.1rem;
+        font-size: 1rem;
+        font-weight: lighter;
+        color: $grey-dark;
+      }
+
+      textarea {
+        display: block;
+        resize: none;
+        margin: 0 1.2rem 1rem;
+        padding: 0.4rem 0.6rem;
+        width: 13rem;
+        height: 7rem;
+        border: 1px solid $grey-light;
+        border-radius: 2px;
+        box-shadow: 0 3px 12px $light;
+        outline: none;
+      }
+
+      button {
+        margin: 0.4rem 1.2rem;
+      }
+    }
+  }
+
+  .article-n-comments {
+    @extend .block;
+    flex: 3;
+    overflow: hidden auto;
+    transition-delay: 150ms;
+
+    h1 {
+      font-size: 2.6rem;
+      line-height: 1.8;
+      margin: 0;
+      padding: 0 2rem 1rem;
+      color: $black;
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+      color: $grey-dark;
+
+      .profile {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        background-size: cover;
+        box-shadow: 0 0 5px $light;
+      }
+
+      .author-n-date {
+        flex: 1;
+        padding: 0 1rem;
+        font-size: 1rem;
+
+        .date {
+          font-size: 0.9rem;
+        }
+      }
+
+      .pageview {
+        padding: 0 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      .rating {
+        font-size: 0.9rem;
+      }
+    }
+
+    .tags {
+      padding: 1rem 2rem;
+    }
+
+    .comments {
+      padding: 5rem 0;
+    }
+  }
+
+  .author-n-related-articles {
+    @extend .block;
+    flex: 1;
+    transition-delay: 300ms;
+    border-left: 1px solid $light;
+
+    button {
+      margin: 0 2rem 1rem;
+    }
+
+    ul {
+      margin: 0;
+      list-style: none;
+      padding: 1rem 1rem 1rem 2rem;
+
+      li {
+        padding: 0 0 1rem;
+
+        h3 {
+          margin: 0;
+
+          a {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: $dark;
+            text-decoration: none;
+          }
+        }
+
+        > div {
+          display: flex;
+          align-items: center;
+          font-size: 0.9em;
+          color: $grey-light;
+
+          div:first-child {
+            padding-right: 1rem;
+          }
+        }
+      }
+    }
+  }
+
+  .author-meta,
+  .related-articles {
+    > h3 {
+      display: flex;
+      align-items: center;
+      margin: 0;
+      padding: 1rem 1rem 1rem 1rem;
+      font-size: 1.2rem;
+      color: $dark;
+      border-top: 1px solid $light;
+      border-bottom: 1px solid $light;
+
+      svg {
+        margin-right: 0.3rem;
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+    }
+  }
+}

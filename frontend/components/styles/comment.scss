@@ -1,0 +1,96 @@
+@import "colors.scss";
+
+.-comment {
+  padding: 1rem 2rem;
+  border-top: 1px solid $light;
+
+  ._flex {
+    display: flex;
+    align-items: center;
+  }
+
+  .meta {
+    @extend ._flex;
+    padding: 0.5rem 0 !important;
+    color: $grey-dark;
+
+    .author {
+      font-weight: bold;
+      text-decoration: none;
+      color: $black;
+    }
+
+    .date {
+      padding-left: 1rem;
+      font-size: 0.9rem;
+      align-self: flex-end;
+    }
+
+    .advocators-count {
+      @extend ._flex;
+      margin-left: auto;
+      cursor: pointer;
+
+      svg {
+        position: relative;
+        top: 0.1rem;
+      }
+
+      span {
+        display: inline-block;
+        width: 3rem;
+      }
+    }
+
+    .opposers-count {
+      @extend ._flex;
+      padding-left: 1rem;
+      cursor: pointer;
+
+      svg {
+        position: relative;
+        top: 0.4rem;
+      }
+
+      span {
+        display: inline-block;
+        width: 3rem;
+      }
+    }
+
+    .reply {
+      @extend ._flex;
+      cursor: pointer;
+
+      svg {
+        position: relative;
+        top: 0.3rem;
+      }
+
+      span {
+        font-size: 0.9rem;
+      }
+    }
+
+    svg {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+  }
+
+  .reference {
+    margin: 0;
+    padding: 0.5rem 1rem;
+    background: $light;
+    border-radius: 2px;
+    color: $grey-dark;
+    font-size: 0.9rem;
+  }
+
+  p {
+    margin: 0;
+    line-height: 1.8;
+    font-size: 0.9rem;
+    color: $black;
+  }
+}

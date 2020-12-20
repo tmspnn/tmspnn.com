@@ -1,0 +1,22 @@
+@import "colors.scss";
+
+.-logo-header {
+  > a {
+    display: flex;
+    align-items: center;
+    color: $black;
+    text-decoration: none;
+
+    svg {
+      width: 4rem;
+      height: 4rem;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: lighter;
+      font-style: italic;
+      margin: 0;
+    }
+  }
+}

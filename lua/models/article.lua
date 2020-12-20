@@ -17,7 +17,7 @@ end
 
 function article:get_recommended_topics()
     local client = redis_client:new()
-    return client:run("zrevrangebyscore", "recommended_topics", "+inf", "0")
+    return client:run("zrevrangebyscore", "recommended_topics", "+inf", 0, "limit", 0, 10)
 end
 
 return article

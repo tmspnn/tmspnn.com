@@ -1,3 +1,50 @@
+<% --[[ -%>
+id
+created_by
+title
+author
+profile
+cover
+keywords
+summary
+content
+created_at
+updated_at
+pageview
+rating
+ratings_count
+comments_count
+status
+<% --]] -%>
 <div class="-feed">
-
+    <a href="/articles/<%= id %>" class="cover" style="background-image: url(<%= cover %>)"
+        <% if #cover == 0 then -%>hidden<% end -%>>
+        <h1><%= title %></h1>
+    </a>
+    <div class="meta">
+        <a href="/users/<%= created_by %>" class="item">
+            <% render("views/icons/user") %>
+            <span><%= author %></span>
+        </a>
+        <div class="item">
+            <% render("views/icons/clock") %>
+            <span><%= created_at %></span>
+        </div>
+        <div class="item">
+            <% render("views/icons/eye") %>
+            <span>阅读 <%= pageview %></span>
+        </div>
+        <div class="item">
+            <% render("views/icons/badge_check") %>
+            <span>评价 <%= rating %></span>
+        </div>
+    </div>
+    <div class="tags">
+        <% for i, text in ipairs(keywords) do -%>
+        <% render("views/components/topic", {text = text}) %>
+        <% end -%>
+    </div>
+    <a href="/articles/<%= id %>" class="summary">
+        <%= summary %>
+    </a>
 </div>
