@@ -9,7 +9,7 @@ local context = require "middlewares/context"
 local device = require "middlewares/device"
 local exception = require "middlewares/exception"
 local page_controller = require "controllers/page_controller"
--- local user_controller = require "controllers/user_controller"
+local user_controller = require "controllers/user_controller"
 -- local article_controller = require "controllers/article_controller"
 
 -- Initialization
@@ -29,7 +29,7 @@ app:before_filter(auth.get_uid)
 
 -- Controllers
 page_controller:register(app)
--- user_controller.register(app)
--- article_controller.register(app)
+user_controller:register(app)
+-- article_controller:register(app)
 
 lapis.serve(app)

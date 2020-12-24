@@ -1,6 +1,33 @@
 <div class="-page-container">
-    <h1>Sign in</h1>
-    <p>sign in, sign in, sign in</p>
+	<div class="main">
+		<% render("views/components/logo_header") %>
+		<div class="row">
+			<label for="email">
+				<% render("views/icons/mail") %>
+			</label>
+			<input type="email" id="email" placeholder="E-mail">
+		</div>
+		<div class="row">
+			<label for="password">
+				<% render("views/icons/key") %>
+			</label>
+			<input type="password" id="password" placeholder="密码">
+			<% render("views/icons/eye") %>
+		</div>
+		<div class="row">
+			<button>
+				<% render("views/icons/login") %>
+				<span>登录</span>
+			</button>
+		</div>
+		<div class="row tips">
+			没有账号? 点击<a href="/sign-up-email">注册</a>.
+		</div>
+		<div class="row tips">
+			忘记密码? 点击<a href="/forgot-password">找回</a>.
+		</div>
+	</div>
 </div>
-<script type="application/json" id="page-data"><%- page_data_json_str %></script>
-<script src="<%= js_path .. "/" .. page_name .. "-" .. version .. ".js"%>"></script>
+<% render("views/components/toast") %>
+<% render("views/components/xhr") %>
+<script id="_data" type="application/json"><%- ctx.data_json %></script>

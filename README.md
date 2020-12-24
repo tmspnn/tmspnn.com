@@ -9,3 +9,5 @@ Backend of tmspnn.com
 - lapis
 - pgmoon
 - sha1
+- bcrypt
+- resty.jit-uuid

@@ -3,108 +3,57 @@
 @import "logoHeader.scss";
 @import "topic.scss";
 @import "button.scss";
-
-html,
-body {
-  height: 100%;
-  overflow: hidden;
-}
+@import "author.scss";
+@import "footer.scss";
 
 .-page-container {
-  width: 100%;
-  max-width: 1280px;
-  height: 100%;
-  margin: 0 auto;
-  display: flex;
-
-  .-navigation-bar {
-    flex: 1;
-    max-height: 100%;
-  }
-
-  .main {
-    flex: 3;
-    max-height: 100%;
-    overflow: hidden auto;
-    transition-delay: 150ms;
-
-    .feeds {
-      padding: 0 2rem;
-    }
-  }
-
-  .etc {
-    flex: 1;
-    max-height: 100%;
+    width: 100%;
+    max-width: 1280px;
+    height: 100%;
+    margin: 0 auto;
     display: flex;
-    flex-direction: column;
-    transition-delay: 300ms;
-    border-left: 1px solid $light;
-
-    h3 {
-      color: $grey-dark;
-      font-size: 1.5rem;
-      margin: 0;
-      padding: 1rem 2rem;
-      border-bottom: 1px solid $light;
+    .-navigation-bar {
+        flex: 1;
+        max-height: 100%;
     }
-
-    ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-
-      li > a {
+    .main {
+        flex: 3;
+        max-height: 100%;
+        overflow: hidden auto;
+        transition-delay: 150ms;
+        .feeds {
+            padding: 0 2rem;
+        }
+    }
+    .etc {
+        flex: 1;
+        max-height: 100%;
         display: flex;
-        align-items: center;
-        padding: 0.5rem 2rem;
-        text-decoration: none;
+        flex-direction: column;
+        transition-delay: 300ms;
+        border-left: 1px solid $light;
 
-        &:first-child {
-          padding-top: 1rem;
+        h3 {
+            color: $grey-dark;
+            font-size: 1.5rem;
+            margin: 0;
+            padding: 1rem;
+            border-bottom: 1px solid $light;
         }
 
-        .profile {
-          width: 3rem;
-          height: 3rem;
-          background-size: cover;
-          border-radius: 50%;
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
         }
 
-        .meta {
-          padding-left: 1rem;
-
-          .nickname {
-            font-size: 1.2rem;
-            color: $dark;
-          }
-
-          .fame {
-            font-size: 0.9rem;
-            color: $grey-light;
-          }
+        .recommended-topics {
+            margin-top: 4rem;
+            border-top: 1px solid $light;
         }
-      }
-    }
 
-    .hot-topics {
-      margin-top: 4rem;
-      border-top: 1px solid $light;
+        .topics {
+            padding: 1rem 0.7rem;
+        }
     }
-
-    .topics {
-      padding: 1rem 2rem;
-
-      .topic {
-        display: inline-block;
-        background: $primary;
-        color: $white;
-        margin: 0 0.6rem 1rem 0;
-        font-size: 0.9rem;
-        padding: 0.1rem 0.4rem;
-        border-radius: 4px;
-        text-decoration: none;
-      }
-    }
-  }
 }

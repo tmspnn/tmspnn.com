@@ -5,7 +5,7 @@ const timeout = 1500;
 
 export default function toast() {
   const toastDiv = document.querySelector(".-toast") as HTMLDivElement;
-  const textDiv = toastDiv.querySelector(".text") as HTMLDivElement;
+  const textsDiv = toastDiv.querySelector(".texts") as HTMLDivElement;
   let available = true;
 
   function show(arg: Message) {
@@ -13,24 +13,24 @@ export default function toast() {
     available = false;
     toastDiv.hidden = false;
     setTimeout(function () {
-      textDiv.addEventListener("transitionend", onShow);
-      textDiv.textContent = arg.text;
-      textDiv.classList.remove("invisible");
+      textsDiv.addEventListener("transitionend", onShow);
+      textsDiv.textContent = arg.texts;
+      textsDiv.classList.remove("invisible");
     }, 50);
   }
 
   function onShow(e: TransitionEvent) {
-    textDiv.removeEventListener("transitionend", onShow);
+    textsDiv.removeEventListener("transitionend", onShow);
     setTimeout(hide, timeout);
   }
 
   function hide() {
-    textDiv.addEventListener("transitionend", onHide);
-    textDiv.classList.add("invisible");
+    textsDiv.addEventListener("transitionend", onHide);
+    textsDiv.classList.add("invisible");
   }
 
   function onHide(e: TransitionEvent) {
-    textDiv.removeEventListener("transitionend", onHide);
+    textsDiv.removeEventListener("transitionend", onHide);
     toastDiv.hidden = true;
     available = true;
   }

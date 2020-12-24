@@ -1,4 +1,4 @@
-import { view } from "../mvc";
+import { view } from "../../components/mvc";
 import Doc from "../../interfaces/Doc";
 import filterVisibleElements from "../../util/filterVisibleElements";
 import isSameOrigin from "../../util/isSameOrigin";
@@ -94,15 +94,13 @@ function switchPage() {
     document.querySelectorAll(".-page-container > :not(.invisible)")
   );
 
-  if (elementsToHide.length > 0) {
-    if (transitingElementsCount == 0) {
-      // Hide current page
-      for (let i = 0; i < elementsToHide.length; i++) {
-        const el = elementsToHide[i] as HTMLElement;
-        transitingElementsCount++;
-        el.addEventListener("transitionend", onElementTransitionEnd);
-        el.classList.add("invisible");
-      }
+  if (elementsToHide.length > 0 && transitingElementsCount == 0) {
+    // Hide current page
+    for (let i = 0; i < elementsToHide.length; i++) {
+      const el = elementsToHide[i] as HTMLElement;
+      transitingElementsCount++;
+      el.addEventListener("transitionend", onElementTransitionEnd);
+      el.classList.add("invisible");
     }
   } else {
     setTimeout(nextStep, 0);
@@ -179,8 +177,8 @@ function loadDocument(doc: Doc) {
 }
 
 function loadPage() {
-  beforeLoadingPage();
   pendingXHR = new XMLHttpRequest();
+  (pendingXHR as any)._url = destUrl;
   pendingXHR.open("GET", destUrl, true);
   pendingXHR.onload = onXHRLoad;
   pendingXHR.onerror = onXHRError;
@@ -188,52 +186,35 @@ function loadPage() {
   pendingXHR.send();
 }
 
-function onXHRLoad() {
-  const status = pendingXHR!.status;
+function onXHRLoad(this: XMLHttpRequest) {
+  const xhr = this;
+  const responseUrl = xhr.responseURL || (xhr as any)._url;
 
-  if (status >= 200 && status < 400) {
+  if (xhr.status >= 200 && xhr.status < 400) {
     const docNScripts = createDocument(pendingXHR!.responseText);
     const head = docNScripts.documentElement.querySelector("head");
     head!.insertBefore(createStyleElement(defaultStyles), head!.firstChild);
-    cache[destUrl] = docNScripts;
-    afterLoadingPage();
+
+    if (destUrl == (xhr as any)._url) {
+      destUrl = responseUrl
+    }
+
+    cache[responseUrl] = docNScripts;
     nextStep();
   } else {
-    onXHRError();
+    onXHRError.call(xhr);
   }
 }
 
-function onXHRError() {
-  const status = pendingXHR!.status;
-  afterLoadingPage();
-  view.dispatch("error", {
-    _sentBy: "pageContainer",
-    type: "HTTP",
-    status,
-    message: status + ": Failed to load " + destUrl
-  });
+function onXHRError(this: XMLHttpRequest) {
+  const xhr = this;
+  const responseUrl = xhr.responseURL || (xhr as any)._url;
 }
 
 function onLoadingProgress(e: ProgressEvent) {
-  const progress = e.loaded / e.total;
-  view.dispatch("loadingProgress", {
-    _sentBy: "pageContainer",
-    progress
-  });
-}
-
-function beforeLoadingPage() {
-  view.dispatch("loadingUrl", {
-    _sentBy: "pageContainer",
-    url: destUrl
-  });
-}
-
-function afterLoadingPage() {
-  view.dispatch("loadingUrl", {
-    _sentBy: "pageContainer",
-    url: null
-  });
+  const { loaded, total } = e;
+  const progress = loaded < total ? (e.loaded / e.total) : 1;
+  view.dispatch("XHRLoadingProgress", { progress });
 }
 
 function cleanUp() {

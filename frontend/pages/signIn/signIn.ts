@@ -1,14 +1,16 @@
-import _ from "lodash";
-import isEmail from "validator/lib/isEmail";
-import qs from "qs";
 // Local modules
 import "./signIn.scss";
-import { model, view, controller, Message } from "../../components/mvc";
-import isJSON from "../../util/isJSON";
+
+import _ from "lodash";
+import qs from "qs";
+import isEmail from "validator/lib/isEmail";
+
+import { controller, Message, model, view } from "../../components/mvc";
 import pageContainer from "../../components/pageContainer/pageContainer";
 import spinner from "../../components/spinner";
 import toast from "../../components/toast/toast";
 import xhr from "../../components/xhr/xhr";
+import isJSON from "../../util/isJSON";
 
 /**
  * Model
@@ -21,13 +23,9 @@ _.assign(model, {
   password: "",
   from,
 
-  setEmail(arg: Message & { value: string }) {
-    model.email = arg.value;
-  },
+  setEmail(arg: Message & { value: string }) { model.email = arg.value; },
 
-  setPassword(arg: Message & { value: string }) {
-    model.password = arg.value;
-  }
+  setPassword(arg: Message & { value: string }) { model.password = arg.value; }
 });
 
 /**
@@ -44,24 +42,25 @@ function signIn() {
 
   const emailInput = $("#email") as HTMLInputElement;
   const passwordInput = $("#password") as HTMLInputElement;
-  const eyeBtn = document.querySelector(".row:nth-child(3) > svg") as SVGElement;
+  const eyeBtn =
+    document.querySelector(".row:nth-child(3) > svg") as SVGElement;
   const submitBtn = $("button") as HTMLButtonElement;
 
-  emailInput.addEventListener("keyup", function () {
+  emailInput.addEventListener("keyup", function() {
     view.dispatch("keyupEmailInput", { value: emailInput.value });
   });
 
-  passwordInput.addEventListener("keyup", function () {
+  passwordInput.addEventListener("keyup", function() {
     view.dispatch("keyupPasswordInput", { value: passwordInput.value });
   });
 
-  eyeBtn.addEventListener("click", function () {
-    view.dispatch("clickEyeBtn", { currentVisibility: passwordInput.type != "password" });
+  eyeBtn.addEventListener("click", function() {
+    view.dispatch("clickEyeBtn",
+      { currentVisibility: passwordInput.type != "password" });
   });
 
-  submitBtn.addEventListener("click", function () {
-    view.dispatch("clickSubmitBtn");
-  });
+  submitBtn.addEventListener("click",
+    function() { view.dispatch("clickSubmitBtn"); });
 
   function setPasswordVisibility(arg: Message & { value: boolean }) {
     if (arg.value) {
@@ -112,20 +111,16 @@ _.assign(controller, {
     controller.render("postJSON", {
       url: "/api/sign-in",
       data: { email, password },
-      cb(json: JSON) {
-        location.href = model.from;
+      cb(json: JSON) { 
+        // location.href = model.from;
       },
       onError(e: Error) {
         const err = isJSON(e.message) ? JSON.parse(e.message).err : e.message;
         controller.showToast(err);
       },
-      final() {
-        controller.blocked = false;
-      }
+      final() { controller.blocked = false; }
     });
   },
 
-  showToast(text: string) {
-    controller.render("toast", { text });
-  }
+  showToast(texts: string) { controller.render("toast", { texts }); }
 });

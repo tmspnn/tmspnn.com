@@ -24,9 +24,23 @@ ctx: {
     </div>
   </div>
   <div class="etc">
-    <div>recommended authors</div>
-    <div>hot topics</div>
-    <div>footer</div>
+    <div class="recommended-authorss">
+      <h3>推荐作者</h3>
+      <ul>
+        <% for i, author in ipairs(ctx.data.recommended_authors) do -%>
+        <% render("views/components/author", author) %>
+        <% end -%>
+      </ul>
+    </div>
+    <div class="recommended-topics">
+      <h3>推荐话题</h3>
+      <div class="topics">
+        <% for i, topic in ipairs(ctx.data.recommended_topics) do -%>
+        <% render("views/components/topic", {text = topic}) %>
+        <% end -%>
+      </div>
+    </div>
+    <% render("views/components/footer") %>
   </div>
 </div>
 <% render("views/components/xhr") %>

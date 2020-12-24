@@ -93,11 +93,63 @@ local function index_data_source(app)
     }
 end
 
+local function editor_data_source(app)
+    local uid = app.ctx.uid
+    local article_id = app.params.article_id
+
+    if not uid then
+        local from_url = "/editor"
+
+        if type(article_id) == "string" then
+            from_url = from_url .. "?article_id=" .. article_id
+        end
+
+        return {
+            redirect_to = "/sign-in?from=" .. app.ctx.escape(from_url)
+        }
+    end
+    
+    local article = Article.find_by_id(article_id)
+
+    if uid ~= article.created_by then
+        return {
+            status = 403,
+            err = "Not Authorized."
+        }
+    end
+
+    return {
+        user = {
+            id = uid
+        },
+        article = article_id
+    }
+end
+
+local function sign_in_data_source(app)
+    return {
+        page_name = "sign_in",
+        page_title = "拾刻阅读 | 登录"
+    }
+end
+
 util.push_back(page_ctrl.routes, {
     method = "get",
     path = "/",
     handler = function(app)
         return get_meta_data(app, index_data_source)
+    end
+}, {
+    method = "get",
+    path = "/editor",
+    handler = function(app)
+        return get_meta_data(app, editor_data_source)
+    end
+}, {
+    method = "get",
+    path = "/sign-in",
+    handler = function(app)
+        return get_meta_data(app, sign_in_data_source)
     end
 })
 

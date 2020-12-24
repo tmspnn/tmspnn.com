@@ -18,5 +18,12 @@
       font-style: italic;
       margin: 0;
     }
+
+    .primary {
+      color: $primary;
+      font-size: 0.8rem;
+      font-style: normal;
+      font-weight: normal;
+    }
   }
 }

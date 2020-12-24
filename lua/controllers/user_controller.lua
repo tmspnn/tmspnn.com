@@ -1,18 +1,26 @@
 -- External modules
 local ngx = require "ngx" -- The Nginx interface provided by OpenResty
 local basexx = require "basexx"
+local bcrypt = require "bcrypt"
+local log_rounds = 9
 local date = require "date"
 local sha1 = require "sha1"
 local lapis_util = require "lapis.util"
+local lapis_application = require "lapis.application"
+local json_params = lapis_application.json_params
 local to_json = lapis_util.to_json
+local uuid = require "resty.jit-uuid"
+uuid.seed()
 
 -- Local modules
+local util = require "util"
 local controller = require "controllers/controller"
+local User = require "models/user"
 
 -- Initialization
-local user_controller = controller:new()
+local user_ctrl = controller:new()
 
-function user_controller.generate_oss_upload_token(uid)
+local function generate_oss_upload_token(uid)
     -- https://support.huaweicloud.com/api-obs/obs_04_0012.html
     local current_date = date()
     local expiration_date = current_date:adddays(1)
@@ -29,4 +37,43 @@ function user_controller.generate_oss_upload_token(uid)
     return string_to_sign, signature
 end
 
-return user_controller
+local function sign_in(app)
+    local email = app.params.email
+    local password = app.params.password
+    local res = {
+        status = nil,
+        json = {
+            err = nil,
+            user = nil
+        }
+    }
+
+    local user = User:find("id, email, password from \"user\" where email = ?", email)[1]
+
+    if not user then
+        res.status = 400
+        res.json.err = "此邮箱还未注册."
+        return res
+    end
+
+    if not bcrypt.verify(password, user.password) then
+        res.status = 400
+        res.json.err = "密码与账号不匹配."
+        return res
+    end
+
+    local user_token = uuid()
+    app.cookies.user_token = user_token
+    User:set_token(user_token, user.id)
+
+    res.status = 206
+    return res
+end
+
+util.push_back(user_ctrl.routes, {
+    method = "post",
+    path = "/api/sign-in",
+    handler = json_params(sign_in)
+})
+
+return user_ctrl
