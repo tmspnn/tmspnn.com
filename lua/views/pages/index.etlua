@@ -43,5 +43,5 @@ ctx: {
     <% render("views/components/footer") %>
   </div>
 </div>
-<% render("views/components/xhr") %>
+<% render("views/components/progress_bar") %>
 <script id="_data" type="application/json"><%- ctx.data_json %></script>

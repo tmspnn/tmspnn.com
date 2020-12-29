@@ -8,8 +8,8 @@ local cors = require "middlewares/cors"
 local context = require "middlewares/context"
 local device = require "middlewares/device"
 local exception = require "middlewares/exception"
-local page_controller = require "controllers/page_controller"
-local user_controller = require "controllers/user_controller"
+local page_controller = require "controllers/page/page_controller"
+local user_controller = require "controllers/user/user_controller"
 -- local article_controller = require "controllers/article_controller"
 
 -- Initialization

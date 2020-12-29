@@ -1,6 +1,6 @@
 # tmspnn.com
 
-Backend of tmspnn.com
+Source code of [tmspnn.com](https://tmspnn.com)
 
 ## Dependencies
 
@@ -11,3 +11,5 @@ Backend of tmspnn.com
 - sha1
 - bcrypt
 - resty.jit-uuid
+- resty.validation
+- resty.mail

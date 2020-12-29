@@ -1,7 +1,0 @@
-export default function isJSON(v: any) {
-  try {
-    return typeof JSON.parse(v) == "object";
-  } catch (e) {
-    return false;
-  }
-}

@@ -1,0 +1,35 @@
+<div class="-page-container">
+    <div class="header">
+        <% render("views/components/logo_header") %>
+        <div class="options">
+            <button class="save">
+                <% render("views/icons/save") %>
+                <span>保存</span>
+            </button>
+            <button class="preview">
+                <% render("views/icons/document_text") %>
+                <span>预览</span>
+            </button>
+            <div>
+                <label for="is-private">公开可见</label>
+                <div id="is-public">
+                    <% render("views/icons/check_circle") %>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="main">
+        <div class=row>
+            <input type="text" id="title" placeholder="请输入标题...">
+            <% for i = 1, 3 do -%>
+            <input type="search" class="keyword" placeholder="关键字<%= i %>">
+            <% end -%>
+        </div>
+        <div class="richtext-editor -richtext">
+            <trix-editor></trix-editor>
+        </div>
+    </div>
+</div>
+<% render("views/components/toast") %>
+<% render("views/components/progress_bar") %>
+<script id="_data" type="application/json"><%- ctx.data_json %></script>

@@ -2,6 +2,7 @@
 @import "logoHeader.scss";
 @import "pageContainer.scss";
 @import "layout.scss";
+@import "richtext.scss";
 
 $primary-lighter: color($primary lightness(+30%));
 
@@ -57,7 +58,11 @@ $primary-lighter: color($primary lightness(+30%));
       color: $dark;
       font-size: 0.9rem;
 
-      #is-private {
+      label {
+        cursor: pointer;
+      }
+
+      #is-public {
         cursor: pointer;
         margin: 0 0.2rem;
 
@@ -66,6 +71,7 @@ $primary-lighter: color($primary lightness(+30%));
           height: 1.4rem;
           color: $grey-light;
           vertical-align: middle;
+          transition: color 150ms;
         }
 
         &.active {
@@ -94,9 +100,13 @@ $primary-lighter: color($primary lightness(+30%));
 
   .keyword {
     width: 6rem;
-    margin: 0 1rem;
+    margin-left: 1rem;
     padding: 0.3rem 0;
     color: $grey-dark;
+
+    &:last-child {
+      margin-right: 1rem;
+    }
   }
 }
 
@@ -110,7 +120,7 @@ $primary-lighter: color($primary lightness(+30%));
 .richtext-editor {
   width: 100%;
   flex: 1;
-  padding: 1rem 0;
+  padding: 1rem 1rem 1rem 0;
   overflow: hidden;
 
   trix-editor {

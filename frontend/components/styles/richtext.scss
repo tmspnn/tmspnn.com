@@ -8,7 +8,8 @@
     padding: 0 2rem;
   }
 
-  code {
+  pre {
+    padding: 1rem;
     font-family: monospace;
     background: $light;
   }
@@ -16,5 +17,11 @@
   img {
     display: block;
     max-width: 100%;
+  }
+
+  blockquote {
+    margin: 0;
+    padding: 0 1rem;
+    border-left: 3px solid $link;
   }
 }

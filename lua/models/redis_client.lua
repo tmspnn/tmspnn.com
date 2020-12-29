@@ -42,6 +42,10 @@ function redis_client:run(command, ...)
 
     self:post_run(command)
 
+    if ok == ngx.null then
+        return nil
+    end
+
     return ok
 end
 

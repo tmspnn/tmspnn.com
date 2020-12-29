@@ -21,7 +21,7 @@
 			</button>
 		</div>
 		<div class="row tips">
-			没有账号? 点击<a href="/sign-up-email">注册</a>.
+			没有账号? 点击<a href="/sign-up">注册</a>.
 		</div>
 		<div class="row tips">
 			忘记密码? 点击<a href="/forgot-password">找回</a>.
@@ -29,5 +29,4 @@
 	</div>
 </div>
 <% render("views/components/toast") %>
-<% render("views/components/xhr") %>
-<script id="_data" type="application/json"><%- ctx.data_json %></script>
+<% render("views/components/progress_bar") %>
