@@ -15,16 +15,7 @@ function exception.handle_error(app, err, trace)
     -- app: lapis.Application
     -- err: string
     -- trace: string
-    if not app.res.status then
-        app.res.status = 500
-    end
-
     ngx.log(ngx.ERR, err, trace)
-
-    return {
-        status = app.res.status,
-        render = "pages.error"
-    }
 end
 
 return exception

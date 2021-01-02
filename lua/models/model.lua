@@ -18,7 +18,7 @@ end
 
 function model:find_by_id(id)
     local sql = string.format("* from \"%s\" where id = ?", self.table_name)
-    return db.select(sql, id)
+    return db.select(sql, id)[1]
 end
 
 function model:find(sql, ...)

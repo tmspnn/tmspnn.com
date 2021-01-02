@@ -1,4 +1,4 @@
-// External modules
+// Trix editor
 import "trix/dist/trix.css"
 import "trix"
 

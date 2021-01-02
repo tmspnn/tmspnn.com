@@ -11,6 +11,7 @@ local sign_in_data_source = require "controllers/page/sign_in_data_source"
 local sign_up_data_source = require "controllers/page/sign_up_data_source"
 local forgot_password_data_source = require "controllers/page/forgot_password_data_source"
 local reset_password_data_source = require "controllers/page/reset_password_data_source"
+local article_data_source = require "controllers/page/article_data_source"
 
 -- Initialization
 local page_ctrl = controller:new()
@@ -107,6 +108,12 @@ util.push_back(page_ctrl.routes, {
     path = "/reset-password",
     handler = function(app)
         return get_meta_data(app, reset_password_data_source)
+    end
+}, {
+    method = "get",
+    path = "/articles/:article_id",
+    handler = function(app)
+        return get_meta_data(app, article_data_source)
     end
 })
 

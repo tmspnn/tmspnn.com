@@ -14,15 +14,15 @@ class SignInController extends Controller {
     super("signIn")
   }
 
-  keyupEmailInput = (args) => {
+  keyupEmailInput = args => {
     this.mutate("setEmail", { email: args.email })
   }
 
-  keyupPasswordInput = (args) => {
+  keyupPasswordInput = args => {
     this.mutate("setPassword", { password: args.password })
   }
 
-  clickEyeBtn = (args) => {
+  clickEyeBtn = args => {
     this.ui("signIn::setPasswordVisibility", { visible: !args.currentVisibility })
   }
 
@@ -44,10 +44,10 @@ class SignInController extends Controller {
     postJSON({
       url: "/api/sign-in",
       data: { email, password },
-      cb: (json) => {
+      cb: () => {
         location.href = from
       },
-      fail: (e) => {
+      fail: e => {
         const err = isJSON(e.message) ? JSON.parse(e.message).err : e.message
         this.showToast(err)
       },
@@ -57,7 +57,7 @@ class SignInController extends Controller {
     })
   }
 
-  showToast = (texts) => {
+  showToast = texts => {
     this.ui("toast::show", { texts })
   }
 }

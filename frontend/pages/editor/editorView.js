@@ -4,6 +4,7 @@ import PageContainer from "@components/PageContainer/PageContainer"
 import CustomSpinner from "@components/CustomSpinner"
 import Toast from "@components/Toast/Toast"
 import ProgressBar from "@components/ProgressBar/ProgressBar"
+import customizeTrix from "./customizeTrix"
 
 class EditorView extends View {
   _name = "editor"
@@ -20,6 +21,11 @@ class EditorView extends View {
 
   constructor() {
     super("editor")
+
+    // Alter trix editor
+    customizeTrix()
+
+    // DOM references
     this.titleInput = $("#title")
     this.keywordInputs = $$(".keyword")
     this.trixEditorEl = $("trix-editor")
@@ -31,6 +37,7 @@ class EditorView extends View {
     this.toast = new Toast("editor")
     this.progressBar = new ProgressBar("editor")
 
+    // Event listeners
     this.saveBtn.on("click", () => {
       this.dispatch("clickSaveBtn", {
         title: this.titleInput.value.trim(),
@@ -52,14 +59,20 @@ class EditorView extends View {
 
     window.on("trix-attachment-add", e => this.dispatch("onAttachmentAdd", e))
 
-    window.on("keydown", e => {
-      const withCtrlOrCmdKeyDown = e.ctrlKey || e.metaKey
+    window.on(
+      "keydown",
+      e => {
+        const withCtrlOrCmdKeyDown = e.ctrlKey || e.metaKey
 
-      // ctrl/cmd + s to save the article
-      if (withCtrlOrCmdKeyDown && e.key == "s") {
-        this.saveBtn.click()
-      }
-    })
+        // ctrl/cmd + s to save the article
+        if (withCtrlOrCmdKeyDown && e.key == "s") {
+          e.preventDefault()
+          e.stopPropagation()
+          this.saveBtn.click()
+        }
+      },
+      { passive: false }
+    )
   }
 }
 

@@ -11,7 +11,7 @@ redis_client.__index = redis_client
 function redis_client:new()
     local redis = require "resty.redis"
     local red = redis:new()
-    red:set_timeouts(1000, 1000, 1000) -- one second
+    red:set_timeout(1000) -- one second
 
     local client = {
         _redis = red,

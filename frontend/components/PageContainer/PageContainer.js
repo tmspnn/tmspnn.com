@@ -39,14 +39,14 @@ export default class PageContainer extends View {
         loaded: true
       }
       history.replaceState({ url: this.currentUrl, from: null }, "")
-      win.on("popstate", this.onPopState);
-      win._pageContainer = this;
+      win.on("popstate", this.onPopState)
+      win._pageContainer = this
     }
 
     const container = win._pageContainer || this
 
     $$("a").forEach(a => {
-      a.on("click", (e) => container.onLinkClick(e), { passive: false })
+      a.on("click", e => container.onLinkClick(e), { passive: false })
     })
   }
 
@@ -57,7 +57,7 @@ export default class PageContainer extends View {
     head.insertBefore(style, head.firstChild)
   }
 
-  onLinkClick = (e) => {
+  onLinkClick = e => {
     const a = e.currentTarget
     const url = a.href.replace(/#.*/, "")
 
@@ -73,15 +73,16 @@ export default class PageContainer extends View {
     this.switchPage()
   }
 
-  onPopState = (e) => {
+  onPopState = e => {
     this.destUrl = e.state.url
     this.shouldPushState = false
     this.switchPage()
   }
 
-  toPage = (url, shouldPushState = true) => {
+  toPage = args => {
+    const { url, shouldPushState = true } = args
     const link = document.createElement("a")
-    link.href = url; // transform relative paths to absolute paths
+    link.href = url // transform relative paths to absolute paths
     const parsedUrl = link.href.replace(/#.*/, "")
 
     if (!isSameOrigin(parsedUrl) || this.currentUrl == parsedUrl) return
@@ -114,7 +115,7 @@ export default class PageContainer extends View {
     this.next = this.showDestPage
   }
 
-  onElementTransitionEnd = (e) => {
+  onElementTransitionEnd = e => {
     const el = e.currentTarget
     el.off("transitionend", el._onceHandler)
     delete el._onceHandler
@@ -146,20 +147,18 @@ export default class PageContainer extends View {
       }
     }
     xhr.onerror = () => this.onXHRError(xhr)
-    xhr.onprogress = (e) => this.onXHRProgress(e)
-    xhr.send();
+    xhr.onprogress = e => this.onXHRProgress(e)
+    xhr.send()
   }
 
-  onXHRError = (xhr) => {
-    const err = isJSON(xhr.responseText) ?
-      JSON.parse(xhr.responseText).err :
-      xhr.status
+  onXHRError = xhr => {
+    const err = isJSON(xhr.responseText) ? JSON.parse(xhr.responseText).err : xhr.status
     this.dispatch("onPageLoadingError", { err })
   }
 
-  onXHRProgress = (e) => {
-    const { loaded, total } = e;
-    const progress = loaded < total ? (e.loaded / e.total) : 1;
+  onXHRProgress = e => {
+    const { loaded, total } = e
+    const progress = loaded < total ? e.loaded / e.total : 1
     this.dispatch("onPageLoadingProgress", { progress })
   }
 
@@ -200,7 +199,7 @@ export default class PageContainer extends View {
     this.next = this.cleanUp
   }
 
-  loadDocument = (doc) => {
+  loadDocument = doc => {
     document.replaceChild(doc.documentElement, document.documentElement)
 
     if (!doc.loaded) {

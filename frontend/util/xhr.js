@@ -64,7 +64,7 @@ export function getJSON(args) {
   xhr({
     url: args.url,
     success(resText) {
-      args.cb(JSON.parse(resText));
+      args.cb(JSON.parse(resText))
     },
     fail: args.fail,
     final: args.final
@@ -77,9 +77,7 @@ export function postJSON(args) {
     method: "post",
     contentType: "application/json",
     data: JSON.stringify(args.data),
-    success(resText) {
-      args.cb(JSON.parse(resText))
-    },
+    success: args.cb,
     fail: args.fail,
     final: args.final
   })

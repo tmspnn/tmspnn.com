@@ -80,4 +80,8 @@ function util.map(t, f)
     return mapped
 end
 
+function util.timestamp()
+    return os.time(os.date("!*t"))
+end
+
 return util

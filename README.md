@@ -2,7 +2,7 @@
 
 Source code of [tmspnn.com](https://tmspnn.com)
 
-## Dependencies
+## Dependencies of the Lua code
 
 - basexx
 - date
@@ -13,3 +13,7 @@ Source code of [tmspnn.com](https://tmspnn.com)
 - resty.jit-uuid
 - resty.validation
 - resty.mail
+
+## Pg advisory locks (%d, %d), both are 32-bit integers
+
+- (0, $id). Rate an article with id

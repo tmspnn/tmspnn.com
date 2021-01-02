@@ -10,6 +10,7 @@ local sha1 = require "sha1"
 -- Local modules
 local model = require "models/model"
 local redis_client = require "models/redis_client"
+local util = require "util"
 
 local user = model:new("user")
 
@@ -28,7 +29,7 @@ function user:get_recommended()
 end
 
 function user:set_token(token, uid)
-	local client = redis_client:new()
+    local client = redis_client:new()
     client:run("setex", string.format("user_token(%s):uid", token), token_ttl, uid)
 end
 
@@ -77,6 +78,38 @@ function user:generate_oss_upload_token(uid)
     local string_to_sign = basexx.to_base64(oss_policy)
     local signature = basexx.to_base64(sha1.hmac_binary(ngx.var.oss_secret_key, string_to_sign))
     return string_to_sign, signature
+end
+
+function user:add_follower(uid, follower_id)
+    local client = redis_client:new()
+    client:run("zadd", string.format("uid(%d):followers", uid), util.timestamp(), follower_id)
+    self:update({
+        followers_count = db.raw("followers_count + 1")
+    }, "id = ?", uid)
+end
+
+function user:remove_follower(uid, follower_id)
+    local client = redis_client:new()
+    client:run("zrem", string.format("uid(%d):followers", uid), follower_id)
+    self:update({
+        followers_count = db.raw("followers_count - 1")
+    }, "id = ?", uid)
+end
+
+function user:add_following(uid, following_id)
+    local client = redis_client:new()
+    client:run("zadd", string.format("uid(%d):followings", uid), util.timestamp(), following_id)
+    self:update({
+        followings_count = db.raw("followings_count + 1")
+    }, "id = ?", uid)
+end
+
+function user:remove_following(uid, following_id)
+    local client = redis_client:new()
+    client:run("zrem", string.format("uid(%d):followings", uid), following_id)
+    self:update({
+        followings_count = db.raw("followings_count - 1")
+    }, "id = ?", uid)
 end
 
 return user

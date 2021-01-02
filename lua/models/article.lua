@@ -20,4 +20,8 @@ function article:get_recommended_topics()
     return client:run("zrevrangebyscore", "recommended_topics", "+inf", 0, "limit", 0, 10)
 end
 
+function article:create_comment(init_data)
+    return db.insert("comment", init_data, db.raw("*"))
+end
+
 return article

@@ -1,6 +1,5 @@
 import { View } from "@components/MVC"
-import { $, $$, addClass, removeClass } from "@util/DOM"
-import { postJSON } from "@util/xhr"
+import { $, addClass, removeClass } from "@util/DOM"
 import PageContainer from "@components/PageContainer/PageContainer"
 import CustomSpinner from "@components/CustomSpinner"
 import Toast from "@components/Toast/Toast"
@@ -53,7 +52,7 @@ class SignInView extends View {
     })
   }
 
-  setPasswordVisibility = (args) => {
+  setPasswordVisibility = args => {
     if (args.visible) {
       this.passwordInput.type = "text"
       addClass(this.eyeBtn, "light")

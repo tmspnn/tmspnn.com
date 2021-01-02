@@ -1,0 +1,48 @@
+<div class="-page-container">
+    <div class="logo-rating-comment">
+        <% render("views/components/logo_header") %>
+        <div class="rating">
+            <h4>我觉得这篇</h4>
+            <div class="stars">
+                <% for i = 1, 5 do -%>
+                <% render("views/icons/star") %>
+                <% end -%>
+                <span></span>
+            </div>
+            <button class="rating-btn">
+                <% render("views/icons/badge_check") %>
+                <span>评价</span>
+            </button>
+        </div>
+        <div class="comment">
+            <h4>我也说两句</h4>
+            <textarea></textarea>
+            <button class="comment-btn">
+                <% render("views/icons/document_text") %>
+                <span>评论</span>
+            </button>
+        </div>
+    </div>
+    <div class="article-n-comments">
+        <h1><%= ctx.data.article.title %></h1>
+        <div class="meta">
+            <div class="profile"></div>
+            <div class="author-n-date">
+                <div class="author"></div>
+                <div class="date"></div>
+            </div>
+            <div class="pageview"></div>
+            <div class="rating"></div>
+        </div>
+        <div class="-richtext">
+            <%- ctx.data.article.content %>
+        </div>
+        <div class="comments"></div>
+    </div>
+    <div class="author-n-related-articles">
+
+    </div>
+</div>
+<% render("views/components/toast") %>
+<% render("views/components/progress_bar") %>
+<script id="_data" type="application/json"><%- ctx.data_json %></script>

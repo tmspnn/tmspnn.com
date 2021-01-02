@@ -5,6 +5,7 @@
 @import "richtext.scss";
 @import "comment.scss";
 @import "userMeta.scss";
+@import "logoHeader.scss";
 
 html,
 body {
@@ -28,29 +29,6 @@ body {
     @extend .block;
     border-right: 1px solid $light;
 
-    .logo {
-      a {
-        display: flex;
-        align-items: center;
-        color: $grey-dark;
-        text-decoration: none;
-      }
-
-      svg {
-        width: 4rem;
-        height: 4rem;
-        color: $link;
-      }
-
-      h1 {
-        font-size: 2.2rem;
-        font-weight: lighter;
-        font-style: italic;
-        color: $black;
-        margin: 0;
-      }
-    }
-
     .rating {
       border-top: 1px solid $light;
 
@@ -71,6 +49,18 @@ body {
           width: 2rem;
           height: 2rem;
           color: $grey-light;
+          cursor: pointer;
+          transition: color 120ms;
+
+          &.active {
+            color: $link;
+          }
+        }
+
+        span {
+          margin-left: 0.3rem;
+          color: $dark;
+          font-size: 0.9rem;
         }
       }
 
@@ -159,6 +149,10 @@ body {
 
     .tags {
       padding: 1rem 2rem;
+    }
+
+    .-richtext {
+      padding: 0 2rem;
     }
 
     .comments {

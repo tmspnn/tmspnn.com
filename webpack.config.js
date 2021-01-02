@@ -10,7 +10,7 @@ const precss = require("precss")
 
 // Entries
 const entry = {}
-const pages = ["index", "signIn", "signUp", "forgotPassword", "resetPassword", "editor"]
+const pages = ["index", "signIn", "signUp", "forgotPassword", "resetPassword", "editor", "article"]
 pages.forEach(p => (entry[p] = path.resolve(`frontend/pages/${p}/${p}.js`)))
 
 module.exports = {
@@ -22,39 +22,39 @@ module.exports = {
     publicPath: ""
   },
   module: {
-    rules: [{
-      test: /\.s?css$/,
-      use: [
-        MiniCssExtractPlugin.loader,
-        { loader: "css-loader", options: { importLoaders: 1 } }, {
-          loader: "postcss-loader",
-          options: {
-            postcssOptions: {
-              plugins: [
-                ["postcss-import", { path: ["frontend/components/styles"] }],
-                precss,
-                colorFunction,
-                autoprefixer
-              ]
+    rules: [
+      {
+        test: /\.s?css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          { loader: "css-loader", options: { importLoaders: 1 } },
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: [
+                  ["postcss-import", { path: ["frontend/components/styles"] }],
+                  precss,
+                  colorFunction,
+                  autoprefixer
+                ]
+              }
             }
           }
-        }
-      ]
-    }, {
-      test: /\.m?js$/,
-      exclude: /node_modules/,
-      use: {
-        loader: "babel-loader",
-        options: {
-          presets: [
-            ["@babel/preset-env", { targets: "defaults" }]
-          ],
-          plugins: [
-            ["@babel/plugin-proposal-class-properties", { loose: true }]
-          ]
+        ]
+      },
+      {
+        test: /\.m?js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [["@babel/preset-env", { targets: "defaults" }]],
+            plugins: [["@babel/plugin-proposal-class-properties", { loose: true }]]
+          }
         }
       }
-    }]
+    ]
   },
   resolve: {
     alias: {
@@ -63,7 +63,8 @@ module.exports = {
     },
     extensions: [".js", ".json"]
   },
-  devtool: process.env.NODE_ENV === "production" ? "nosources-source-map" : "cheap-module-source-map",
+  devtool:
+    process.env.NODE_ENV === "production" ? "nosources-source-map" : "cheap-module-source-map",
   plugins: pages.map(() => new MiniCssExtractPlugin({ filename: `[name]-${version}.css` })),
   watchOptions: { ignored: ["conf/**", "lua/**", "node_modules/**"] }
 }
