@@ -112,4 +112,24 @@ function user:remove_following(uid, following_id)
     }, "id = ?", uid)
 end
 
+function user:add_advocated_comment(uid, comment_id)
+    local client = redis_client:new()
+    return client:run("zadd", string.format("uid(%d):advocated_comments", uid), util.timestamp(), comment_id)
+end
+
+function user:remove_advocated_comment(uid, comment_id)
+    local client = redis_client:new()
+    return client:run("zrem", string.format("uid(%d):advocated_comments", uid), comment_id)
+end
+
+function user:add_opposed_comment(uid, comment_id)
+    local client = redis_client:new()
+    return client:run("zadd", string.format("uid(%d):opposed_comments", uid), util.timestamp(), comment_id)
+end
+
+function user:remove_opposed_comment(uid, comment_id)
+    local client = redis_client:new()
+    return client:run("zrem", string.format("uid(%d):opposed_comments", uid), comment_id)
+end
+
 return user
