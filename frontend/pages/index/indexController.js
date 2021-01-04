@@ -14,10 +14,13 @@ class IndexController extends Controller {
 
     setTimeout(() => {
       disconnect()
-    }, 6000)
+    }, 180000)
   }
 
   loadMoreFeeds = () => {}
 }
 
 export default new IndexController()
+
+// TODO: use document.cookie="ws_last_active=" + Date.now() to detect other ws connection
+// TODO: use window.postMessage to broadcast ws messages
