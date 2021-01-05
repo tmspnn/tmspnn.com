@@ -1,7 +1,13 @@
 <div class="-search-bar">
   <div class="input-container">
-    <input maxlength="80" />
-    <% render("views/icons/search") %>
-    <ul hidden></ul>
+    <input id="keyword-input" maxlength="80" />
+    <label for="keyword-input">
+      <% render("views/icons/search") %>
+    </label>
+    <ul hidden>
+      <% for _, item in ipairs(ctx.data.recommended_keywords) do -%>
+      <% render("views/components/search_item", { item = item}) %>
+      <% end -%>
+    </ul>
   </div>
 </div>

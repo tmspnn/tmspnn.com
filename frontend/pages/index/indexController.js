@@ -1,26 +1,32 @@
+// External packages
+import _ from "lodash"
+
+// Local modules
 import { Controller } from "@components/MVC"
+import { getJSON } from "@util/xhr"
+// import { connect, send, disconnect } from "@util/ws"
 import indexModel from "./indexModel"
-import { connect, send, disconnect } from "@util/ws"
 
 class IndexController extends Controller {
+  blocked = false
+
   constructor() {
     super("index")
-
-    connect()
-
-    setTimeout(() => {
-      send("js::asdasdasdasd")
-    }, 3000)
-
-    setTimeout(() => {
-      disconnect()
-    }, 180000)
   }
 
-  loadMoreFeeds = () => {}
+  searchKeyword = args => {
+    const { keyword } = args
+    getJSON({
+      url: "/api/search?keyword=" + encodeURIComponent(keyword),
+      cb: json => {
+        console.log(json)
+      }
+    })
+  }
+
+  loadMoreFeeds = _.debounce(() => {
+    console.log("load more")
+  }, 500)
 }
 
 export default new IndexController()
-
-// TODO: use document.cookie="ws_last_active=" + Date.now() to detect other ws connection
-// TODO: use window.postMessage to broadcast ws messages

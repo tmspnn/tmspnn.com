@@ -17,6 +17,10 @@ local function index_data_source(app)
         fd.keywords = util.split(fd.keywords, ",")
     end
 
+    for i = 1, 10 do
+        util.push_back(latest_feeds, latest_feeds[1])
+    end
+
     return {
         page_name = "index",
         page_title = "拾刻阅读 | 首页",
@@ -25,7 +29,20 @@ local function index_data_source(app)
         },
         feeds = latest_feeds,
         recommended_authors = recommended_authors,
-        recommended_topics = recommended_topics
+        recommended_topics = recommended_topics,
+        recommended_keywords = {{
+            type = "article",
+            link = "/articles/7",
+            texts = "木兰第一章"
+        }, {
+            type = "user",
+            link = "/users/10007",
+            texts = "木兰花下人"
+        }, {
+            type = "topic",
+            link = "/topics/" .. app.ctx.escape("南北朝"),
+            texts = "南北朝"
+        }}
     }
 end
 

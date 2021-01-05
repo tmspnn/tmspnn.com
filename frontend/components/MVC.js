@@ -34,6 +34,7 @@ export class Model extends Listener {
 
 export class View extends Listener {
   _name = ""
+  _element = null
 
   constructor(namespace = "global") {
     super(namespace, "view")

@@ -3,20 +3,20 @@
 
 .-navigation-bar {
   overflow: hidden;
-  border-right: 1px solid $light;
+  border-right: 1px solid $grey-lighter;
 
   ul {
     list-style: none;
     margin: 0;
     padding: 0;
-    border-top: 1px solid $light;
+    border-top: 1px solid $grey-lighter;
 
     li {
       border-radius: 4px;
       transition: background-color 150ms, color 150ms;
 
       &:hover {
-        background: $light;
+        background: $grey-lighter;
       }
 
       &.active {

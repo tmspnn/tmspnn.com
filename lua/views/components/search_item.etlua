@@ -1,0 +1,3 @@
+<li class="-search-item">
+    <a href="<%= item.link %>"><%= item.texts %></a>
+</li>

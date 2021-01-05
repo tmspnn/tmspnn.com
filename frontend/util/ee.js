@@ -1,15 +1,15 @@
 import EventEmitter from "events"
 
-const win = window
-
 function isEventEmitter(o) {
   return o instanceof Object && typeof o.emit == "function" && typeof o.on == "function"
 }
 
-let ee = win._ee
+let ee = window._ee
 
 if (!isEventEmitter(ee)) {
-  win._ee = ee = new EventEmitter()
+  ee = new EventEmitter()
+  ee.setMaxListeners(5000)
+  window._ee = ee
 }
 
 export default ee

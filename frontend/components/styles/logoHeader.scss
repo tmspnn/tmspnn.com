@@ -7,9 +7,20 @@
     color: $black;
     text-decoration: none;
 
+    &:hover {
+      svg {
+        color: $primary;
+      }
+
+      h1 {
+        font-weight: normal;
+      }
+    }
+
     svg {
       width: 4rem;
       height: 4rem;
+      transition: color 300ms;
     }
 
     h1 {
@@ -17,6 +28,7 @@
       font-weight: lighter;
       font-style: italic;
       margin: 0;
+      transition: font-weight 300ms;
     }
 
     .primary {

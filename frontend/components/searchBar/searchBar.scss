@@ -10,31 +10,51 @@
       width: 100%;
       font-size: 1.2rem;
       padding: 0.5rem 2.5rem 0.5rem 1rem;
-      border-color: $grey-dark;
+      border: 1px solid $grey-lighter;
       border-radius: 4px;
       color: $dark;
+      background: $white;
+      box-shadow: 0 3px 5px $grey-lighter;
+
+      &:focus {
+        border-color: $primary;
+      }
     }
 
-    & > svg {
+    & > label > svg {
       position: absolute;
       right: 0.8rem;
       top: 0.5rem;
       width: 1.6rem;
       height: 1.6rem;
+      cursor: pointer;
+
+      &:hover {
+        color: $primary;
+      }
     }
 
     & > ul {
       position: absolute;
       left: 0;
       top: 2.48rem;
+      z-index: 1;
       margin: 0;
-      padding: 0.5rem 1rem;
+      padding: 0;
       list-style: none;
       width: 100%;
       background: $white;
       border: 1px solid $light;
       border-radius: 4px;
-      box-shadow: 0 6px 12px $light;
+      box-shadow: 0 3px 5px $light;
+
+      > li {
+        padding: 0.5rem 1rem;
+        transition: background-color 150ms;
+        &:hover {
+          background-color: $light;
+        }
+      }
     }
   }
 }

@@ -36,7 +36,8 @@ ctx: { page_name: string }
     </li>
   </ul>
   <div class="row">
-    <a href="/editor"><button>
+    <a href="/editor">
+      <button>
         <% render("views/icons/pencil_alt") %>
         <span>写一篇</span>
       </button>

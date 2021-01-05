@@ -4,7 +4,8 @@ import { $ } from "@util/DOM"
 
 export default class Feed extends View {
   _name = "feed"
-  element = null
+  _element = null
+
   data = null
 
   constructor(namespace, element, data) {
