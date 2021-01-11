@@ -11,6 +11,7 @@ local exception = require "middlewares/exception"
 local page_controller = require "controllers/page/page_controller"
 local user_controller = require "controllers/user/user_controller"
 local article_controller = require "controllers/article/article_controller"
+local search_controller = require "controllers/search/search_controller"
 
 -- Initialization
 local app = lapis.Application()
@@ -31,5 +32,6 @@ app:before_filter(auth.get_uid)
 page_controller:register(app)
 user_controller:register(app)
 article_controller:register(app)
+search_controller:register(app)
 
 lapis.serve(app)

@@ -1,26 +1,13 @@
-<% --[[ -%>
-id
-created_by
-title
-author
-profile
-cover
-keywords
-summary
-content
-created_at
-updated_at
-pageview
-rating
-ratings_count
-comments_count
-status
-<% --]] -%>
 <div class="-feed">
-    <a href="/articles/<%= id %>" class="cover" style="background-image: url(<%= cover %>)"
-        <% if #cover == 0 then -%>hidden<% end -%>>
+    <% if not cover or #cover == 0 then -%>
+    <a href="/articles/<%= id %>" class="header">
         <h1><%= title %></h1>
     </a>
+    <% else -%>
+    <a href="/articles/<%= id %>" class="cover" style="background-image: url(<%= cover %>)">
+        <h1><%= title %></h1>
+    </a>
+    <% end -%>
     <div class="meta">
         <a href="/users/<%= created_by %>" class="item">
             <% render("views/icons/user") %>
@@ -41,7 +28,7 @@ status
     </div>
     <div class="tags">
         <% for i, text in ipairs(keywords) do -%>
-        <% render("views/components/topic", {text = text}) %>
+        <% render("views/components/topic", {ctx = ctx, data = text}) %>
         <% end -%>
     </div>
     <a href="/articles/<%= id %>" class="summary">

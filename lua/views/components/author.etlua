@@ -1,31 +1,13 @@
-<% --[[ -%>
-id               
-password        
-nickname        
-profile         
-fame            
-articles_count  
-followings_count
-followers_count 
-id_card_no      
-name            
-email           
-mobile          
-created_at      
-last_login      
-intro           
-etc             
-<% --]] -%>
 <li class="-author">
-    <a href="/ysers/<%= id %>">
-        <div class="profile" style="background-image: url(<%= profile %>)"></div>
+    <a href="/users/<%= data.id %>">
+        <div class="profile" style="background-image: url(<%= data.profile %>)"></div>
         <div class="meta">
-            <div class="nickname"><%= nickname %></div>
+            <div class="nickname"><%= data.nickname %></div>
             <div class="fame">
-            	<% render("views/icons/document_text") %>
-                <span class="truncated bold"><%= articles_count %></span>
+                <% render("views/icons/document_text") %>
+                <span class="truncated bold"><%= data.articles_count %></span>
                 <% render("views/icons/fire") %>
-                <span class="truncated bold"><%= fame %></span>
+                <span class="truncated bold"><%= data.fame %></span>
             </div>
         </div>
     </a>

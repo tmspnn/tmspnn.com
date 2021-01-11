@@ -16,7 +16,7 @@ class Listener {
     ee.on(this._namespace + "::" + this._type, this._eventHandler)
   }
 
-  _eventHandler = args => {
+  _eventHandler = (args) => {
     const { _method } = args
 
     if (typeof this[_method] == "function") {
@@ -47,6 +47,7 @@ export class View extends Listener {
   dispatch = (method, args = {}) => {
     args._method = method
     ee.emit(this._namespace + "::controller", args)
+    return this
   }
 
   destroy = () => {
@@ -67,17 +68,20 @@ export class Controller extends Listener {
   mutate = (method, args = {}) => {
     args._method = method
     ee.emit(this._namespace + "::model", args)
+    return this
   }
 
   broadcast = (args = {}) => {
     args._method = "onBroadcast"
     ee.emit(this._namespace + "::view", args)
+    return this
   }
 
   ui = (pattern, args = {}) => {
     const [componentName, method] = pattern.split("::")
     args._method = method
     ee.emit(this._namespace + "::view::" + componentName, args)
+    return this
   }
 }
 

@@ -4,9 +4,9 @@
     <label for="keyword-input">
       <% render("views/icons/search") %>
     </label>
-    <ul hidden>
+    <ul>
       <% for _, item in ipairs(ctx.data.recommended_keywords) do -%>
-      <% render("views/components/search_item", { item = item}) %>
+      <% render("views/components/search_item", { data = item }) %>
       <% end -%>
     </ul>
   </div>

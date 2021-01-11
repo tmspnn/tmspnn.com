@@ -8,6 +8,7 @@ local controller = require "controllers/controller"
 local rate_article = require "controllers/article/rate_article"
 local comment_article = require "controllers/article/comment_article"
 local like_comment = require "controllers/article/like_comment"
+local get_articles = require "controllers/article/get_articles"
 
 -- Initialization
 local article_ctrl = controller:new()
@@ -24,6 +25,6 @@ util.push_back(article_ctrl.routes, {
     method = "put",
     path = "/api/articles/:article_id/comments/:comment_id/attitudes",
     handler = json_params(like_comment)
-})
+}, {method = "get", path = "/api/articles", handler = get_articles})
 
 return article_ctrl

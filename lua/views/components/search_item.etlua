@@ -1,3 +1,13 @@
-<li class="-search-item">
-    <a href="<%= item.link %>"><%= item.texts %></a>
+<% if data.type == "article" then -%>
+<li class="-search-item article">
+    <a href="<%= "/articles/" .. data.id %>"><%= data.title %></a>
 </li>
+<% elseif data.type == "user" then -%>
+<li class="-search-item user">
+    <a href="<%= "/users/" .. data.id %>"><%= data.nickname %></a>
+</li>
+<% elseif data.type == "topic" then -%>
+<li class="-search-item topic">
+    <a href="<%= "/topics/" .. ctx.escape(data.title) %>"><%= data.title %></a>
+</li>
+<% end -%>

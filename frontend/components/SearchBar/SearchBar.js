@@ -3,8 +3,9 @@ import _ from "lodash"
 
 // Local modules
 import "./SearchBar.scss"
-import { $ } from "@util/DOM"
+import { $, clearNode, html2DOM } from "@util/DOM"
 import { View } from "@components/MVC"
+import ResultItem from "./ResultItem"
 
 export default class SearchBar extends View {
   // Reserved properties
@@ -15,25 +16,13 @@ export default class SearchBar extends View {
   input = $("input", this._element)
   searchIcon = $("label", this._element)
   resultList = $("ul", this._element)
-  mainDiv = $(".main")
 
   constructor(namespace) {
     super(namespace)
 
     // Event listeners
-    this.input.on("focus", this.onInputFocus)
-    this.input.on("blur", this.onInputBlur)
     this.input.on("keyup", this.onInputKeyup)
     this.searchIcon.on("click", this.onInputKeyup)
-    this.mainDiv.on("scroll", this.onMainDivScroll)
-  }
-
-  onInputFocus = () => {
-    this.resultList.hidden = false
-  }
-
-  onInputBlur = () => {
-    this.resultList.hidden = true
   }
 
   onInputKeyup = () => {
@@ -41,19 +30,22 @@ export default class SearchBar extends View {
     if (keyword.length > 0) {
       this.dispatch("searchKeyword", { keyword })
     } else {
-      this.dispatch("resetKeywords")
+      this.dispatch("resetKeyword")
     }
   }
 
-  onMainDivScroll = () => {
-    const { scrollHeight, scrollTop } = this.mainDiv
+  setResults = (args) => {
+    const { results, html } = args
 
-    if (scrollHeight - scrollTop - window.innerHeight < window.innerHeight) {
-      this.dispatch("loadMoreFeeds")
-    }
-  }
+    clearNode(this.resultList)
 
-  setKeywords = keywords => {
-    console.log(keywords)
+    const ul = html2DOM(html)
+    const docFrag = document.createDocumentFragment()
+
+    _.forEach(ul.children, (li, idx) => {
+      docFrag.appendChild(new ResultItem(this._namespace, li, results[idx])._element)
+    })
+
+    this.resultList.appendChild(docFrag)
   }
 }

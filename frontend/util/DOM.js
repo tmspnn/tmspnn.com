@@ -84,3 +84,9 @@ export function filterVisibleElements(elements) {
 
   return visibleElements
 }
+
+const parser = new DOMParser()
+export function html2DOM(html) {
+  const doc = parser.parseFromString(html, "text/html")
+  return doc.body.firstChild
+}

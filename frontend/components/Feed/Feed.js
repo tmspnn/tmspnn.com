@@ -1,7 +1,7 @@
 import "./Feed.scss"
 import { View } from "@components/MVC"
-import { $ } from "@util/DOM"
-
+import { html2DOM } from "@util/DOM"
+import { user, clock, eye, badge_check } from "@components/icons"
 export default class Feed extends View {
   _name = "feed"
   _element = null
