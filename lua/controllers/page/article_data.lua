@@ -1,18 +1,11 @@
 local Article = require "models/article"
-local User = require "models/user"
 local util = require "util"
 
-local function article_data_source(app)
+local function article_data(app)
     local uid = app.ctx.uid
     local article_id = tonumber(app.params.article_id)
 
-    local res = {
-        status = nil,
-        json = {
-            err = nil,
-            article = nil
-        }
-    }
+    local res = {status = nil, json = {err = nil, article = nil}}
 
     if not article_id then
         res.status = 400
@@ -27,11 +20,9 @@ local function article_data_source(app)
     return {
         page_name = "article",
         page_title = "拾刻阅读 | " .. article.title,
-        user = {
-            id = uid
-        },
+        user = {id = uid},
         article = article
     }
 end
 
-return article_data_source
+return article_data

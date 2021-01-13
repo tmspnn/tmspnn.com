@@ -57,6 +57,7 @@ body {
       width: 15rem;
       border: none;
       border-bottom: 1px solid $grey-dark;
+      background-color: $light;
 
       &:focus {
         border-bottom: 1px solid $link;

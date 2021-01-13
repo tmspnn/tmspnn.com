@@ -11,9 +11,9 @@
                 <span>预览</span>
             </button>
             <div>
-                <label for="is-private">公开可见</label>
+                <span>公开</span>
                 <div id="is-public">
-                    <% render("views/icons/check_circle") %>
+                    <div class="switcher"></div>
                 </div>
             </div>
         </div>

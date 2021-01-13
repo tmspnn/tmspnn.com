@@ -5,7 +5,7 @@ ctx: { page_name: string }
   <% render("views/components/logo_header") %>
   <ul>
     <li <% if ctx.page_name == "me" then %> class="active" <% end %>>
-      <a href="me">
+      <a href="/me">
         <% render("views/icons/home") %>
         <span>主页</span>
       </a>

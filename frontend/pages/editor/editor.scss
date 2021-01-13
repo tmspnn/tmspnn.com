@@ -5,8 +5,6 @@
 @import "trix-customization.scss";
 @import "richtext.scss";
 
-$primary-lighter: color($primary lightness(+30%));
-
 .header {
   flex: 1;
   text-align: right;
@@ -26,21 +24,18 @@ $primary-lighter: color($primary lightness(+30%));
       padding: 0.36rem 1.2rem 0.3rem 0.8rem;
       color: $white;
       background-color: $primary;
-      background-position: center;
-      box-shadow: 0 0 4px $light;
+      box-shadow: 0 0 4px $grey-light;
       outline: none;
-      transition: background 500ms;
+      transition: transform 500ms, background-color 200ms;
       user-select: none;
       width: 6rem;
 
       &:hover {
-        background: $primary radial-gradient(circle, transparent 1%, $primary 1%) center/15000%;
+        background-color: color($primary blackness(+5%));
       }
 
       &:active {
-        background-color: $primary-lighter;
-        background-size: 100%;
-        transition: background 0s;
+        transform: scale(0.9);
       }
 
       svg {
@@ -65,20 +60,29 @@ $primary-lighter: color($primary lightness(+30%));
 
       #is-public {
         cursor: pointer;
-        margin: 0 0.2rem;
-
-        svg {
-          width: 1.4rem;
-          height: 1.4rem;
-          color: $grey-light;
-          vertical-align: middle;
-          transition: color 150ms;
-        }
+        margin: 0 0.5rem;
+        width: 3.2rem;
+        height: 1.6rem;
+        background-color: $grey-lighter;
+        border-radius: 2rem;
+        box-shadow: 0 0 3px $grey-light;
+        transition: background-color 200ms;
 
         &.active {
-          svg {
-            color: $link;
+          background-color: $link;
+
+          .switcher {
+            transform: translate3d(100%, 0, 0);
           }
+        }
+
+        .switcher {
+          width: 1.6rem;
+          height: 1.6rem;
+          border-radius: 50%;
+          background-color: $white;
+          box-shadow: 0 0 3px $grey-light;
+          transition: transform 300ms;
         }
       }
     }
@@ -132,8 +136,10 @@ $primary-lighter: color($primary lightness(+30%));
 }
 
 input {
+  background-color: $light;
   border: none;
   border-bottom: 1px solid $grey-dark;
+
   &:focus {
     border-color: $link;
   }
