@@ -1,2 +1,81 @@
-<h1>Me</h1>
-<span>mememeem</span>
+<div class="-page-container">
+    <div class="specifics">
+        <% render("views/components/logo_header") %>
+        <ul>
+            <li>
+                <label>
+                    <% render("views/icons/identification") %>
+                    <span>昵称</span>
+                </label>
+                <span><%= ctx.data.user.nickname %></span>
+            </li>
+            <li>
+                <label>
+                    <% render("views/icons/location_marker") %>
+                    <span>地区</span>
+                </label>
+                <span><%= ctx.data.user.district %></span>
+            </li>
+            <li>
+                <label>
+                    <% render("views/icons/document_text") %>
+                    <span>文档数</span>
+                </label>
+                <span><%= ctx.data.user.articles_count %></span>
+            </li>
+            <li>
+                <label>
+                    <% render("views/icons/heart") %>
+                    <span>关注</span>
+                </label>
+                <span><%= ctx.data.user.followings_count %></span>
+            </li>
+            <li>
+                <label>
+                    <% render("views/icons/user_group") %>
+                    <span>粉丝</span>
+                </label>
+                <span><%= ctx.data.user.followers_count %></span>
+            </li>
+        </ul>
+        <div class="row">
+            <a href="/editor">
+                <button>
+                    <% render("views/icons/pencil_alt") %>
+                    <span>写一篇</span>
+                </button>
+            </a>
+        </div>
+        <div class="row">
+            <button>
+                <% render("views/icons/logout") %>
+                <span>退出登录</span>
+            </button>
+        </div>
+    </div>
+    <div class="main">
+        <div class="bg" style="background-image: url(<%= ctx.data.user.bg_image %>)"></div>
+        <div class="profile" style="background-image: url(<%= ctx.data.user.profile %>)"></div>
+        <div class="events">
+            <% for i, f in ipairs(ctx.data.events) do -%>
+            <div class="event"></div>
+            <% end -%>
+        </div>
+    </div>
+    <div class="relations">
+        <h3>我关注的</h3>
+        <div>
+            <% for i, f in ipairs(ctx.data.followings) do -%>
+            <div class="profile" style="background-image: url(<%= f.profile %>)"></div>
+            <% end -%>
+        </div>
+        <h3>关注我的</h3>
+        <div>
+            <% for i, f in ipairs(ctx.data.followers) do -%>
+            <div class="profile" style="background-image: url(<%= f.profile %>)"></div>
+            <% end -%>
+        </div>
+    </div>
+</div>
+<% render("views/components/toast") %>
+<% render("views/components/progress_bar") %>

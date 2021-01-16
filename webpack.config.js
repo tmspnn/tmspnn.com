@@ -1,17 +1,28 @@
+// @Package
 const package = require("./package.json")
 const version = package.version
 
-// Plugins
+// @Plugins
+const webpack = require("webpack")
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const autoprefixer = require("autoprefixer")
 const colorFunction = require("postcss-color-function")
 const path = require("path")
 const precss = require("precss")
 
-// Entries
+// @Entries
 const entry = {}
-const pages = ["index", "signIn", "signUp", "forgotPassword", "resetPassword", "editor", "article"]
-pages.forEach(p => (entry[p] = path.resolve(`frontend/pages/${p}/${p}.js`)))
+const pages = [
+  "index",
+  "signIn",
+  "signUp",
+  "forgotPassword",
+  "resetPassword",
+  "editor",
+  "article",
+  "me"
+]
+pages.forEach((p) => (entry[p] = path.resolve(`frontend/pages/${p}/${p}.js`)))
 
 module.exports = {
   entry,
@@ -65,6 +76,11 @@ module.exports = {
   },
   devtool:
     process.env.NODE_ENV === "production" ? "nosources-source-map" : "cheap-module-source-map",
-  plugins: pages.map(() => new MiniCssExtractPlugin({ filename: `[name]-${version}.css` })),
+  plugins: [
+    new webpack.ProvidePlugin({
+      _: "lodash"
+    }),
+    ...pages.map(() => new MiniCssExtractPlugin({ filename: `[name]-${version}.css` }))
+  ],
   watchOptions: { ignored: ["conf/**", "lua/**", "node_modules/**"] }
 }

@@ -72,7 +72,7 @@ export class Controller extends Listener {
   }
 
   broadcast = (args = {}) => {
-    args._method = "onBroadcast"
+    args._method = "_onBroadcast"
     ee.emit(this._namespace + "::view", args)
     return this
   }
@@ -81,6 +81,12 @@ export class Controller extends Listener {
     const [componentName, method] = pattern.split("::")
     args._method = method
     ee.emit(this._namespace + "::view::" + componentName, args)
+    return this
+  }
+
+  notify = (namespace = "global", args = {}) => {
+    args._method = "_onNotification"
+    ee.emit(namespace + "::controller", args)
     return this
   }
 }

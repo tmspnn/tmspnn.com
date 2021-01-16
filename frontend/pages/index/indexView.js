@@ -1,6 +1,3 @@
-// External packages
-import _ from "lodash"
-
 // Local modules
 import { $ } from "@util/DOM"
 import { View } from "@components/MVC"

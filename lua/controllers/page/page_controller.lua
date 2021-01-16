@@ -15,6 +15,9 @@ local forgot_password_data = require "controllers/page/forgot_password_data"
 local reset_password_data = require "controllers/page/reset_password_data"
 local article_data = require "controllers/page/article_data"
 local me_data = require "controllers/page/me_data"
+local followings_data = require "controllers/page/followings_data"
+local followers_data = require "controllers/page/followers_data"
+local messages_data = require "controllers/page/messages_data"
 local render_component = require "controllers/page/render_component"
 
 -- @Implementation
@@ -102,6 +105,18 @@ util.push_back(page_ctrl.routes, {
     method = "get",
     path = "/me",
     handler = function(app) return get_meta_data(app, me_data) end
+}, {
+    method = "get",
+    path = "/followings",
+    handler = function(app) return get_meta_data(app, followings_data) end
+}, {
+    method = "get",
+    path = "/followers",
+    handler = function(app) return get_meta_data(app, followers_data) end
+}, {
+    method = "get",
+    path = "/messages",
+    handler = function(app) return get_meta_data(app, messages_data) end
 })
 
 return page_ctrl

@@ -1,0 +1,19 @@
+<div class="-page-container">
+    <% render("views/components/navigation_bar") %>
+    <div class="main">
+        <div class="filter">
+            <input id="keyword-input" maxlength="80" />
+            <label for="keyword-input">
+                <% render("views/icons/search") %>
+            </label>
+        </div>
+        <ul>
+            <% for i, fl in ipairs(ctx.data.followings) do -%>
+            <% render("views/components/following", {data = fl}) %>
+            <% end -%>
+        </ul>
+    </div>
+</div>
+<% render("views/components/toast") %>
+<% render("views/components/progress_bar") %>
+<script id="_data" type="application/json"><%- ctx.data_json %></script>
