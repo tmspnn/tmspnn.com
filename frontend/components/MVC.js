@@ -1,8 +1,3 @@
-/**
- * models won"t dispatch events.
- * views will dispatch events that handled by controllers.
- * controllers will dispatch events that handled by models or views.
- */
 import { removeNode } from "@util/DOM"
 import ee from "@util/ee"
 

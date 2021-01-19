@@ -78,7 +78,22 @@ module.exports = {
     process.env.NODE_ENV === "production" ? "nosources-source-map" : "cheap-module-source-map",
   plugins: [
     new webpack.ProvidePlugin({
-      _: "lodash"
+      _: "lodash",
+      Model: ["@components/MVC", "Model"],
+      View: ["@components/MVC", "View"],
+      Controller: ["@components/MVC", "Controller"],
+      getJSON: ["@util/xhr", "getJSON"],
+      postJSON: ["@util/xhr", "postJSON"],
+      postFormData: ["@util/xhr", "postFormData"],
+      xhr: ["@util/xhr", "default"],
+      isJSON: ["@util/isJSON", "default"],
+      $: ["@util/DOM", "$"],
+      $$: ["@util/DOM", "$$"],
+      addClass: ["@util/DOM", "addClass"],
+      removeClass: ["@util/DOM", "removeClass"],
+      hasClass: ["@util/DOM", "hasClass"],
+      html2DOM: ["@util/DOM", "html2DOM"],
+      uploadToOSS: ["util/uploadToOSS", "default"]
     }),
     ...pages.map(() => new MiniCssExtractPlugin({ filename: `[name]-${version}.css` }))
   ],

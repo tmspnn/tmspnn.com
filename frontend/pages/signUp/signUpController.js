@@ -1,71 +1,59 @@
-// External modules
+// @External
 import isEmail from "validator/lib/isEmail"
 
-// Local modules
-import { postJSON } from "@util/xhr"
-import { Controller } from "@components/MVC"
-import isJSON from "@util/isJSON"
-import signUpModel from "./signUpModel"
-
-class SignUpController extends Controller {
+export default class SignUpController extends Controller {
   blocked = false
-  countdownInterval = 0
+  countdown = 0
+  intervalId = 0
 
   constructor() {
     super("signUp")
   }
 
-  keyupEmailInput = (args) => {
-    this.mutate("setEmail", { email: args.email })
-  }
+  clickVcodeBtn = (args) => {
+    if (this.blocked || this.intervalId != 0) return
 
-  keyupVcodeInput = (args) => {
-    this.mutate("setVcode", { vcode: args.vcode })
-  }
+    const { email } = args
 
-  keyupPasswordInput = (args) => {
-    this.mutate("setPassword", { password: args.password })
-  }
-
-  clickVcodeBtn = () => {
-    if (!this.blocked && signUpModel.countdown == 0) {
-
-      this.blocked = true
-      this.ui("customSpinner::show")
-
-      postJSON({
-        url: "/api/verification-codes",
-        data: { email: signUpModel.email },
-        cb: (json) => {
-          this.showToast("验证码已发送至您的邮箱.")
-          this.startCountdown()
-        },
-        fail: (e) => {
-          const err = isJSON(e.message) ? JSON.parse(e.message).err : e.message
-          this.showToast(err)
-        },
-        final: () => {
-          this.blocked = false
-          this.ui("customSpinner::hide")
-        }
-      })
-    }
-  }
-
-  clickEyeBtn = (args) => {
-    this.ui("signUp::setPasswordVisibility", { visible: !args.currentVisibility })
-  }
-
-  clickSubmitBtn = () => {
-    if (this.blocked) return
-
-    const { email, vcode, password } = signUpModel
-
-    if (!email || !isEmail(email)) {
+    if (!isEmail(email)) {
       return this.showToast("请输入正确的邮箱地址.")
     }
 
-    if (!password || password.length < 6) {
+    this.blocked = true
+    this.ui("customSpinner::show")
+
+    postJSON({
+      url: "/api/verification-codes",
+      data: { email },
+      cb: () => {
+        this.showToast("验证码已发送至您的邮箱.")
+        this.startCountdown()
+      },
+      fail: (e) => {
+        const err = isJSON(e.message) ? JSON.parse(e.message).err : e.message
+        this.showToast(err)
+      },
+      final: () => {
+        this.blocked = false
+        this.ui("customSpinner::hide")
+      }
+    })
+  }
+
+  clickSubmitBtn = (args) => {
+    if (this.blocked) return
+
+    const { email, vcode, password } = args
+
+    if (!isEmail(email)) {
+      return this.showToast("请输入正确的邮箱地址.")
+    }
+
+    if (!_.isNumber(+vcode)) {
+      return this.showToast("请输入4位数字验证码.")
+    }
+
+    if (password.length < 6) {
       return this.showToast("请输入至少6位的密码.")
     }
 
@@ -74,8 +62,8 @@ class SignUpController extends Controller {
 
     postJSON({
       url: "/api/sign-up",
-      data: { email, vcode, password },
-      cb: (json) => {
+      data: args,
+      cb: () => {
         location.href = "/"
       },
       fail: (e) => {
@@ -90,13 +78,12 @@ class SignUpController extends Controller {
   }
 
   startCountdown = () => {
-    this.mutate("setCountdown", { countdown: 60 })
-
-    this.countdownInterval = setInterval(() => {
-      this.mutate("setCountdown", { countdown: signUpModel.countdown - 1 })
-      this.ui("signUp::setVcodeCountdown", { countdown: signUpModel.countdown })
-      if (signUpModel.countdown == 0) {
-        clearInterval(this.countdownInterval)
+    this.countdown = 60
+    this.intervalId = setInterval(() => {
+      this.ui("signUp::setVcodeCountdown", { countdown: --this.countdown })
+      if (this.countdown == 0) {
+        clearInterval(this.intervalId)
+        this.intervalId = 0
       }
     }, 1000)
   }
@@ -105,5 +92,3 @@ class SignUpController extends Controller {
     this.ui("toast::show", { texts })
   }
 }
-
-export default new SignUpController()

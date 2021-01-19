@@ -3,7 +3,7 @@
 		<% render("views/components/logo_header") %>
 		<div class="row">
 			<label for="email">
-				<% render("views/icons/mail") %>
+				<% render("views/icons/at_symbol") %>
 			</label>
 			<input type="email" id="email" placeholder="E-mail">
 		</div>

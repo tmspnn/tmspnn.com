@@ -1,19 +1,15 @@
--- External modules
+-- @External
 local validation = require "resty.validation"
 
--- Local modules
+-- @Local
 local mailer = require "controllers/user/mailer"
+local User = require "models/user"
 
 local function send_vcode(app)
     local email = app.params.email
     local is_email, _ = validation.email(email)
 
-    local res = {
-        status = nil,
-        json = {
-            err = nil
-        }
-    }
+    local res = {status = nil, json = {err = nil}}
 
     if not is_email then
         res.status = 400
@@ -25,7 +21,8 @@ local function send_vcode(app)
 
     if existed_vcode then
         res.status = 429
-        res.json.err = "验证码有效时间为10分钟, 此期间内请勿重复发送."
+        res.json.err =
+            "验证码有效时间为10分钟, 此期间内请勿重复发送."
         return res
     end
 
@@ -35,7 +32,7 @@ local function send_vcode(app)
 
     local ok, err = mailer:send({
         from = "拾刻阅读 <tmspnn@163.com>",
-        to = { email },
+        to = {email},
         cc = {},
         subject = "验证码 | 拾刻阅读",
         text = vcode,
@@ -50,7 +47,7 @@ local function send_vcode(app)
     end
 
     res.status = 204
-    
+
     return res
 end
 

@@ -1,17 +1,20 @@
--- External modules
-local ngx = require "ngx" -- The Nginx interface provided by OpenResty
+-- @External
+local ngx = require "ngx"
 local basexx = require "basexx"
 local date = require "date"
 local db = require "lapis.db"
+local encoding = require "lapis.util.encoding"
+local encode_base64 = encoding.encode_base64
 local lapis_util = require "lapis.util"
 local to_json = lapis_util.to_json
 local sha1 = require "sha1"
 
--- Local modules
+-- @Local
 local model = require "models/model"
 local redis_client = require "models/redis_client"
 local util = require "util"
 
+-- @Implementation
 local user = model:new("user")
 
 local token_ttl = 60 * 60 * 24 * 14 -- two weeks
@@ -27,6 +30,12 @@ end
 
 function user:get_recommended()
     return self:find("* from \"user\" order by id desc limit 5")
+end
+
+function user:generate_user_token(uid)
+    local timestamp = os.time()
+    local random_number = string.sub(math.random(), -4)
+    return encode_base64(uid .. ":" .. timestamp .. ":" .. random_number)
 end
 
 function user:set_token(token, uid)

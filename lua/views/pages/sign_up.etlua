@@ -3,16 +3,16 @@
 		<% render("views/components/logo_header") %>
 		<div class="row">
 			<label for="email">
-				<% render("views/icons/mail") %>
+				<% render("views/icons/at_symbol") %>
 			</label>
 			<input type="email" id="email" placeholder="E-mail">
 		</div>
 		<div class="row">
 			<label for="vcode">
-				<% render("views/icons/chat_alt") %>
+				<% render("views/icons/annotation") %>
 			</label>
 			<input type="text" id="vcode" placeholder="验证码">
-			<button class="acquire-vcode">获取</button>
+			<button class="acquire-vcode"><span>获取</span></button>
 		</div>
 		<div class="row">
 			<label for="password">
