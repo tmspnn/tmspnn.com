@@ -1,8 +1,7 @@
--- External modules
-local ngx = require "ngx" -- The Nginx interface provided by OpenResty
+-- @External
 local lapis_util = require "lapis.util"
 
--- Local modules
+-- @Implementation
 local context = {}
 
 function context.init(app)

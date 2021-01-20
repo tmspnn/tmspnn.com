@@ -1,8 +1,7 @@
--- External modules
-local ngx = require "ngx" -- The Nginx interface provided by OpenResty
+-- @External
 local lapis = require "lapis"
 
--- Local modules
+-- @Local
 local auth = require "/middlewares/auth"
 local cors = require "middlewares/cors"
 local context = require "middlewares/context"
@@ -13,22 +12,22 @@ local user_controller = require "controllers/user/user_controller"
 local article_controller = require "controllers/article/article_controller"
 local search_controller = require "controllers/search/search_controller"
 
--- Initialization
+-- @Initialization
 local app = lapis.Application()
 app.handle_404 = exception.handle_404
 app.handle_error = exception.handle_error
 
--- Templating
+-- @Templating
 app:enable("etlua")
 app.layout = require "views.layout"
 
--- Middlewares
+-- @Middlewares
 app:before_filter(cors.add_headers_if_necessary)
 app:before_filter(context.init)
 app:before_filter(device.detect)
 app:before_filter(auth.get_uid)
 
--- Controllers
+-- @Controllers
 page_controller:register(app)
 user_controller:register(app)
 article_controller:register(app)

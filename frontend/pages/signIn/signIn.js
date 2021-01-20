@@ -1,3 +1,6 @@
 import "./signIn.scss"
-import "./signInView"
-import "./signInController"
+import SignInView from "./SignInView"
+import SignInController from "./SignInController"
+
+new SignInView()
+new SignInController()

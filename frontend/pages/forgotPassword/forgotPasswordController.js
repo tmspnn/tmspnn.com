@@ -1,29 +1,19 @@
-// External modules
+// @External
 import isEmail from "validator/lib/isEmail"
 
-// Local modules
-import { postJSON } from "@util/xhr"
-import { Controller } from "@components/MVC"
-import forgotPasswordModel from "./forgotPasswordModel"
-import isJSON from "@util/isJSON"
-
-class ForgotPasswordController extends Controller {
+export default class ForgotPasswordController extends Controller {
   blocked = false
 
   constructor() {
     super("forgotPassword")
   }
 
-  keyupEmailInput = (args) => {
-    this.mutate("setEmail", { email: args.email })
-  }
-
-  clickSubmitBtn = () => {
+  clickSubmitBtn = (args) => {
     if (this.blocked) return
 
-    const { email } = forgotPasswordModel
+    const { email } = args
 
-    if (!email || !isEmail(email)) {
+    if (!isEmail(email)) {
       return this.showToast("请输入正确的邮箱地址.")
     }
 
@@ -33,7 +23,7 @@ class ForgotPasswordController extends Controller {
     postJSON({
       url: "/api/retrieve-password",
       data: { email },
-      cb: (json) => {
+      cb: () => {
         this.showToast("请通过您收到的邮件重设密码.")
       },
       fail: (e) => {
@@ -51,5 +41,3 @@ class ForgotPasswordController extends Controller {
     this.ui("toast::show", { texts })
   }
 }
-
-export default new ForgotPasswordController()

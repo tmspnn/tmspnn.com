@@ -11,6 +11,7 @@ local validation = require "resty.validation"
 local User = require "models/user"
 local errors = require "models/error_messages"
 
+-- @Implementation
 local function sign_up(app)
     local ctx = app.ctx
 
@@ -30,6 +31,12 @@ local function sign_up(app)
 
     if #password < 6 then
         return {status = 400, json = {err = errors["password.invalid"]}}
+    end
+
+    local duplicates = User:find("id from \"user\" where email = ?", email)
+
+    if #duplicates > 0 then
+        return {status = 400, json = {err = errors["email.already.exists"]}}
     end
 
     local existed_vcode = User:get_vcode(email)

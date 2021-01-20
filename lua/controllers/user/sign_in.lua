@@ -1,55 +1,47 @@
--- External modules
+-- @External
 local bcrypt = require "bcrypt"
 local validation = require "resty.validation"
 local uuid = require "resty.jit-uuid"
 uuid.seed()
 
--- Local modules
+-- @Local
 local User = require "models/user"
+local errors = require "models/error_messages"
 
+-- @Implementation
 local function sign_in(app)
-    local email = app.params.email
-    local password = app.params.password
+    local ctx = app.ctx
 
-    local res = {
-        status = nil,
-        json = {
-            err = nil,
-            user = nil
-        }
-    }
+    local email = ctx.trim(app.params.email)
+    local password = ctx.trim(app.params.password)
 
     local is_email, _ = validation.email(email)
 
     if not is_email then
-        res.status = 400
-        res.json.err = "请输入合法的邮箱地址."
-        return res
+        return {status = 400, json = {err = errors["email.invalid"]}}
     end
 
-    local user = User:find("id, email, password from \"user\" where email = ?", email)[1]
-
-    if not user then
-        res.status = 400
-        res.json.err = "此邮箱还未注册."
-        return res
+    if #password < 6 then
+        return {status = 400, json = {err = errors["password.invalid"]}}
     end
 
-    if not bcrypt.verify(password, user.password) then
-        res.status = 400
-        res.json.err = "密码与账号不匹配."
-        return res
+    local user_in_db = User:find(
+                           "id, email, password from \"user\" where email = ?",
+                           email)[1]
+
+    if not user_in_db then
+        return {status = 400, json = {err = errors["email.not.registered"]}}
     end
 
-    local user_token = uuid()
+    if not bcrypt.verify(password, user_in_db.password) then
+        return {status = 400, json = {err = errors["password.not.match"]}}
+    end
 
-    User:set_token(user_token, user.id)
-    
+    local user_token = User:generate_user_token(user_in_db.id)
+    User:set_token(user_token, user_in_db.id)
     app.cookies.user_token = user_token
 
-    res.status = 204
-    
-    return res
+    return {status = 204}
 end
 
 return sign_in

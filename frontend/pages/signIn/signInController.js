@@ -1,65 +1,50 @@
-// External modules
+// @External
 import isEmail from "validator/lib/isEmail"
+import qs from "qs"
 
-// Local modules
-import { postJSON } from "@util/xhr"
-import { Controller } from "@components/MVC"
-import signInModel from "./signInModel"
-import isJSON from "@util/isJSON"
-
-class SignInController extends Controller {
+export default class SignInController extends Controller {
   blocked = false
+  queryString = qs.parse(location.search.slice(1))
 
   constructor() {
     super("signIn")
   }
 
-  keyupEmailInput = args => {
-    this.mutate("setEmail", { email: args.email })
-  }
-
-  keyupPasswordInput = args => {
-    this.mutate("setPassword", { password: args.password })
-  }
-
-  clickEyeBtn = args => {
-    this.ui("signIn::setPasswordVisibility", { visible: !args.currentVisibility })
-  }
-
-  clickSubmitBtn = () => {
+  clickSubmitBtn = (args) => {
     if (this.blocked) return
 
-    const { email, password, from } = signInModel
+    const { email, password } = args
+    const from = this.queryString.from || "/"
 
-    if (!email || !isEmail(email)) {
+    if (!isEmail(email)) {
       return this.showToast("请输入正确的邮箱地址.")
     }
 
-    if (!password || password.length < 6) {
+    if (password.length < 6) {
       return this.showToast("请输入至少6位的密码.")
     }
 
     this.blocked = true
+    this.ui("customSpinner::show")
 
     postJSON({
       url: "/api/sign-in",
-      data: { email, password },
+      data: args,
       cb: () => {
         location.href = from
       },
-      fail: e => {
+      fail: (e) => {
         const err = isJSON(e.message) ? JSON.parse(e.message).err : e.message
         this.showToast(err)
       },
       final: () => {
         this.blocked = false
+        this.ui("customSpinner::hide")
       }
     })
   }
 
-  showToast = texts => {
+  showToast = (texts) => {
     this.ui("toast::show", { texts })
   }
 }
-
-export default new SignInController()

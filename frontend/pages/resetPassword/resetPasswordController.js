@@ -1,42 +1,41 @@
-// External modules
+// @External
 import isEmail from "validator/lib/isEmail"
+import qs from "qs"
 
-// Local modules
-import { postJSON } from "@util/xhr"
-import { Controller } from "@components/MVC"
-import resetPasswordModel from "./resetPasswordModel"
-import isJSON from "@util/isJSON"
-
-class ResetPasswordController extends Controller {
+export default class ResetPasswordController extends Controller {
   blocked = false
+  queryString = qs.parse(location.search.slice(1))
 
   constructor() {
     super("resetPassword")
   }
 
-  keyupPasswordInput = (args) => {
-    this.mutate("setPassword", { password: args.password })
-  }
-
-  clickEyeBtn = (args) => {
-    this.ui("resetPassword::setPasswordVisibility", { visible: !args.currentVisibility })
-  }
-
-  clickSubmitBtn = () => {
+  clickSubmitBtn = (args) => {
     if (this.blocked) return
 
-    const { password, sequence, email } = resetPasswordModel
+    const { email, sequence } = this.queryString
 
-    if (!password || password.length < 6) {
+    if (!isEmail(email)) {
+      return this.showToast("无效的邮箱地址.")
+    }
+
+    if (!sequence) {
+      return this.showToast("无效的密码序列号.")
+    }
+
+    const { password } = args
+
+    if (password.length < 6) {
       return this.showToast("请输入至少6位的密码.")
     }
 
     this.blocked = true
+    this.ui("customSpinner::show")
 
     postJSON({
       url: "/api/reset-password",
       data: { email, sequence, password },
-      cb: (json) => {
+      cb: () => {
         this.showToast("密码重置成功, 请重新登录.")
         setTimeout(() => {
           location.href = "/sign-in"
@@ -48,6 +47,7 @@ class ResetPasswordController extends Controller {
       },
       final: () => {
         this.blocked = false
+        this.ui("customSpinner::hide")
       }
     })
   }
@@ -56,5 +56,3 @@ class ResetPasswordController extends Controller {
     this.ui("toast::show", { texts })
   }
 }
-
-export default new ResetPasswordController()

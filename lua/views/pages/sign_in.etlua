@@ -29,4 +29,3 @@
 	</div>
 </div>
 <% render("views/components/toast") %>
-<% render("views/components/progress_bar") %>

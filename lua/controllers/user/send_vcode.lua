@@ -2,28 +2,25 @@
 local validation = require "resty.validation"
 
 -- @Local
-local mailer = require "controllers/user/mailer"
 local User = require "models/user"
+local mailer = require "controllers/user/mailer"
+local errors = require "models/error_messages"
 
+-- @Implementation
 local function send_vcode(app)
-    local email = app.params.email
+    local ctx = app.ctx
+    local email = ctx.trim(app.params.email)
+
     local is_email, _ = validation.email(email)
 
-    local res = {status = nil, json = {err = nil}}
-
     if not is_email then
-        res.status = 400
-        res.json.err = "请输入合法的邮箱地址."
-        return res
+        return {status = 400, json = {err = errors["email.invalid"]}}
     end
 
     local existed_vcode = User:get_vcode(email)
 
     if existed_vcode then
-        res.status = 429
-        res.json.err =
-            "验证码有效时间为10分钟, 此期间内请勿重复发送."
-        return res
+        return {status = 403, json = {err = errors["vcode.not.available"]}}
     end
 
     local vcode = string.sub(math.random(), -4)
@@ -34,21 +31,17 @@ local function send_vcode(app)
         from = "拾刻阅读 <tmspnn@163.com>",
         to = {email},
         cc = {},
-        subject = "验证码 | 拾刻阅读",
+        subject = "验证码:" .. vcode .. " | 拾刻阅读",
         text = vcode,
         html = string.format("<h1>%s</h1>", vcode)
     })
 
     if not ok then
         User:remove_vcode(email)
-        res.status = 500
-        res.json.err = err
-        return res
+        return {status = 500, json = {err = err}}
     end
 
-    res.status = 204
-
-    return res
+    return {status = 204}
 end
 
 return send_vcode

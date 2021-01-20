@@ -30,6 +30,10 @@
 		<div class="row tips">
 			已有账号? 点击<a href="/sign-in">登录</a>.
 		</div>
+		<p class="tips">
+			<% render("views/icons/exclamation_circle") %>
+			在拾刻阅读创作的<b>所有</b>作品, 版权均归<b>作者</b>所有.
+		</p>
 	</div>
 </div>
 <% render("views/components/toast") %>

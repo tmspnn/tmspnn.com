@@ -1,3 +1,6 @@
 import "./resetPassword.scss"
-import "./resetPasswordView"
-import "./resetPasswordController"
+import ResetPasswordView from "./ResetPasswordView"
+import ResetPasswordController from "./ResetPasswordController"
+
+new ResetPasswordView()
+new ResetPasswordController()
