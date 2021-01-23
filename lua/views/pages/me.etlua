@@ -2,40 +2,49 @@
     <div class="specifics">
         <% render("views/components/logo_header") %>
         <ul>
-            <li>
-                <label>
-                    <% render("views/icons/identification") %>
-                    <span>昵称</span>
-                </label>
-                <span><%= ctx.data.user.nickname %></span>
+            <li class="nickname">
+                <% render("views/icons/identification") %>
+                <span class="truncated"><%= ctx.data.user.nickname %></span>
+                <div class="edit-btn">
+                    <% render("views/icons/adjustments") %>
+                </div>
+            </li>
+            <li class="desc">
+                <%= #ctx.data.user.intro > 0 and ctx.data.user.intro or "这个人很懒, 什么也没有写..." %>
             </li>
             <li>
                 <label>
                     <% render("views/icons/location_marker") %>
                     <span>地区</span>
                 </label>
-                <span><%= ctx.data.user.district %></span>
+                <span class="to-right"><%= ctx.data.user.district %></span>
             </li>
             <li>
                 <label>
                     <% render("views/icons/document_text") %>
                     <span>文档数</span>
                 </label>
-                <span><%= ctx.data.user.articles_count %></span>
+                <span class="to-right"><%= ctx.data.user.articles_count %></span>
             </li>
             <li>
                 <label>
                     <% render("views/icons/heart") %>
                     <span>关注</span>
                 </label>
-                <span><%= ctx.data.user.followings_count %></span>
+                <span class="to-right"><%= ctx.data.user.followings_count %></span>
             </li>
             <li>
                 <label>
                     <% render("views/icons/user_group") %>
                     <span>粉丝</span>
                 </label>
-                <span><%= ctx.data.user.followers_count %></span>
+                <span class="to-right"><%= ctx.data.user.followers_count %></span>
+            </li>
+            <li class="settings">
+                <a href="/settings">
+                    <% render("views/icons/cog") %>
+                    <span>设置</span>
+                </a>
             </li>
         </ul>
         <div class="row">
@@ -45,12 +54,6 @@
                     <span>写一篇</span>
                 </button>
             </a>
-        </div>
-        <div class="row">
-            <button>
-                <% render("views/icons/logout") %>
-                <span>退出登录</span>
-            </button>
         </div>
     </div>
     <div class="main">
@@ -63,13 +66,13 @@
         </div>
     </div>
     <div class="relations">
-        <h3>我关注的</h3>
+        <h3>我的关注</h3>
         <div>
             <% for i, f in ipairs(ctx.data.followings) do -%>
             <div class="profile" style="background-image: url(<%= f.profile %>)"></div>
             <% end -%>
         </div>
-        <h3>关注我的</h3>
+        <h3>我的粉丝</h3>
         <div>
             <% for i, f in ipairs(ctx.data.followers) do -%>
             <div class="profile" style="background-image: url(<%= f.profile %>)"></div>

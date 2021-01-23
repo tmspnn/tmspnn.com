@@ -1,3 +1,6 @@
 import "./me.scss"
-import "./meView"
-import "./meController"
+import MeView from "./MeView"
+import MeController from "./MeController"
+
+new MeView()
+new MeController()

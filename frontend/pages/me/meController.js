@@ -1,9 +1,4 @@
-import { Controller } from "@components/MVC"
-import { getJSON } from "@util/xhr"
-import meModel from "./meModel"
-import isJSON from "@util/isJSON"
-
-class MeController extends Controller {
+export default class MeController extends Controller {
   blocked = false
 
   constructor() {
@@ -14,5 +9,3 @@ class MeController extends Controller {
     this.ui("toast::show", { texts })
   }
 }
-
-export default new MeController()

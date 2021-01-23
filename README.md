@@ -16,4 +16,4 @@ Source code of [tmspnn.com](https://tmspnn.com)
 
 ## Pg advisory locks (%d, %d), both are 32-bit integers
 
-- (0, $id). Rate an article with id
+- (0, $id). Rate an article by id

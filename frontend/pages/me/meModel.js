@@ -1,8 +1,6 @@
-import { Model } from "@components/MVC"
-
 const data = JSON.parse($("#_data").textContent)
 
-class MeModel extends Model {
+export default class MeModel extends Model {
   user = data.user
   followings = data.followings
   followers = data.followers
@@ -16,5 +14,3 @@ class MeModel extends Model {
     this.events.push(...args.events)
   }
 }
-
-export default new MeModel()

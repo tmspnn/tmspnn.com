@@ -10,22 +10,18 @@ const colorFunction = require("postcss-color-function")
 const path = require("path")
 const precss = require("precss")
 
-// @Entries
-const entry = {}
-const pages = [
-  "index",
-  "signIn",
-  "signUp",
-  "forgotPassword",
-  "resetPassword",
-  "editor",
-  "article",
-  "me"
-]
-pages.forEach((p) => (entry[p] = path.resolve(`frontend/pages/${p}/${p}.js`)))
-
 module.exports = {
-  entry,
+  context: path.resolve(__dirname, "frontend"),
+  entry: {
+    index: "/pages/index/index.js",
+    signIn: "/pages/signIn/signIn.js",
+    signUp: "/pages/signUp/signUp.js",
+    forgotPassword: "/pages/forgotPassword/forgotPassword.js",
+    resetPassword: "/pages/resetPassword/resetPassword.js",
+    editor: "/pages/editor/editor.js",
+    article: "/pages/article/article.js",
+    me: "/pages/me/me.js"
+  },
   mode: process.env.NODE_ENV || "development",
   output: {
     path: __dirname + "/assets",
@@ -95,7 +91,16 @@ module.exports = {
       html2DOM: ["@util/DOM", "html2DOM"],
       uploadToOSS: ["util/uploadToOSS", "default"]
     }),
-    ...pages.map(() => new MiniCssExtractPlugin({ filename: `[name]-${version}.css` }))
+    ...[
+      "index",
+      "signIn",
+      "signUp",
+      "forgotPassword",
+      "resetPassword",
+      "editor",
+      "article",
+      "me"
+    ].map(() => new MiniCssExtractPlugin({ filename: `[name]-${version}.css` }))
   ],
   watchOptions: { ignored: ["conf/**", "lua/**", "node_modules/**"] }
 }

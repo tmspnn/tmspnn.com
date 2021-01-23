@@ -36,7 +36,7 @@ local function me_data(app)
 
     return {
         page_name = "me",
-        page_title = "拾刻阅读 | 主页",
+        page_title = "拾刻阅读 | 个人主页",
         user = current_user,
         followings = followings,
         followers = followers,
