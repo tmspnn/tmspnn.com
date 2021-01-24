@@ -98,10 +98,33 @@ body {
   .main {
     flex: 3;
     max-height: 100%;
-    overflow: hidden auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     transition-delay: 150ms;
 
+    .bg-container {
+      flex: 3;
+      background-color: $grey-lighter;
+    }
+
+    .profile-container {
+      height: 5rem;
+      max-height: 5rem;
+      .profile {
+        position: relative;
+        left: 5rem;
+        top: -5rem;
+        width: 10rem;
+        height: 10rem;
+        border-radius: 50%;
+        background-size: cover;
+        box-shadow: 0 0 5px $grey;
+      }
+    }
+
     .events {
+      flex: 7;
       padding: 0 2rem;
     }
   }

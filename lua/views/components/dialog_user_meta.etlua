@@ -1,0 +1,56 @@
+<div class="-dialog user-meta">
+    <div class="box">
+        <div class="header">
+            <% render("views/icons/pencil_alt") %>
+            <span>编辑个人信息</span>
+            <div class="x-btn">
+                <% render("views/icons/x") %>
+            </div>
+        </div>
+        <div class="body">
+            <div class="row">
+                <label for="bg-image-input">
+                    <% render("views/icons/photograph") %>
+                    <span>背景墙</span>
+                </label>
+                <div class="bg-preview"></div>
+                <input type="file" id="bg-image-input">
+            </div>
+            <div class="row">
+                <label for="profile-input">
+                    <% render("views/icons/emoji_happy") %>
+                    <span>头像</span>
+                </label>
+                <div class="profile-preview"></div>
+                <input type="file" id="profile-input">
+            </div>
+            <div class="row">
+                <label for="nickname-input">
+                    <% render("views/icons/identification") %>
+                    <span>昵称</span>
+                </label>
+                <input type="text" id="nickname-input">
+            </div>
+            <div class="row">
+                <label for="desc-input">
+                    <% render("views/icons/chat") %>
+                    <span>简介</span>
+                </label>
+                <textarea type="text" id="desc-input"></textarea>
+            </div>
+            <div class="row">
+                <label for="district-input">
+                    <% render("views/icons/location_marker") %>
+                    <span>地区</span>
+                </label>
+                <input type="text" id="district-input">
+            </div>
+        </div>
+        <div class="footer">
+            <button>
+                <% render("views/icons/check") %>
+                <span>确定</span>
+            </button>
+        </div>
+    </div>
+</div>

@@ -57,8 +57,15 @@
         </div>
     </div>
     <div class="main">
-        <div class="bg" style="background-image: url(<%= ctx.data.user.bg_image %>)"></div>
-        <div class="profile" style="background-image: url(<%= ctx.data.user.profile %>)"></div>
+        <div class="bg-container">
+            <% if #ctx.data.user.bg_image > 0 then %>
+            <img src="<%= ctx.data.user.bg_image %>" alt="bg_image" />
+            <% end %>
+        </div>
+        <div class="profile-container">
+            <div class="profile" <% if #ctx.data.user.profile > 0 then %>
+                style="background-image: url(<%= ctx.data.user.profile %>)" <% end %>></div>
+        </div>
         <div class="events">
             <% for i, f in ipairs(ctx.data.events) do -%>
             <div class="event"></div>
@@ -80,5 +87,7 @@
         </div>
     </div>
 </div>
+<% render("views/components/dialog_user_meta") %>
 <% render("views/components/toast") %>
 <% render("views/components/progress_bar") %>
+<script id="_data" type="application/json"><%- ctx.data_json %></script>

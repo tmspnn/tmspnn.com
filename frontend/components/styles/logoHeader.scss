@@ -19,7 +19,9 @@
 
     svg {
       width: 4rem;
+      min-width: 4rem;
       height: 4rem;
+      min-height: 4rem;
       transition: color 300ms;
     }
 
@@ -27,6 +29,7 @@
       font-size: 2.2rem;
       font-weight: lighter;
       font-style: italic;
+      white-space: nowrap;
       margin: 0;
       transition: font-weight 300ms;
     }
