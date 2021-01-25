@@ -1,5 +1,3 @@
-import { postFormData } from "@util/xhr"
-
 const ossEntry = "https://tmspnn.obs.cn-east-2.myhuaweicloud.com"
 const accessKey = "ZKDTV75UYIPGRVHLMJAG"
 

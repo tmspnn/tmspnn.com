@@ -34,13 +34,17 @@ local function me_data(app)
                        "* from \"event\" where created_by = ? order by id desc limit ?",
                        uid, 20)
 
+    local policy, signature = User:generate_oss_upload_token(uid)
+
     return {
         page_name = "me",
         page_title = "拾刻阅读 | 个人主页",
         user = current_user,
         followings = followings,
         followers = followers,
-        events = events
+        events = events,
+        oss_policy = policy,
+        oss_signature = signature
     }
 end
 

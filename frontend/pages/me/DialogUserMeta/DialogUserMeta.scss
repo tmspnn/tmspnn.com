@@ -24,6 +24,7 @@
     flex-direction: column;
     background-color: $white;
     box-shadow: 0 3px 5px $grey-light;
+    border-radius: 0.3rem;
 
     .header {
       display: flex;
@@ -55,10 +56,44 @@
 
     .body {
       flex: 1;
+      overflow: hidden auto;
+
       .row {
         padding: 1rem 2rem;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
+
+        &.bg {
+          .bg-preview {
+            width: 16rem;
+            max-width: 16rem;
+            height: 9rem;
+            max-height: 9rem;
+            background-color: $light;
+            background-size: cover;
+            border-radius: 0.2rem;
+            cursor: pointer;
+          }
+        }
+
+        &.profile {
+          .profile-preview {
+            width: 6rem;
+            height: 6rem;
+            background-color: $light;
+            background-size: cover;
+            border-radius: 50%;
+          }
+        }
+
+        &.nickname {
+          align-items: center;
+        }
+
+        label {
+          width: 8rem;
+          cursor: pointer;
+        }
       }
 
       svg {
@@ -67,10 +102,28 @@
         width: 1.2rem;
         height: 1.2rem;
       }
+
+      input {
+        border: none;
+        border-bottom: 1px solid $dark;
+        &:focus {
+          border-color: $link;
+        }
+      }
+
+      textarea {
+        border: 1px solid $dark;
+        border-radius: 0.2rem;
+        outline: none;
+        &:focus {
+          border-color: $link;
+        }
+      }
     }
 
     .footer {
       padding: 1.5rem 2.5rem;
+      border-top: 1px solid $light;
       button {
         display: block;
         width: 100%;

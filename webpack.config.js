@@ -89,7 +89,7 @@ module.exports = {
       removeClass: ["@util/DOM", "removeClass"],
       hasClass: ["@util/DOM", "hasClass"],
       html2DOM: ["@util/DOM", "html2DOM"],
-      uploadToOSS: ["util/uploadToOSS", "default"]
+      uploadToOSS: ["@util/uploadToOSS", "default"]
     }),
     ...[
       "index",

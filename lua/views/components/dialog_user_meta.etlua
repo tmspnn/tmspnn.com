@@ -8,42 +8,44 @@
             </div>
         </div>
         <div class="body">
-            <div class="row">
+            <div class="row bg">
                 <label for="bg-image-input">
                     <% render("views/icons/photograph") %>
                     <span>背景墙</span>
                 </label>
-                <div class="bg-preview"></div>
+                <div class="bg-preview" <% if #ctx.data.user.bg_image > 0 then %>
+                    style="background-image: url(<%= ctx.data.user.bg_image %>)" <% end %>></div>
                 <input type="file" id="bg-image-input">
             </div>
-            <div class="row">
+            <div class="row profile">
                 <label for="profile-input">
                     <% render("views/icons/emoji_happy") %>
                     <span>头像</span>
                 </label>
-                <div class="profile-preview"></div>
+                <div class="profile-preview" <% if #ctx.data.user.profile > 0 then %>
+                    style="background-image: url(<%= ctx.data.user.profile %>)" <% end %>></div>
                 <input type="file" id="profile-input">
             </div>
-            <div class="row">
+            <div class="row nickname">
                 <label for="nickname-input">
                     <% render("views/icons/identification") %>
                     <span>昵称</span>
                 </label>
-                <input type="text" id="nickname-input">
+                <input type="text" id="nickname-input" placeholder="请输入昵称" value="<%= ctx.data.user.nickname %>">
             </div>
-            <div class="row">
+            <div class="row desc">
                 <label for="desc-input">
                     <% render("views/icons/chat") %>
                     <span>简介</span>
                 </label>
-                <textarea type="text" id="desc-input"></textarea>
+                <textarea type="text" id="desc-input" placeholder="请输入简介" value="<%= ctx.data.user.desc %>"></textarea>
             </div>
-            <div class="row">
+            <div class="row district">
                 <label for="district-input">
                     <% render("views/icons/location_marker") %>
                     <span>地区</span>
                 </label>
-                <input type="text" id="district-input">
+                <input type="text" id="district-input" placeholder="请输入地区" value="<%= ctx.data.user.district %>">
             </div>
         </div>
         <div class="footer">

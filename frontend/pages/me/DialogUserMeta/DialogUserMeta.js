@@ -6,11 +6,18 @@ export default class DialogUserMeta extends View {
 
   // @DOM references
   xBtn = $(".x-btn")
+  bgPreviewDiv = $(".bg-preview")
+  bgInput = $("#bg-image-input")
 
   constructor(namespace) {
     super(namespace)
 
     this.xBtn.on("click", this.hide)
+    this.bgPreviewDiv.on("click", () => this.bgInput.click())
+    this.bgInput.on("change", () => {
+      if (this.bgInput.files.length > 0) {
+      }
+    })
 
     window.on("keyup", (e) => {
       if (e.key == "Escape") {

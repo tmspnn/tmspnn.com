@@ -1,14 +1,8 @@
-// External modules
+// @External
 import { Base64 } from "js-base64"
-import _ from "lodash"
-import qs from "qs"
 
-// Local modules
-import { Controller } from "@components/MVC"
-import xhr, { postFormData, postJSON } from "@util/xhr"
-import isJSON from "@util/isJSON"
+// @Local
 import editorModel from "./editorModel"
-import uploadToOSS from "../../util/uploadToOSS"
 
 class EditorController extends Controller {
   blocked = false
@@ -95,7 +89,7 @@ class EditorController extends Controller {
         signature,
         onProgress: (progressEvent) => {
           const { loaded, total } = progressEvent
-          const progress = 100 * loaded / total
+          const progress = (100 * loaded) / total
           attachment.setUploadProgress(progress)
         },
         cb: () => {
