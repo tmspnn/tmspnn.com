@@ -1,7 +1,4 @@
-import { postJSON } from "@util/xhr"
-import { Controller } from "@components/MVC"
 import articleModel from "./articleModel"
-import isJSON from "@util/isJSON"
 
 class ArticleController extends Controller {
   blocked = false
@@ -10,7 +7,7 @@ class ArticleController extends Controller {
     super("article")
   }
 
-  clickRatingBtn = args => {
+  clickRatingBtn = (args) => {
     if (this.blocked) return
     if (!articleModel.user.id) {
       return this.redirectToSignIn()
@@ -42,7 +39,7 @@ class ArticleController extends Controller {
     })
   }
 
-  clickCommentBtn = args => {
+  clickCommentBtn = (args) => {
     if (this.blocked) return
     if (!articleModel.user.id) {
       return this.redirectToSignIn()
@@ -59,7 +56,7 @@ class ArticleController extends Controller {
         articleId: articleModel.article.id,
         comment
       },
-      cb: res => {
+      cb: (res) => {
         this.mutate("addComment", res)
         this.showToast("评论成功")
         this.ui("onNewComment", res)
@@ -80,7 +77,7 @@ class ArticleController extends Controller {
     })
   }
 
-  showToast = texts => {
+  showToast = (texts) => {
     this.ui("toast::show", { texts })
   }
 }

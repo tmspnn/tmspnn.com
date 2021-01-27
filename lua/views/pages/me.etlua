@@ -10,30 +10,30 @@
                 </div>
             </li>
             <li class="desc">
-                <%= #ctx.data.user.intro > 0 and ctx.data.user.intro or "这个人很懒, 什么也没有写..." %>
+                <%= #ctx.data.user.desc > 0 and ctx.data.user.desc or "这个人很懒, 什么也没有写..." %>
             </li>
-            <li>
+            <li class="district">
                 <label>
                     <% render("views/icons/location_marker") %>
                     <span>地区</span>
                 </label>
                 <span class="to-right"><%= ctx.data.user.district %></span>
             </li>
-            <li>
+            <li class="articles-count">
                 <label>
                     <% render("views/icons/document_text") %>
                     <span>文档数</span>
                 </label>
                 <span class="to-right"><%= ctx.data.user.articles_count %></span>
             </li>
-            <li>
+            <li class="followings-count">
                 <label>
                     <% render("views/icons/heart") %>
                     <span>关注</span>
                 </label>
                 <span class="to-right"><%= ctx.data.user.followings_count %></span>
             </li>
-            <li>
+            <li class="followers-count">
                 <label>
                     <% render("views/icons/user_group") %>
                     <span>粉丝</span>
@@ -58,9 +58,8 @@
     </div>
     <div class="main">
         <div class="bg-container">
-            <% if #ctx.data.user.bg_image > 0 then %>
-            <img src="<%= ctx.data.user.bg_image %>" alt="bg_image" />
-            <% end %>
+            <img src="<%= ctx.data.user.bg_image %>" alt="bg_image"
+                <% if #ctx.data.user.bg_image == 0 then %>hidden<% end %> />
         </div>
         <div class="profile-container">
             <div class="profile" <% if #ctx.data.user.profile > 0 then %>

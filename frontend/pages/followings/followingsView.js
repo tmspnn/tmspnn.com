@@ -1,5 +1,3 @@
-import { $ } from "@util/DOM"
-import { View } from "@components/MVC"
 import PageContainer from "@components/PageContainer/PageContainer"
 
 class FollowingsView extends View {

@@ -104,8 +104,27 @@ body {
     transition-delay: 150ms;
 
     .bg-container {
+      position: relative;
       flex: 3;
+      overflow: hidden;
       background-color: $grey-lighter;
+
+      &:after {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        content: "";
+        background: linear-gradient(0deg, hsla(0, 0%, 0%, 0.8), transparent);
+      }
+
+      img {
+        min-width: 100%;
+        max-width: 100%;
+        transition: transform 100ms;
+        transform: translate3d(0, 0, 0);
+      }
     }
 
     .profile-container {

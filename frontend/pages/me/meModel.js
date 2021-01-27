@@ -1,13 +1,15 @@
 const data = JSON.parse($("#_data").textContent)
 
-export default class MeModel extends Model {
+export default class MeModel {
   user = data.user
   followings = data.followings
   followers = data.followers
   events = data.events
+  policy = data.oss_policy
+  signature = data.oss_signature
 
-  constructor() {
-    super("me")
+  setUserProps = (props) => {
+    _.assign(this.user, props)
   }
 
   addEvents = (args) => {

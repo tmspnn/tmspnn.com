@@ -12,6 +12,7 @@ local retrieve_password = require "controllers/user/retrieve_password"
 local reset_password = require "controllers/user/reset_password"
 local follow_user = require "controllers/user/follow_user"
 local unfollow_user = require "controllers/user/unfollow_user"
+local update_user = require "controllers/user/update_user"
 
 -- Initialization
 local user_ctrl = controller:new()
@@ -24,11 +25,7 @@ util.push_back(user_ctrl.routes, {
     method = "post",
     path = "/api/verification-codes",
     handler = json_params(send_vcode)
-}, {
-    method = "post",
-    path = "/api/sign-up",
-    handler = json_params(sign_up)
-}, {
+}, {method = "post", path = "/api/sign-up", handler = json_params(sign_up)}, {
     method = "post",
     path = "/api/retrieve-password",
     handler = json_params(retrieve_password)
@@ -44,6 +41,10 @@ util.push_back(user_ctrl.routes, {
     method = "delete",
     path = "/api/users/:user_id/followers",
     handler = json_params(unfollow_user)
+}, {
+    method = "put",
+    path = "/api/users/:user_id",
+    handler = json_params(update_user)
 })
 
 return user_ctrl

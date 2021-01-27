@@ -1,5 +1,4 @@
-import { View } from "@components/MVC"
-import { $, $$, hasClass, toggleClass } from "@util/DOM"
+import { toggleClass } from "@util/DOM"
 import PageContainer from "@components/PageContainer/PageContainer"
 import CustomSpinner from "@components/CustomSpinner"
 import Toast from "@components/Toast/Toast"
@@ -42,7 +41,7 @@ class EditorView extends View {
       this.dispatch("clickSaveBtn", {
         title: this.titleInput.value.trim(),
         isPublic: hasClass(this.publicCheckbox, "active"),
-        keywords: this.keywordInputs.map(el => el.value.trim()).filter(v => v.length > 0),
+        keywords: this.keywordInputs.map((el) => el.value.trim()).filter((v) => v.length > 0),
         htmlContent: this.trixEditorEl.value.trim(),
         textContent: this.trixEditorEl.editor.getDocument().toString()
       })
@@ -57,11 +56,11 @@ class EditorView extends View {
       this.saveBtn.click()
     })
 
-    window.on("trix-attachment-add", e => this.dispatch("onAttachmentAdd", e))
+    window.on("trix-attachment-add", (e) => this.dispatch("onAttachmentAdd", e))
 
     window.on(
       "keydown",
-      e => {
+      (e) => {
         const withCtrlOrCmdKeyDown = e.ctrlKey || e.metaKey
 
         // ctrl/cmd + s to save the article

@@ -1,10 +1,3 @@
-// External modules
-import _ from "lodash"
-
-// Local modules
-import { Model } from "@components/MVC"
-import { $ } from "@util/DOM"
-
 class EditorModel extends Model {
   user = { id: 0 }
 

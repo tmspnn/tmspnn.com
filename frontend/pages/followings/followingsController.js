@@ -1,7 +1,4 @@
-import { Controller } from "@components/MVC"
-import { getJSON } from "@util/xhr"
 import meModel from "./meModel"
-import isJSON from "@util/isJSON"
 
 class FollowingsController extends Controller {
   blocked = false

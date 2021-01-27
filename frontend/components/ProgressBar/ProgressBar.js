@@ -1,18 +1,21 @@
-import "./ProgressBar.scss";
-import { View } from "@components/MVC";
-import { $ } from "@util/DOM"
+import "./ProgressBar.scss"
 
 export default class ProgressBar extends View {
   _name = "progressBar"
-  _element = null
+  _element = $(".-progress-bar")
 
   constructor(namespace) {
     super(namespace)
-    this._element = $(".-progress-bar")
   }
 
-  setProgress = (completionRate) => {
-    const transform = `translate3d(0, -${100 * (1 - completionRate)}%, 0)`
+  setProgress = (args) => {
+    const { completionRate } = args
+
+    const transform =
+      completionRate > 0 && completionRate < 1
+        ? `translate3d(0, -${100 * (1 - completionRate)}%, 0)`
+        : "translate3d(-100%, 0, 0)"
+
     this._element.style.transform = transform
     this._element.style.webkitTransform = transform
   }

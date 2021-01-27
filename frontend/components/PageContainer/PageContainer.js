@@ -1,5 +1,4 @@
-import { View } from "@components/MVC"
-import { $, $$, addClass, removeClass, createStyleElement, filterVisibleElements } from "@util/DOM"
+import { createStyleElement, filterVisibleElements } from "@util/DOM"
 import isJSON from "@util/isJSON"
 import isSameOrigin from "@util/isSameOrigin"
 import createDocument from "@util/createDocument"
@@ -45,8 +44,8 @@ export default class PageContainer extends View {
 
     const container = win._pageContainer || this
 
-    $$("a").forEach(a => {
-      a.on("click", e => container.onLinkClick(e), { passive: false })
+    $$("a").forEach((a) => {
+      a.on("click", (e) => container.onLinkClick(e), { passive: false })
     })
   }
 
@@ -57,7 +56,7 @@ export default class PageContainer extends View {
     head.insertBefore(style, head.firstChild)
   }
 
-  onLinkClick = e => {
+  onLinkClick = (e) => {
     const a = e.currentTarget
     const url = a.href.replace(/#.*/, "")
 
@@ -73,13 +72,13 @@ export default class PageContainer extends View {
     this.switchPage()
   }
 
-  onPopState = e => {
+  onPopState = (e) => {
     this.destUrl = e.state.url
     this.shouldPushState = false
     this.switchPage()
   }
 
-  toPage = args => {
+  toPage = (args) => {
     const { url, shouldPushState = true } = args
     const link = document.createElement("a")
     link.href = url // transform relative paths to absolute paths
@@ -97,9 +96,9 @@ export default class PageContainer extends View {
 
     if (elementsToHide.length > 0 && this.transitingElementsCount == 0) {
       // Hide current page
-      elementsToHide.forEach(el => {
+      elementsToHide.forEach((el) => {
         ++this.transitingElementsCount
-        el._onceHandler = e => this.onElementTransitionEnd(e)
+        el._onceHandler = (e) => this.onElementTransitionEnd(e)
         el.on("transitionend", el._onceHandler)
         addClass(el, "invisible")
       })
@@ -115,7 +114,7 @@ export default class PageContainer extends View {
     this.next = this.showDestPage
   }
 
-  onElementTransitionEnd = e => {
+  onElementTransitionEnd = (e) => {
     const el = e.currentTarget
     el.off("transitionend", el._onceHandler)
     delete el._onceHandler
@@ -147,16 +146,16 @@ export default class PageContainer extends View {
       }
     }
     xhr.onerror = () => this.onXHRError(xhr)
-    xhr.onprogress = e => this.onXHRProgress(e)
+    xhr.onprogress = (e) => this.onXHRProgress(e)
     xhr.send()
   }
 
-  onXHRError = xhr => {
+  onXHRError = (xhr) => {
     const err = isJSON(xhr.responseText) ? JSON.parse(xhr.responseText).err : xhr.status
     this.dispatch("onPageLoadingError", { err })
   }
 
-  onXHRProgress = e => {
+  onXHRProgress = (e) => {
     const { loaded, total } = e
     const progress = loaded < total ? e.loaded / e.total : 1
     this.dispatch("onPageLoadingProgress", { progress })
@@ -172,7 +171,7 @@ export default class PageContainer extends View {
     const elementsToShow = $$(".-page-container > *", doc.documentElement)
 
     if (elementsToShow.length > 0) {
-      elementsToShow.forEach(el => addClass(el, "invisible"))
+      elementsToShow.forEach((el) => addClass(el, "invisible"))
 
       if (document.documentElement != doc.documentElement) {
         this.loadDocument(doc)
@@ -181,9 +180,9 @@ export default class PageContainer extends View {
       setTimeout(() => {
         const transitingElements = filterVisibleElements($$(".-page-container > .invisible"))
 
-        transitingElements.forEach(el => {
+        transitingElements.forEach((el) => {
           ++this.transitingElementsCount
-          el._onceHandler = e => this.onElementTransitionEnd(e)
+          el._onceHandler = (e) => this.onElementTransitionEnd(e)
           el.on("transitionend", el._onceHandler)
           removeClass(el, "invisible")
         })
@@ -199,7 +198,7 @@ export default class PageContainer extends View {
     this.next = this.cleanUp
   }
 
-  loadDocument = doc => {
+  loadDocument = (doc) => {
     document.replaceChild(doc.documentElement, document.documentElement)
 
     if (!doc.loaded) {

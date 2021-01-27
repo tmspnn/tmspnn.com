@@ -1,5 +1,3 @@
-import { View } from "@components/MVC"
-
 export default class ResultItem extends View {
   // Reserved properties
   _name = "resultItem"

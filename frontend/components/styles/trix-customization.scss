@@ -9,6 +9,10 @@
   }
 }
 
+trix-editor {
+  background-color: $white;
+}
+
 trix-toolbar {
   .trix-button--icon-bold {
     @extend .no-icon;

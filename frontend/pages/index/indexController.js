@@ -1,12 +1,5 @@
-// External packages
-import _ from "lodash"
-
-// Local modules
-import { Controller } from "@components/MVC"
-import { getJSON } from "@util/xhr"
 // import { connect, send, disconnect } from "@util/ws"
 import indexModel from "./indexModel"
-import isJSON from "@util/isJSON"
 
 class IndexController extends Controller {
   blocked = false

@@ -1,10 +1,4 @@
-// External packages
-import _ from "lodash"
-
-// Local modules
 import "./SearchBar.scss"
-import { $, clearNode, html2DOM } from "@util/DOM"
-import { View } from "@components/MVC"
 import ResultItem from "./ResultItem"
 
 export default class SearchBar extends View {

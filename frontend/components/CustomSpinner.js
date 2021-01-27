@@ -1,9 +1,5 @@
-// External modules
 import "spin.js/spin.css"
 import { Spinner } from "spin.js"
-
-// Local modules
-import { View } from "@components/MVC"
 
 export default class CustomSpinner extends View {
   _name = "customSpinner"
@@ -19,6 +15,6 @@ export default class CustomSpinner extends View {
   }
 
   hide = () => {
-    this.spinner.stop();
+    this.spinner.stop()
   }
 }

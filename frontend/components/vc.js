@@ -21,12 +21,6 @@ class Listener {
   }
 }
 
-export class Model extends Listener {
-  constructor(namespace = "global") {
-    super(namespace, "model")
-  }
-}
-
 export class View extends Listener {
   _name = ""
   _element = null
@@ -60,18 +54,6 @@ export class Controller extends Listener {
     super(namespace, "controller")
   }
 
-  mutate = (method, args = {}) => {
-    args._method = method
-    ee.emit(this._namespace + "::model", args)
-    return this
-  }
-
-  broadcast = (args = {}) => {
-    args._method = "_onBroadcast"
-    ee.emit(this._namespace + "::view", args)
-    return this
-  }
-
   ui = (pattern, args = {}) => {
     const [componentName, method] = pattern.split("::")
     args._method = method
@@ -79,11 +61,12 @@ export class Controller extends Listener {
     return this
   }
 
-  notify = (namespace = "global", args = {}) => {
-    args._method = "_onNotification"
+  notify = (pattern, args = {}) => {
+    const [namespace, method] = pattern.split("::")
+    args._method = method
     ee.emit(namespace + "::controller", args)
     return this
   }
 }
 
-export default { Model, View, Controller }
+export default { View, Controller }

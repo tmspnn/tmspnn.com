@@ -1,6 +1,3 @@
-// Local modules
-import { $ } from "@util/DOM"
-import { View } from "@components/MVC"
 import NavigationBar from "@components/NavigationBar/NavigationBar"
 import SearchBar from "@components/SearchBar/SearchBar"
 import Feed from "@components/Feed/Feed"

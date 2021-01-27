@@ -8,7 +8,7 @@ let ee = window._ee
 
 if (!isEventEmitter(ee)) {
   ee = new EventEmitter()
-  ee.setMaxListeners(5000)
+  ee.setMaxListeners(1e4)
   window._ee = ee
 }
 

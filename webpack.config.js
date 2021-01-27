@@ -75,9 +75,8 @@ module.exports = {
   plugins: [
     new webpack.ProvidePlugin({
       _: "lodash",
-      Model: ["@components/MVC", "Model"],
-      View: ["@components/MVC", "View"],
-      Controller: ["@components/MVC", "Controller"],
+      View: ["@components/vc", "View"],
+      Controller: ["@components/vc", "Controller"],
       getJSON: ["@util/xhr", "getJSON"],
       postJSON: ["@util/xhr", "postJSON"],
       postFormData: ["@util/xhr", "postFormData"],

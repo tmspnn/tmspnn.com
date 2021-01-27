@@ -1,5 +1,3 @@
-import { View } from "@components/MVC"
-import { $, $$, addClass, removeClass, hasClass } from "@util/DOM"
 import PageContainer from "@components/PageContainer/PageContainer"
 import CustomSpinner from "@components/CustomSpinner"
 import Toast from "@components/Toast/Toast"
@@ -41,7 +39,7 @@ class ArticleView extends View {
     })
   }
 
-  setStarsCount = starsCount => {
+  setStarsCount = (starsCount) => {
     this.starsCount = starsCount
     this.starIcons.forEach((el, idx) => {
       idx <= starsCount - 1 ? addClass(el, "active") : removeClass(el, "active")

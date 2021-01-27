@@ -1,10 +1,3 @@
-// External modules
-import _ from "lodash"
-
-// Local modules
-import { Model } from "@components/MVC"
-import { $ } from "@util/DOM"
-
 class ArticleModel extends Model {
   user = {
     id: 0,
@@ -45,15 +38,15 @@ class ArticleModel extends Model {
     this.setArticleProps(initData.article)
   }
 
-  setUserProps = props => {
+  setUserProps = (props) => {
     _.assign(this.user, props)
   }
 
-  setArticleProps = props => {
+  setArticleProps = (props) => {
     _.assign(this.article, props)
   }
 
-  setRated = args => {
+  setRated = (args) => {
     this.rated = args.rated
   }
 }

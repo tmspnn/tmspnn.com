@@ -1,6 +1,4 @@
-import "./Toast.scss";
-import { View } from "@components/MVC";
-import { $, addClass, removeClass } from "@util/DOM"
+import "./Toast.scss"
 
 export default class Toast extends View {
   _name = "toast"
@@ -16,14 +14,14 @@ export default class Toast extends View {
   }
 
   show = (args) => {
-    if (!this.available) return;
-    this.available = false;
-    this.element.hidden = false;
+    if (!this.available) return
+    this.available = false
+    this.element.hidden = false
     setTimeout(() => {
       this.textsEl.addEventListener("transitionend", this.onTextsShow)
       this.textsEl.textContent = args.texts
       removeClass(this.textsEl, "invisible")
-    }, 50);
+    }, 50)
   }
 
   hide = () => {

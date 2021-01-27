@@ -1,5 +1,3 @@
-import { Model } from "@components/MVC"
-
 const data = JSON.parse($("#_data").textContent)
 
 class FollowingsModel extends Model {
