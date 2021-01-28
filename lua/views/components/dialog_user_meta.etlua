@@ -38,7 +38,7 @@
                     <% render("views/icons/chat") %>
                     <span>简介</span>
                 </label>
-                <textarea type="text" id="desc-input" placeholder="请输入简介" value="<%= ctx.data.user.desc %>"></textarea>
+                <textarea type="text" id="desc-input" placeholder="请输入简介"><%= ctx.data.user.desc %></textarea>
             </div>
             <div class="row district">
                 <label for="district-input">

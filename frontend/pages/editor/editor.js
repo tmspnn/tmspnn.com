@@ -4,5 +4,8 @@ import "trix"
 
 // Local modules
 import "./editor.scss"
-import "./editorView"
-import "./editorController"
+import EditorView from "./EditorView"
+import EditorController from "./EditorController"
+
+new EditorView()
+new EditorController()

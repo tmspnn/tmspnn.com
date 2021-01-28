@@ -1,40 +1,29 @@
-import { toggleClass } from "@util/DOM"
 import PageContainer from "@components/PageContainer/PageContainer"
 import CustomSpinner from "@components/CustomSpinner"
 import Toast from "@components/Toast/Toast"
 import ProgressBar from "@components/ProgressBar/ProgressBar"
 import customizeTrix from "./customizeTrix"
 
-class EditorView extends View {
+export default class EditorView extends View {
   _name = "editor"
-  titleInput = null
-  keywordInputs = []
-  trixEditorEl = null
-  saveBtn = null
-  previewBtn = null
-  publicCheckbox = null
-  pageContainer = null
-  customSpinner = null
-  toast = null
-  progressBar = null
+
+  // @DOM references
+  titleInput = $("#title")
+  keywordInputs = $$(".keyword")
+  trixEditorEl = $("trix-editor")
+  saveBtn = $("button.save")
+  previewBtn = $("button.preview")
+  publicCheckbox = $("#is-public")
+  pageContainer = new PageContainer("editor")
+  customSpinner = new CustomSpinner("editor")
+  toast = new Toast("editor")
+  progressBar = new ProgressBar("editor")
 
   constructor() {
     super("editor")
 
     // Alter trix editor
     customizeTrix()
-
-    // DOM references
-    this.titleInput = $("#title")
-    this.keywordInputs = $$(".keyword")
-    this.trixEditorEl = $("trix-editor")
-    this.saveBtn = $("button.save")
-    this.previewBtn = $("button.preview")
-    this.publicCheckbox = $("#is-public")
-    this.pageContainer = new PageContainer("editor")
-    this.customSpinner = new CustomSpinner("editor")
-    this.toast = new Toast("editor")
-    this.progressBar = new ProgressBar("editor")
 
     // Event listeners
     this.saveBtn.on("click", () => {
@@ -74,5 +63,3 @@ class EditorView extends View {
     )
   }
 }
-
-export default new EditorView()

@@ -86,6 +86,7 @@ module.exports = {
       $$: ["@util/DOM", "$$"],
       addClass: ["@util/DOM", "addClass"],
       removeClass: ["@util/DOM", "removeClass"],
+      toggleClass: ["@util/DOM", "toggleClass"],
       hasClass: ["@util/DOM", "hasClass"],
       html2DOM: ["@util/DOM", "html2DOM"],
       uploadToOSS: ["@util/uploadToOSS", "default"]

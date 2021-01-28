@@ -1,5 +1,3 @@
-import { $ } from "@util/DOM"
-
 export default function customizeTrix() {
   const boldBtn = $(".trix-button--icon-bold")
   boldBtn.title = "粗体"

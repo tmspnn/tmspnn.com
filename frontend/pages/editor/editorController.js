@@ -1,11 +1,8 @@
-// @External
 import { Base64 } from "js-base64"
 
-// @Local
-import editorModel from "./editorModel"
-
-class EditorController extends Controller {
+export default class EditorController extends Controller {
   blocked = false
+  data = JSON.parse($("#_data").textContent)
 
   constructor() {
     super("editor")
@@ -22,11 +19,11 @@ class EditorController extends Controller {
       return this.showToast("请输入100字以上的内容")
     }
 
-    this.mutate("setArticleProps", args)
+    _.assign(this.data.article, args)
 
     this.blocked = true
 
-    if (editorModel.article.id > 0) {
+    if (this.data.article.id > 0) {
       this.updateArticle()
     } else {
       this.createArticle()
@@ -35,9 +32,9 @@ class EditorController extends Controller {
 
   updateArticle = () => {
     xhr({
-      url: "/api/articles/" + editorModel.article.id,
+      url: "/api/articles/" + this.data.article.id,
       method: "put",
-      data: editorModel.article,
+      data: this.data.article,
       success: (res) => {
         alert("success: ", res)
       },
@@ -54,7 +51,7 @@ class EditorController extends Controller {
   createArticle = () => {
     postJSON({
       url: "/api/articles",
-      data: editorModel.article,
+      data: this.data.article,
       cb: () => {},
       fail: (e) => {
         const err = isJSON(e.message) ? JSON.parse(e.message).err : e.message
@@ -76,8 +73,8 @@ class EditorController extends Controller {
       this.blocked = true
       this.ui("customSpinner::show")
 
-      const { policy, signature } = editorModel
-      const uid = editorModel.user.id
+      const { oss_policy, oss_signature } = this.data
+      const uid = this.data.user.id
       const dateStr = new Date().toISOString().slice(0, 10).split("-").join("/")
       const fileNameBase64 = Base64.encode(file.name)
       const key = `public/users/${uid}/${dateStr}/${fileNameBase64}`
@@ -85,8 +82,8 @@ class EditorController extends Controller {
       uploadToOSS({
         file,
         key,
-        policy,
-        signature,
+        policy: oss_policy,
+        signature: oss_signature,
         onProgress: (progressEvent) => {
           const { loaded, total } = progressEvent
           const progress = (100 * loaded) / total
@@ -97,8 +94,7 @@ class EditorController extends Controller {
           attachment.setAttributes({ url, href: url })
         },
         fail: (e) => {
-          const err = isJSON(e.message) ? JSON.parse(e.message).err : e.message
-          this.showToast(err)
+          this.toast(isJSON(e.message) ? JSON.parse(e.message).err : e.message)
         },
         final: () => {
           this.blocked = false
@@ -108,9 +104,7 @@ class EditorController extends Controller {
     }
   }
 
-  showToast = (texts) => {
+  toast = (texts) => {
     this.ui("toast::show", { texts })
   }
 }
-
-export default new EditorController()
