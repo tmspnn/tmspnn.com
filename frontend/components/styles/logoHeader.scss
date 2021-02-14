@@ -1,43 +1,62 @@
 @import "colors.scss";
 
 .-logo-header {
+  $logo-size: 5rem;
+
   > a {
     display: flex;
-    align-items: center;
-    color: $black;
+    align-items: flex-start;
     text-decoration: none;
 
     &:hover {
       svg {
-        color: $primary;
-      }
-
-      h1 {
-        font-weight: normal;
+        path {
+          stroke: hsl(213, 92%, 28%);
+        }
       }
     }
 
     svg {
-      width: 4rem;
-      min-width: 4rem;
-      height: 4rem;
-      min-height: 4rem;
-      transition: color 300ms;
+      width: $logo-size;
+      min-width: $logo-size;
+      height: $logo-size;
+      min-height: $logo-size;
+
+      g {
+        fill: url(#logo-gradient);
+      }
+
+      path {
+        stroke: $dark;
+        transition: stroke 300ms;
+      }
     }
 
     h1 {
       font-size: 2.2rem;
-      font-weight: lighter;
-      font-style: italic;
+      font-weight: bold;
       white-space: nowrap;
       margin: 0;
-      transition: font-weight 300ms;
+      color: $dark;
     }
 
-    .primary {
-      color: $primary;
-      font-size: 0.8rem;
-      font-style: normal;
+    h3 {
+      font-size: 0.9rem;
+      font-weight: normal;
+      white-space: nowrap;
+      margin: 0;
+      background-image: linear-gradient(130deg, $primary 0%, $secondary 100%);
+      background-size: 100%;
+      background-clip: text;
+      background-color: $link;
+      -webkit-text-fill-color: transparent;
+      -moz-text-fill-color: transparent;
+    }
+
+    .meta {
+      color: $grey;
+      font-size: 0.9rem;
+      font-style: italic;
       font-weight: normal;
     }
   }

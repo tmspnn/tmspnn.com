@@ -16,6 +16,11 @@
         <% render("views/components/author", {data = author}) %>
         <% end -%>
       </ul>
+      <div class="more">
+        <a href="/authors">
+            <% render("views/icons/chevron_right") %>查看更多...
+        </a>
+      </div>
     </div>
     <div class="recommended-topics">
       <h3>推荐话题</h3>
@@ -23,6 +28,11 @@
         <% for i, topic in ipairs(ctx.data.recommended_topics) do -%>
         <% render("views/components/topic", {ctx = ctx, data = topic}) %>
         <% end -%>
+      </div>
+      <div class="more">
+        <a href="/authors">
+            <% render("views/icons/chevron_right") %>查看更多...
+        </a>
       </div>
     </div>
     <% render("views/components/footer") %>

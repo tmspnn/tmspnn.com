@@ -4,9 +4,9 @@
   "description": "Frontend & gateway of tmspnn.com",
   "main": "frontend/pages/index/index.ts",
   "scripts": {
-    "test": "jest",
     "build": "NODE_ENV=production webpack",
-    "dev": "webpack --watch"
+    "dev": "webpack --watch",
+    "list": "tree -I 'node_modules|icons'"
   },
   "repository": {
     "type": "git",

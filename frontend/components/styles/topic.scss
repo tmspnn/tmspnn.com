@@ -10,9 +10,14 @@
   max-width: 10rem;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: transform 200ms;
 
   &:not(:last-child) {
     padding-right: 1rem;
+  }
+
+  &:hover {
+      transform: scale(1.1);
   }
 
   svg {

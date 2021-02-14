@@ -7,4 +7,10 @@
         <path transform="translate(0, -60)" stroke-width="60"
             d="M1523 1204 c-3 -8 -1 -20 4 -25 5 -5 290 -8 729 -7 711 3 719 3 719 23 0 20 -8 20 -723 23 -650 2 -723 1 -729 -14z" />
     </g>
+    <defs>
+        <linearGradient id="logo-gradient">
+            <stop offset="5%" stop-color="hsl(213, 96%, 56%)" />
+            <stop offset="95%" stop-color="hsl(183, 90%, 72%)" />
+        </linearGradient>
+    </defs>
 </svg>

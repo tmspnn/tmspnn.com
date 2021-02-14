@@ -1,8 +1,12 @@
 <li class="-author">
     <a href="/users/<%= data.id %>">
+        <% if #data.profile > 0 then %>
         <div class="profile" style="background-image: url(<%= data.profile %>)"></div>
+        <% else %>
+        <div class="profile">匿</div>
+        <% end %>
         <div class="meta">
-            <div class="nickname"><%= data.nickname %></div>
+            <div class="nickname truncated"><%= data.nickname %></div>
             <div class="fame">
                 <% render("views/icons/document_text") %>
                 <span class="truncated bold"><%= data.articles_count %></span>

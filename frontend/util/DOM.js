@@ -19,7 +19,7 @@ export function clearNode(node) {
   }
 }
 
-export function replaceNode(el, newEl) {
+export function replaceNode(newEl, el) {
   if (el.parentNode) {
     el.parentNode.replaceChild(newEl, el)
   }

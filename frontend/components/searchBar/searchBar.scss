@@ -16,15 +16,11 @@
       width: 100%;
       font-size: 1.2rem;
       padding: 0.5rem 2.5rem 0.5rem 1rem;
-      border: 1px solid $grey-lighter;
+      border: 2px solid $grey-dark;
       border-radius: 4px;
       color: $dark;
       background: $white;
       box-shadow: 0 3px 5px $grey-lighter;
-
-      &:focus {
-        border-color: $primary;
-      }
     }
 
     & > label > svg {
@@ -34,10 +30,7 @@
       width: 1.6rem;
       height: 1.6rem;
       cursor: pointer;
-
-      &:hover {
-        color: $primary;
-      }
+      color: $grey;
     }
 
     & > ul {
@@ -49,9 +42,9 @@
       margin: 0;
       padding: 0;
       list-style: none;
+      border: none;
       width: 100%;
       background: $white;
-      border: 1px solid $light;
       border-radius: 4px;
       box-shadow: 0 3px 5px $grey-dark;
 
@@ -59,9 +52,15 @@
         padding: 0.5rem 1rem;
         transition: background-color 150ms;
         cursor: pointer;
+        border: 2px solid transparent;
 
         &:hover {
           background-color: $light;
+        }
+
+        &.selected {
+          background-color: $light;
+          border-left: 2px solid $link;
         }
 
         a {

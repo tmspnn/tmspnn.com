@@ -4,14 +4,24 @@
 .-author > a {
     display: flex;
     align-items: center;
-    padding: 0.5rem 1.1rem;
+    padding: 1rem 1.1rem;
     text-decoration: none;
+    transition: background-color 200ms;
+    &:hover {
+        background-color: $grey-lighter;
+    }
 
     .profile {
         width: 3rem;
         height: 3rem;
+        line-height: 3rem;
+        text-align: center;
+        font-size: 2rem;
+        color: $grey-dark;
         background-size: cover;
+        background-color: $grey-lighter;
         border-radius: 50%;
+        box-shadow: 0 0 5px $grey-light;
     }
 
     .meta {
@@ -45,8 +55,8 @@
 
         .bold {
         	font-size: 0.9rem;
-        	width: 4rem;
-        	max-width: 4rem;
+        	width: 3rem;
+        	max-width: 3rem;
         	font-weight: bold;
         	color: $grey-dark;
         }

@@ -13,9 +13,7 @@ class Listener {
 
   _eventHandler = (args) => {
     const { _method } = args
-
     if (typeof this[_method] == "function") {
-      delete args._method
       this[_method](args)
     }
   }
@@ -27,10 +25,16 @@ export class View extends Listener {
 
   constructor(namespace = "global") {
     super(namespace, "view")
-
     setTimeout(() => {
       ee.on([this._namespace, this._type, this._name].join("::"), this._eventHandler)
     })
+  }
+
+  ui = (pattern, args = {}) => {
+    const [componentName, method] = pattern.split("::")
+    args._method = method
+    ee.emit(this._namespace + "::view::" + componentName, args)
+    return this
   }
 
   dispatch = (method, args = {}) => {
@@ -43,7 +47,6 @@ export class View extends Listener {
     if (this._element) {
       removeNode(this._element)
     }
-
     ee.off([this._namespace, this._type, this._name].join("::"), this._eventHandler)
     ee.off(this._namespace + "::" + this._type, this._eventHandler)
   }

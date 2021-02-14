@@ -9,7 +9,7 @@ export default class PageContainer extends View {
   _name = "pageContainer"
   defaultStyle = `
     .-page-container > * {
-      transition: all 120ms ease;
+      transition: all 200ms ease;
     }
 
     .-page-container > .invisible {

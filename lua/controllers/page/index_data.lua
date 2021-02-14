@@ -15,8 +15,9 @@ local function index_data(app)
     for _, fd in ipairs(latest_feeds) do
         fd.created_at = date(fd.created_at):fmt("%Y/%m/%d %H:%M")
         fd.keywords = util.split(fd.keywords, ",")
+        fd.rating = string.format("%.2f", fd.rating)
     end
-
+    
     return {
         page_name = "index",
         page_title = "拾刻阅读 | 首页",

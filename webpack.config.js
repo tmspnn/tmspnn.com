@@ -88,6 +88,9 @@ module.exports = {
       removeClass: ["@util/DOM", "removeClass"],
       toggleClass: ["@util/DOM", "toggleClass"],
       hasClass: ["@util/DOM", "hasClass"],
+      cloneNode: ["@util/DOM", "cloneNode"],
+      replaceNode: ["@util/DOM", "replaceNode"],
+      clearNode: ["@util/DOM", "clearNode"],
       html2DOM: ["@util/DOM", "html2DOM"],
       uploadToOSS: ["@util/uploadToOSS", "default"]
     }),

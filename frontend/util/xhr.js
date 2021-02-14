@@ -63,8 +63,8 @@ export default function xhr(args) {
 export function getJSON(args) {
   xhr({
     url: args.url,
-    success(resText) {
-      args.cb(JSON.parse(resText))
+    success(response) {
+      args.cb(JSON.parse(response))
     },
     fail: args.fail,
     final: args.final

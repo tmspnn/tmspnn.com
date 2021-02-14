@@ -1,4 +1,4 @@
-class ArticleModel extends Model {
+class ArticleModel {
   user = {
     id: 0,
     nickname: "",
@@ -32,7 +32,6 @@ class ArticleModel extends Model {
   rated = false
 
   constructor() {
-    super("article")
     const initData = JSON.parse($("#_data").textContent)
     this.setUserProps(initData.user)
     this.setArticleProps(initData.article)

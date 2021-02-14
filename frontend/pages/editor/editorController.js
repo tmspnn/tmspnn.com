@@ -12,11 +12,11 @@ export default class EditorController extends Controller {
     if (this.blocked) return
 
     if (args.title.length < 1) {
-      return this.showToast("请输入标题")
+      return this.toast("请输入标题")
     }
 
     if (args.textContent.length < 100) {
-      return this.showToast("请输入100字以上的内容")
+      return this.toast("请输入100字以上的内容")
     }
 
     _.assign(this.data.article, args)
@@ -40,7 +40,7 @@ export default class EditorController extends Controller {
       },
       fail: (e) => {
         const err = isJSON(e.message) ? JSON.parse(e.message).err : e.message
-        this.showToast(err)
+        this.toast(err)
       },
       final: () => {
         this.blocked = false

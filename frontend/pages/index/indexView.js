@@ -1,14 +1,10 @@
-import NavigationBar from "@components/NavigationBar/NavigationBar"
-import SearchBar from "@components/SearchBar/SearchBar"
-import Feed from "@components/Feed/Feed"
 import PageContainer from "@components/PageContainer/PageContainer"
+import SearchBar from "@components/SearchBar/SearchBar"
 import CustomSpinner from "@components/CustomSpinner"
 import ProgressBar from "@components/ProgressBar/ProgressBar"
 
-class IndexView extends View {
+export default class IndexView extends View {
   _name = "index"
-
-  navigationBar = new NavigationBar("index")
   mainDiv = $(".main")
   searchBar = new SearchBar("index")
   feedsDiv = $(".feeds")
@@ -23,22 +19,15 @@ class IndexView extends View {
 
   onMainDivScroll = _.throttle(() => {
     const { scrollHeight, scrollTop } = this.mainDiv
-
-    if (scrollHeight - scrollTop - window.innerHeight < window.innerHeight) {
+    if (scrollHeight - scrollTop < 2 * window.innerHeight) {
       this.dispatch("loadMoreFeeds")
     }
   }, 3000)
 
   addFeeds = (args) => {
-    const { feeds, html } = args
-
+    const { html } = args
     const tmpDiv = document.createElement("div")
     tmpDiv.innerHTML = html
-
-    feeds.forEach((a, i) => {
-      this.mainDiv.appendChild(new Feed("index", tmpDiv.children[i], a)._element)
-    })
+    _.forEach(tmpDiv.children, (div) => this.mainDiv.appendChild(div))
   }
 }
-
-export default new IndexView()
