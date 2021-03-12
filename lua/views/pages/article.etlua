@@ -2,21 +2,27 @@
     <div class="logo-rating-comment">
         <% render("views/components/logo_header") %>
         <div class="rating">
-            <h4>我觉得这篇</h4>
+            <h4>
+                <% render("views/icons/clipboard_check") %>
+                <span>我觉得这篇</span>
+            </h4>
             <div class="stars">
                 <% for i = 1, 5 do -%>
                 <% render("views/icons/star") %>
                 <% end -%>
                 <span></span>
             </div>
-            <button class="rating-btn">
+            <button class="rating-btn" <% if ctx.data.my_rating then %>hidden<% end %>>
                 <% render("views/icons/badge_check") %>
                 <span>评价</span>
             </button>
         </div>
         <div class="comment">
-            <h4>我也说两句</h4>
-            <textarea></textarea>
+            <h4>
+                <% render("views/icons/chat_alt_2") %>
+                <span>我也说两句</span>
+            </h4>
+            <textarea placeholder="请输入评论..."></textarea>
             <button class="comment-btn">
                 <% render("views/icons/document_text") %>
                 <span>评论</span>
@@ -26,21 +32,44 @@
     <div class="article-n-comments">
         <h1><%= ctx.data.article.title %></h1>
         <div class="meta">
-            <div class="profile"></div>
+            <% if #ctx.data.article.profile > 0 then %>
+            <a href="/users/<%= ctx.data.article.created_by %>" class="profile" style="background-image: url(<%= ctx.data.article.profile %>)"></a>
+            <% else %>
+            <a href="/users/<%= ctx.data.article.created_by %>" class="profile">匿</a>
+            <% end %>
             <div class="author-n-date">
-                <div class="author"></div>
-                <div class="date"></div>
+                <div class="author"><%= ctx.data.article.author %></div>
+                <div class="date">创建于 <%= ctx.data.article.created_at %></div>
             </div>
-            <div class="pageview"></div>
-            <div class="rating"></div>
+            <div class="pageview">阅读 <%= ctx.data.article.pageview %></div>
+            <div class="rating">评分 <%= ctx.data.article.rating %></div>
         </div>
         <div class="-richtext">
             <%- ctx.data.article.content %>
         </div>
-        <div class="comments"></div>
+        <div class="comments">
+            <% for _, c in ipairs(ctx.data.comments) do %>
+            <% render("views/components/comment", { data = c }) %>
+            <% end %>
+        </div>
     </div>
-    <div class="author-n-related-articles">
-
+    <div class="related-articles">
+        <h3>
+            <% render("views/icons/document_text") %>
+            <span>推荐阅读</span>
+        </h3>
+        <% for _, a in ipairs(ctx.data.related_articles) do %>
+        <a href="/users/<%= a.created_by %>" class="-related-article">
+            <div class="title">
+                <% render("views/icons/chevron_right") %>
+                <%= a.title %>
+            </div>
+            <div class="meta">
+                <div class="pageview">阅读 <span><%= a.pageview %></span></div>
+                <div class="rating">评分 <span><%= a.rating %></span></div>
+            </div>
+        </a>
+        <% end %>
     </div>
 </div>
 <% render("views/components/toast") %>

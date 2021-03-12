@@ -5,11 +5,12 @@ Source code of [tmspnn.com](https://tmspnn.com)
 ## Dependencies of the Lua code
 
 - basexx
+- bcrypt
 - date
 - lapis
+- penlight
 - pgmoon
 - sha1
-- bcrypt
 - resty.jit-uuid
 - resty.validation
 - resty.mail

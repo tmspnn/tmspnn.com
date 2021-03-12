@@ -1,112 +1,119 @@
 -- External modules
-local ngx = require "ngx" -- The Nginx interface provided by OpenResty
+local ngx = require("ngx") -- Provided by OpenResty
 
--- Local modules
-local util = require "util"
+-- Implementation
 local redis_client = {}
 
--- As a base class, __index points to self
-redis_client.__index = redis_client
+redis_client.__index = redis_client -- As a base class, __index points to self
 
-function redis_client:new()
-    local redis = require "resty.redis"
-    local red = redis:new()
-    red:set_timeout(1000) -- one second
+function redis_client:new(conf)
+    local resty_redis = require("resty.redis")
+    local redis = resty_redis:new()
+    redis:set_timeout(1000) -- one second
+
+    if not conf then conf = {} end
 
     local client = {
-        _redis = red,
+        host = conf.host or "127.0.0.1",
+        port = conf.port or 6379,
+        redis = redis,
         connected = false,
         piping = false,
-        transactioning = false
+        transactioning = false,
+        subscribed_channels = {},
+        subscribed_patterns = {}
     }
 
     return setmetatable(client, self)
 end
 
 function redis_client:run(command, ...)
-    local red = self._redis
-    local ok, err
-
     if not self.connected then
         self:connect()
     end
 
-    local args = {...}
+    local res, err = self.redis[command](self.redis, unpack({...}))
 
-    ok, err = red[command](red, unpack(args))
-
-    if not ok then
+    if not res then
         self:release()
         error(err)
     end
 
-    self:post_run(command)
+    self:post_run(command, unpack({...}))
 
-    if ok == ngx.null then
-        return nil
-    end
+    if res == ngx.null then return nil end
 
-    return ok
+    return res
 end
 
 function redis_client:connect()
-    local red = self._redis
-    local ok, err = red:connect(ngx.var.redis_host, 6379)
+    local res, err = self.redis:connect(self.host, self.port)
 
-    if not ok then
-        error(err)
-    end
+    if not res then error(err) end
 
     self.connected = true
 end
 
-function redis_client:post_run(command)
+function redis_client:post_run(command, ...)
+    local params = {...} 
+
     if command == "init_pipeline" then
         self.piping = true
-    end
-
-    if command == "commit_pipeline" or command == "cancel_pipeline" then
+    elseif command == "commit_pipeline" or command == "cancel_pipeline" then
         self.piping = false
-    end
-
-    if command == "multi" then
+    elseif command == "multi" then
         self.transactioning = true
-    end
-
-    if command == "exec" or command == "discard" then
+    elseif command == "exec" or command == "discard" then
         self.transactioning = false
+    elseif command == "subscribe" then
+        local channels_count = #self.subscribed_channels
+        for i = 1, #params do
+            channels_count = channels_count + 1
+            self.subscribed_channels[channels_count] = params[i]
+        end
+    elseif command == "unsubscribe" then
+        for i = 1, #params do
+            table.remove(self.subscribed_channels, params[i])
+        end
+    elseif command == "psubscribe" then
+        local patterns_count = #self.subscribed_patterns
+        for i = 1, #params do
+            patterns_count = patterns_count + 1
+            self.subscribed_patterns[patterns_count] = params[i]
+        end
+    elseif command == "punsubscribe" then
+        for i = 1, #params do
+            table.remove(self.subscribed_patterns, params[i])
+        end
     end
 
-    if self.piping or self.transactioning then
-        return
-    end
+    if self.piping or self.transactioning or #self.subscribed_channels > 0 or #self.subscribed_patterns > 0 then return end
 
     self:release()
 end
 
 function redis_client:release()
-    local red = self._redis
-
     if self.piping then
-        red:cancel_pipeline()
+        self.redis:cancel_pipeline()
+        self.piping = false
     end
 
     if self.transactioning then
-        red:discard()
+        self.redis:discard()
+        self.transactioning = false
     end
 
-    -- ten seconds, pool size 100
-    local ok, err = red:set_keepalive(10000, 100)
+    local res, err
 
-    util.assign(self, {
-        connected = false,
-        piping = false,
-        transactioning = false
-    })
-
-    if not ok then
-        error(err)
+    if #self.subscribed_channels > 0 or #self.subscribed_patterns > 0 then
+        res, err = self.redis:close()
+    else
+        res, err = self.redis:set_keepalive(10000, 100)
     end
+
+    if not res then error(err) end
+
+    self.connected = false
 end
 
 return redis_client

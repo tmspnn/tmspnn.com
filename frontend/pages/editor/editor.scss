@@ -9,6 +9,10 @@
   flex: 1;
   text-align: right;
 
+  .-logo-header {
+    text-align: left;
+  }
+
   .options {
     padding-top: 2.8rem;
 
@@ -131,7 +135,8 @@
   trix-editor {
     min-height: 93%;
     max-height: 93%;
-    overflow: hidden;
+    overflow: hidden auto;
+    padding-bottom: 20rem;
   }
 }
 

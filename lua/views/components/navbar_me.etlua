@@ -1,0 +1,65 @@
+<div class="-navbar-me">
+    <% render("views/components/logo_header") %>
+    <ul>
+        <li class="nickname">
+            <% render("views/icons/identification") %>
+            <span class="truncated"><%= ctx.data.user.nickname %></span>
+            <div class="edit-btn">
+                <% render("views/icons/adjustments") %>
+            </div>
+        </li>
+        <li class="desc">
+            <%= #ctx.data.user.desc > 0 and ctx.data.user.desc or "这个人很懒, 什么也没有写..." %>
+        </li>
+        <li class="district">
+            <label>
+                <% render("views/icons/location_marker") %>
+                <span>地区</span>
+            </label>
+            <span class="to-right"><%= ctx.data.user.district %></span>
+        </li>
+        <li class="articles-count">
+            <a href="/articles">
+                <% render("views/icons/document_text") %>
+                <span>文档数</span>
+            </a>
+            <a href="/articles" class="to-right"><%= ctx.data.user.articles_count %></a>
+        </li>
+        <li class="ratings-count">
+            <a href="/ratings">
+                <% render("views/icons/star") %>
+                <span>评价</span>
+            </a>
+            <a href="/ratings" class="to-right"><%= ctx.data.user.ratings_count or 0 %></a>
+        </li>
+        <li class="followings-count">
+            <a href="/followings">
+                <% render("views/icons/heart") %>
+                <span>关注</span>
+            </a>
+            <a href="/followings" class="to-right"><%= ctx.data.user.followings_count %></a>
+        </li>
+        <li class="followers-count">
+            <a href="followers">
+                <% render("views/icons/user_group") %>
+                <span>粉丝</span>
+            </a>
+            <a href="/followers" class="to-right"><%= ctx.data.user.followers_count %></a>
+        </li>
+        <li class="settings">
+            <a href="/settings">
+                <% render("views/icons/cog") %>
+                <span>设置</span>
+            </a>
+        </li>
+    </ul>
+    <div class="row">
+        <a href="/editor">
+            <button>
+                <% render("views/icons/pencil_alt") %>
+                <span>写一篇</span>
+            </button>
+        </a>
+    </div>
+</div>
+

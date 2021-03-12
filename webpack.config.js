@@ -40,7 +40,7 @@ module.exports = {
             options: {
               postcssOptions: {
                 plugins: [
-                  ["postcss-import", { path: ["frontend/components/styles"] }],
+                  ["postcss-import", { path: ["frontend/components", "frontend/components/styles"] }],
                   precss,
                   colorFunction,
                   autoprefixer

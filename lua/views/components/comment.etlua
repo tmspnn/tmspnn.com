@@ -1,0 +1,40 @@
+<div class="-comment">
+    <div class="head">
+        <% if #data.profile > 0 then %>
+        <div class="profile" style="background-image: url(<%= data.profile %>)"></div>
+        <% else %>
+        <div class="profile">匿</div>
+        <% end %>
+        <div class="name-n-date">
+            <div class="author"><%= data.author %></div>
+            <div class="date"><%= data.created_at %></div>
+        </div>
+        <div class="operations">
+            <div class="advocate <% if data.advocated then %>active<% end %>" data-ref="advocateBtn">
+                <% render("views/icons/thumb_up") %>
+                <span data-ref="advocatorsCountSpan"><%= data.advocators_count %></span>
+            </div>
+            <div class="reply" data-ref="replyBtn">
+                <% render("views/icons/reply") %>
+                <span> 回复</span>
+            </div>
+            <div class="report-abuse" data-ref="reportAbuseBtn">
+                <% render("views/icons/exclamation") %>
+                <span> 举报</span>
+            </div>
+        </div>
+    </div>
+    <div class="body">
+        <% if data.reference_id > 0 then %>
+        <div class="reply-to" <% if data.reference_id == 0 then %>hidden<% end %>>
+            回复 <b><%= data.reference_author %></b>:
+        </div>
+        <div class="reference">
+            <%= data.reference_content %>
+        </div>
+        <% end %>
+        <div class="content">
+            <%= data.content %>
+        </div>
+    </div>
+</div>

@@ -2,8 +2,11 @@
     <a href="https://tmspnn.com">
         <% render("views/components/logo") %>
         <div>
-            <h1>一刻<span class="meta">内测版</span></h1>
-            <h3>尊重创作的价值</h3>
+            <h1>一刻阅读</h1>
+            <div class="sub-title">
+                <h3>尊重创作的价值</h3>
+                <span class="meta">内测版</span>
+            </div>
         </div>
     </a>
 </div>

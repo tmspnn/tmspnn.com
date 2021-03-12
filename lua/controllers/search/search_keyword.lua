@@ -1,12 +1,12 @@
--- @External packages
-local ngx = require "ngx" -- The Nginx interface provided by OpenResty
+-- External packages
+local ngx = require("ngx") -- The Nginx interface provided by OpenResty
 
--- @Local modules
-local util = require "util"
-local Article = require "models/article"
-local User = require "models/user"
+-- Local modules
+local util = require("util")
+local Article = require("models/article")
+local User = require("models/user")
 
--- @Implementation
+-- Implementation
 local function search_keyword(app)
     local ctx = app.ctx
     local keyword = app.params.keyword

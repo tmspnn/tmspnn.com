@@ -3,223 +3,196 @@
 @import "button.scss";
 @import "topic.scss";
 @import "richtext.scss";
-@import "comment.scss";
 @import "userMeta.scss";
 @import "logoHeader.scss";
-
-html,
-body {
-  height: 100%;
-  overflow: hidden;
-}
-
-.block {
-  flex: 1;
-  max-height: 100%;
-}
+@import "relatedArticle.scss";
+@import "Comment/Comment.scss";
 
 .-page-container {
   width: 100%;
   max-width: 1280px;
   height: 100%;
   margin: 0 auto;
-  display: flex;
+  position: relative;
+}
 
-  .logo-rating-comment {
-    @extend .block;
-    border-right: 1px solid $light;
+.logo-rating-comment {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 20%;
+  height: 100%;
+  border-right: 1px solid $grey-lighter;
 
-    .rating {
-      border-top: 1px solid $light;
+  &.invisible {
+    transform: translate3d(-4rem, 0, 0);
+  }
 
-      h4 {
-        margin: 0;
-        padding: 1rem 1.1rem;
-        font-size: 1rem;
-        font-weight: lighter;
-        color: $grey-dark;
-      }
-
-      .stars {
-        display: flex;
-        align-items: center;
-        padding: 0 0.8rem;
-
-        svg {
-          width: 2rem;
-          height: 2rem;
-          color: $grey-light;
-          cursor: pointer;
-          transition: color 120ms;
-
-          &.active {
-            color: $link;
-          }
-        }
-
-        span {
-          margin-left: 0.3rem;
-          color: $dark;
-          font-size: 0.9rem;
-        }
-      }
-
-      button {
-        margin: 1rem 1.2rem 5rem;
-      }
-    }
-
-    .comment {
-      border-top: 1px solid $light;
-
-      h4 {
-        margin: 0;
-        padding: 1rem 1.1rem;
-        font-size: 1rem;
-        font-weight: lighter;
-        color: $grey-dark;
-      }
-
-      textarea {
-        display: block;
-        resize: none;
-        margin: 0 1.2rem 1rem;
-        padding: 0.4rem 0.6rem;
-        width: 13rem;
-        height: 7rem;
-        border: 1px solid $grey-light;
-        border-radius: 2px;
-        box-shadow: 0 3px 12px $light;
-        outline: none;
-      }
-
-      button {
-        margin: 0.4rem 1.2rem;
-      }
+  h4 {
+    color: $grey-dark;
+    font-size: 1.5rem;
+    margin: 0;
+    padding: 1rem;
+    border-top: 1px solid $grey-lighter;
+    svg {
+      position: relative;
+      top: -0.15rem;
+      width: 1.8rem;
+      height: 1.8rem;
+      vertical-align: middle;
     }
   }
 
-  .article-n-comments {
-    @extend .block;
-    flex: 3;
-    overflow: hidden auto;
-    transition-delay: 150ms;
+  .rating {
+    border-top: 1px solid $light;
 
-    h1 {
-      font-size: 2.6rem;
-      line-height: 1.8;
-      margin: 0;
-      padding: 0 2rem 1rem;
-      color: $black;
-    }
-
-    .meta {
+    .stars {
       display: flex;
       align-items: center;
-      padding: 0 2rem;
-      color: $grey-dark;
-
-      .profile {
-        width: 3rem;
-        height: 3rem;
-        border-radius: 50%;
-        background-size: cover;
-        box-shadow: 0 0 5px $light;
-      }
-
-      .author-n-date {
-        flex: 1;
-        padding: 0 1rem;
-        font-size: 1rem;
-
-        .date {
-          font-size: 0.9rem;
-        }
-      }
-
-      .pageview {
-        padding: 0 1.5rem;
-        font-size: 0.9rem;
-      }
-
-      .rating {
-        font-size: 0.9rem;
-      }
-    }
-
-    .tags {
-      padding: 1rem 2rem;
-    }
-
-    .-richtext {
-      padding: 0 2rem;
-    }
-
-    .comments {
-      padding: 5rem 0;
-    }
-  }
-
-  .author-n-related-articles {
-    @extend .block;
-    flex: 1;
-    transition-delay: 300ms;
-    border-left: 1px solid $light;
-
-    button {
-      margin: 0 2rem 1rem;
-    }
-
-    ul {
-      margin: 0;
-      list-style: none;
-      padding: 1rem 1rem 1rem 2rem;
-
-      li {
-        padding: 0 0 1rem;
-
-        h3 {
-          margin: 0;
-
-          a {
-            font-size: 1rem;
-            line-height: 1.8;
-            color: $dark;
-            text-decoration: none;
-          }
-        }
-
-        > div {
-          display: flex;
-          align-items: center;
-          font-size: 0.9em;
-          color: $grey-light;
-
-          div:first-child {
-            padding-right: 1rem;
-          }
-        }
-      }
-    }
-  }
-
-  .author-meta,
-  .related-articles {
-    > h3 {
-      display: flex;
-      align-items: center;
-      margin: 0;
-      padding: 1rem 1rem 1rem 1rem;
-      font-size: 1.2rem;
-      color: $dark;
-      border-top: 1px solid $light;
-      border-bottom: 1px solid $light;
+      padding-left: 1rem;
 
       svg {
-        margin-right: 0.3rem;
-        width: 1.5rem;
-        height: 1.5rem;
+        width: 2rem;
+        height: 2rem;
+        color: $grey-light;
+        cursor: pointer;
+        transition: color 120ms;
+
+        &.active {
+          color: $link;
+        }
       }
+
+      span {
+        margin-left: 0.3rem;
+        color: $dark;
+        font-size: 0.9rem;
+        user-select: none;
+      }
+    }
+
+    button {
+      visibility: hidden;
+      margin: 1rem 1.4rem 5rem;
+    }
+  }
+
+  .comment {
+    border-top: 1px solid $light;
+    textarea {
+      display: block;
+      resize: none;
+      margin: 0 1.2rem 1rem;
+      padding: 0.4rem 0.6rem;
+      width: 13rem;
+      height: 7rem;
+      border: 1px solid $grey-light;
+      border-radius: 4px;
+      box-shadow: 0 3px 12px $light;
+      outline: none;
+    }
+
+    button {
+      margin: 0.4rem 1.2rem;
+    }
+  }
+}
+
+.article-n-comments {
+  position: absolute;
+  left: 20%;
+  top: 0;
+  width: 60%;
+  height: 100%;
+  overflow: hidden auto;
+  transition-delay: 500ms;
+
+  &.invisible {
+    transform: translate3d(0, 4rem, 0);
+  }
+
+  h1 {
+    font-size: 3rem;
+    line-height: 1.8;
+    margin: 0;
+    padding: 1rem;
+    color: $black;
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    color: $grey-dark;
+    border-top: 1px solid $grey-lighter;
+    border-bottom: 1px solid $grey-lighter;
+
+    .profile {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      background-size: cover;
+      box-shadow: 0 0 5px $light;
+    }
+
+    .author-n-date {
+      flex: 1;
+      padding: 0 1rem;
+      font-size: 1rem;
+
+      .date {
+        font-size: 0.9rem;
+      }
+    }
+
+    .pageview {
+      padding: 0 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .rating {
+      font-size: 0.9rem;
+    }
+  }
+
+  .tags {
+    padding: 1rem 2rem;
+  }
+
+  .-richtext {
+    padding: 0 1rem;
+  }
+
+  .comments {
+    padding: 5rem 0;
+  }
+}
+
+.related-articles {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 20%;
+  height: 100%;
+  border-left: 1px solid $grey-lighter;
+  transition-delay: 250ms;
+
+  &.invisible {
+    transform: translate3d(4rem, 0, 0);
+  }
+
+  h3 {
+    color: $grey-dark;
+    font-size: 1.5rem;
+    margin: 0;
+    padding: 1rem;
+    border-bottom: 1px solid $grey-lighter;
+    svg {
+      position: relative;
+      top: -0.15rem;
+      width: 1.8rem;
+      height: 1.8rem;
+      vertical-align: middle;
     }
   }
 }

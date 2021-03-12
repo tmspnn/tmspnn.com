@@ -1,17 +1,17 @@
 .main {
-    position: absolute;
-    left: 20%;
-    top: 0;
-    width: 60%;
-    height: 100%;
-    overflow: hidden auto;
-    transition-delay: 500ms;
+  position: absolute;
+  left: 20%;
+  top: 0;
+  width: 60%;
+  height: 100%;
+  overflow: hidden auto;
+  transition-delay: 500ms;
 
-    &.invisible {
-        transform: translate3d(0, 4rem, 0);
-    }
+  &.invisible {
+    transform: translate3d(0, 4rem, 0);
+  }
 
-    .feeds {
-        padding: 0 2rem;
-    }
+  .feeds {
+    padding: 0 2rem;
+  }
 }

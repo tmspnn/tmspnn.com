@@ -1,6 +1,6 @@
-import "./signUp.scss"
-import SignUpView from "./SignUpView"
-import SignUpController from "./SignUpController"
+import "./signUp.scss";
+import SignUpView from "./SignUpView";
+import SignUpController from "./SignUpController";
 
-new SignUpView()
-new SignUpController()
+new SignUpView();
+new SignUpController();

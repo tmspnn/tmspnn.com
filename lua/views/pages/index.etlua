@@ -10,7 +10,10 @@
   </div>
   <div class="etc">
     <div class="recommended-authorss">
-      <h3>推荐作者</h3>
+      <h3>
+        <% render("views/icons/user_circle") %>
+        <span>推荐作者</span>
+      </h3>
       <ul>
         <% for i, author in ipairs(ctx.data.recommended_authors) do -%>
         <% render("views/components/author", {data = author}) %>
@@ -23,7 +26,10 @@
       </div>
     </div>
     <div class="recommended-topics">
-      <h3>推荐话题</h3>
+      <h3>
+        <% render("views/icons/tag") %>
+        <span>推荐话题</span>
+      </h3>
       <div class="topics">
         <% for i, topic in ipairs(ctx.data.recommended_topics) do -%>
         <% render("views/components/topic", {ctx = ctx, data = topic}) %>

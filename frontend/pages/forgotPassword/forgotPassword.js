@@ -1,6 +1,6 @@
-import "./forgotPassword.scss"
-import ForgotPasswordView from "./ForgotPasswordView"
-import ForgotPasswordController from "./ForgotPasswordController"
+import "./forgotPassword.scss";
+import ForgotPasswordView from "./ForgotPasswordView";
+import ForgotPasswordController from "./ForgotPasswordController";
 
-new ForgotPasswordView()
-new ForgotPasswordController()
+new ForgotPasswordView();
+new ForgotPasswordController();

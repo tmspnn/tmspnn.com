@@ -1,3 +1,3 @@
-import "./followings.scss"
-import "./followingsView"
-import "./followingsController"
+import "./followings.scss";
+import "./followingsView";
+import "./followingsController";

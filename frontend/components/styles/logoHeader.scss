@@ -7,7 +7,9 @@
     display: flex;
     align-items: flex-start;
     text-decoration: none;
-
+    > div {
+      flex: 1;
+    }
     &:hover {
       svg {
         path {
@@ -40,7 +42,13 @@
       color: $dark;
     }
 
+    .sub-title {
+      display: flex;
+      align-items: center;
+    }
+
     h3 {
+      flex: 1;
       font-size: 0.9rem;
       font-weight: normal;
       white-space: nowrap;
@@ -54,8 +62,9 @@
     }
 
     .meta {
-      color: $grey;
-      font-size: 0.9rem;
+      padding-right: 1rem;
+      color: $red;
+      font-size: 0.8rem;
       font-style: italic;
       font-weight: normal;
     }

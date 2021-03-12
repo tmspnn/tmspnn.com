@@ -1,15 +1,15 @@
-import meModel from "./meModel"
+import meModel from "./meModel";
 
 class FollowingsController extends Controller {
-  blocked = false
+  blocked = false;
 
   constructor() {
-    super("followings")
+    super("followings");
   }
 
   toast = (texts) => {
-    this.ui("toast::show", { texts })
-  }
+    this.ui("toast::show", { texts });
+  };
 }
 
-export default new FollowingsController()
+export default new FollowingsController();

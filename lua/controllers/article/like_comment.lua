@@ -1,162 +1,111 @@
-local User = require "models/user"
-local Article = require "models/article"
-local util = require "util"
+-- External modules
+local ngx = require("ngx")
 
--- TODO: handle exceptions
+-- Local modules
+local User = require("models/user")
+local Article = require("models/article")
+local Comment = require("models/comment")
+local util = require("util")
+local redis_client = require("models/redis_client")
 
-local function advocate(app, uid, article_id, comment_id)
-    local ok1 = User:add_advocated_comment(uid, comment_id)
-    local ok2 = Article:add_comment_advocator(comment_id, uid)
-
-    if ok1 == 1 and ok2 == 1 then
-        local ok = User:query(string.format([[
-                begin;
-
-                update "article" set advocators_count = advocators_count + 1 where id = %d;
-
-                update "user"
-                set fame = fame + 1
-                from (select created_by from "article" where id = %d) a
-                where id = a.created_by;
-
-                commit;
-            ]], article_id, article_id))
-
-        if not ok then
-            error("...")
-        end
-
-        app:write({
-            status = 204
-        })
-    end
+local function post_advocate(_, advocator_id, comment_id)
+    local comment = Comment:find_by_id(comment_id)
+    Article:set_hot_comment(comment.article_id, comment_id, comment.advocators_count)
+    User:add_advocated_comment(advocator_id, comment_id)
 end
 
-local function rev_advocate(app, uid, article_id, comment_id)
-    local ok1 = User:remove_advocated_comment(uid, comment_id)
-    local ok2 = Article:remove_comment_advocator(comment_id, uid)
-
-    if ok1 == 1 and ok2 == 1 then
-        local ok = User:query(string.format([[
-                begin;
-
-                update "article" set advocators_count = advocators_count - 1 where id = %d;
-
-                update "user"
-                set fame = fame - 1
-                from (select created_by from "article" where id = %d) a
-                where id = a.created_by;
-
-                commit;
-            ]], article_id, article_id))
-
-        if not ok then
-            error("...")
-        end
-
-        app:write({
-            status = 204
-        })
+local function advocate(app, uid, comment_id)
+    local already_advocated = User:check_advocated_comment(uid, comment_id)
+    
+    if already_advocated then
+        error("duplicated.advocation", 0)
     end
+
+    local comment = Comment:find_by_id(comment_id)
+
+    if not comment then
+        error("comment.not.exists", 0)
+    end
+
+    Comment:query([[
+        begin;
+
+        update "comment" set advocators_count = advocators_count + 1 where id = ?;
+
+        update "user" set fame = fame + 1 where id = ?;
+
+        commit;
+    ]], comment_id, comment.created_by)
+
+    ngx.timer.at(0, post_advocate, uid, comment_id)
+    
+    app:write({ status = 204 })
 end
 
-local function oppose(app, uid, article_id, comment_id)
-    local ok1 = User:add_opposed_comment(uid, comment_id)
-    local ok2 = Article:add_comment_opposer(comment_id, uid)
+local function post_rev_advocate(_, rev_advocator_id, comment_id)
+    local comment = Comment:find_by_id(comment_id)
 
-    if ok1 == 1 and ok2 == 1 then
-        local ok = User:query(string.format([[
-                begin;
-
-                update "article" set opposers_count = opposers_count + 1 where id = %d;
-
-                update "user"
-                set fame = fame - 1
-                from (select created_by from "article" where id = %d) a
-                where id = a.created_by;
-
-                commit;
-            ]], article_id, article_id))
-
-        if not ok then
-            error("...")
-        end
-
-        app:write({
-            status = 204
-        })
+    if comment.advocators_count > 0 then
+        Article:set_hot_comment(comment.article_id, comment_id, comment.advocators_count)
+    else
+        Article:reomve_hot_comment(comment.article_id, comment_id)
     end
+    
+    User:remove_advocated_comment(uid, comment_id)
 end
 
-local function rev_oppose(app, uid, article_id, comment_id)
-    local ok1 = User:remove_opposed_comment(uid, comment_id)
-    local ok2 = Article:remove_comment_opposer(comment_id, uid)
+local function rev_advocate(app, uid, comment_id)
+    local comment = Comment:find_by_id(comment_id)
 
-    if ok1 == 1 and ok2 == 1 then
-        local ok = User:query(string.format([[
-                begin;
-
-                update "article" set opposers_count = opposers_count - 1 where id = %d;
-
-                update "user"
-                set fame = fame + 1
-                from (select created_by from "article" where id = %d) a
-                where id = a.created_by;
-
-                commit;
-            ]], article_id, article_id))
-
-        if not ok then
-            error("...")
-        end
-
-        app:write({
-            status = 204
-        })
+    if not comment then
+        app.status = 400
+        error("comment.not.exists")
     end
+
+    Comment:query([[
+    begin;
+
+        update "comment" set advocators_count = advocators_count - 1 where id = ?;
+
+        update "user" set fame = fame - 1 where id = ?;
+
+        commit;
+    ]], comment_id, comment.created_by)
+
+    ngx.timer.at(0, post_rev_advocate, uid, comment_id)
+
+    app:write({ status = 204 })
 end
 
 local function like_comment(app)
     local uid = app.ctx.uid
-    local article_id = app.params.article_id
-    local comment_id = app.params.comment_id
-    local attitude = app.params.attitude -- advocate, oppose, rev_advocate, rev_oppose
-    
-    local res = {
-        status = 200,
-        json = {}
-    }
+    local comment_id = tonumber(app.params.comment_id)
+    local attitude = app.params.attitude -- advocate, rev_advocate
 
-    if not uid then
-        local from = util.join({"/articles", article_id, "comments", comment_id, "attitudes"}, "/")
-        return {
-            redirect_to = "/sign-in?from = " .. app.ctx.escape(from)
-        }
+    -- Authentication
+    if not uid then return { redirect_to = "/sign_in" } end
+
+    -- Validation of parameters
+    if not comment_id then
+        app.status = 400
+        error("comment.not.exists")
     end
 
-    local current_user = User:find_by_id(uid)
+    local user = User:find_by_id(uid)
 
-    if current_user.fame <= 0 then
-        res.status = 403
-        res.json.err = "您的声望太低, 无法执行此操作"
-        return res
+    if user.fame <= 0 then
+        app.status = 403
+        error("fame.too.low")
     end
-
-    -- TODO: add verifications & exceptions
 
     if attitude == "advocate" then
-        return advocate(app, uid, article_id, comment_id)
+        return advocate(app, uid, comment_id)
     elseif attitude == "rev_advocate" then
-        return rev_advocate(app, uid, article_id, comment_id)
-    elseif attitude == "oppose" then
-        return oppose(app, uid, article_id, comment_id)
-    elseif attitude == "rev_oppose" then
-        return rev_oppose(app, uid, article_id, comment_id)
+        return rev_advocate(app, uid, comment_id)
+    else
+        app.status = 400
+        error("unknown.attitude")
     end
-
-    res.status = 400
-    res.json.err = "Unknown attitude."
-    return res
 end
 
 return like_comment

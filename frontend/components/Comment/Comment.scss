@@ -1,0 +1,88 @@
+@import "colors.scss";
+
+.-comment {
+    border-top: 2px solid $link;
+    box-shadow: 0 0 5px $grey-light;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    color: $dark;
+
+    svg {
+        position: relative;
+        top: 0.2rem;
+        width: 1.2rem;
+        height: 1.2rem;
+        transition: transform 200ms;
+    }
+
+    .head {
+        display: flex;
+        align-items: center;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid $grey-lighter;
+
+        .author {
+            color: $black;
+            font-weight: bold;
+        }
+    }
+
+    .profile {
+        background-size: cover;
+        width: 4rem;
+        height: 4rem;
+        border-radius: 50%;
+        margin-right: 1rem;
+    }
+
+    .operations {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        transition: color 200ms;
+
+        & > div {
+            margin-left: 2rem;
+            cursor: pointer;
+
+            &:hover {
+                svg {
+                    transform: scale(1.2);
+                }
+            }
+        }
+
+        .advocate {
+            &.active {
+                color: $primary;
+            }
+
+            svg {
+                top: 0.1rem;
+            }
+        }
+
+        .reply {
+            svg {
+                top: 0.15rem;
+            }
+        }
+
+        .report-abuse {
+            &:hover {
+                color: $red;
+            }
+        }
+    }
+
+    .body {
+        padding-top: 0.5rem;
+    }
+
+    .reference {
+        margin: 0.5rem 0;
+        padding: 1rem;
+        background-color: $grey-lighter;
+        border-radius: 0.2rem;
+    }
+}

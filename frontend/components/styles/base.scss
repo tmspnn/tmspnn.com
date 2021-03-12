@@ -17,8 +17,9 @@ body {
 
 body {
   overflow: hidden;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
   line-height: 1.4;
   background-color: $light;
 }
@@ -39,6 +40,10 @@ a {
 table {
   border-collapse: collapse;
   width: 100%;
+}
+
+textarea {
+    line-height: 1.5;
 }
 
 /* Change Autocomplete styles in Chrome*/
