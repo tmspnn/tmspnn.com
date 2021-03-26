@@ -59,7 +59,7 @@
             <span>推荐阅读</span>
         </h3>
         <% for _, a in ipairs(ctx.data.related_articles) do %>
-        <a href="/users/<%= a.created_by %>" class="-related-article">
+        <a href="/articles/<%= a.id %>" class="-related-article">
             <div class="title">
                 <% render("views/icons/chevron_right") %>
                 <%= a.title %>

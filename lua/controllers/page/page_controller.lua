@@ -1,4 +1,4 @@
--- @External modules
+-- External modules
 local lapis_util = require "lapis.util"
 local to_json = lapis_util.to_json
 local lapis_application = require "lapis.application"
@@ -18,6 +18,7 @@ local me_data = require "controllers/page/me_data"
 local followings_data = require "controllers/page/followings_data"
 local followers_data = require "controllers/page/followers_data"
 local messages_data = require "controllers/page/messages_data"
+local user_data = require("controllers/page/user_data")
 local render_component = require "controllers/page/render_component"
 
 -- @Implementation
@@ -117,6 +118,10 @@ util.push_back(page_ctrl.routes, {
     method = "get",
     path = "/messages",
     handler = function(app) return get_meta_data(app, messages_data) end
+}, {
+    method = "get",
+    path = "/users/:user_id",
+    handler = function(app) return get_meta_data(app, user_data) end
 })
 
 return page_ctrl

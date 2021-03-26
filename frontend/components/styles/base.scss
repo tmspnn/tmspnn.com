@@ -2,44 +2,44 @@
 @import "colors.scss";
 
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 
-  &[hidden] {
-    display: none !important;
-  }
+    &[hidden] {
+        display: none !important;
+    }
 }
 
 html,
 body {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 body {
-  overflow: hidden;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-    "Helvetica Neue", sans-serif;
-  line-height: 1.4;
-  background-color: $light;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+        "Helvetica Neue", sans-serif;
+    line-height: 1.4;
+    background-color: $light;
 }
 
 a,
 button,
 input,
 select {
-  cursor: pointer;
-  outline: none;
+    cursor: pointer;
+    outline: none;
 }
 
 a {
-  text-decoration: none;
-  color: $link;
+    text-decoration: none;
+    color: $link;
 }
 
 table {
-  border-collapse: collapse;
-  width: 100%;
+    border-collapse: collapse;
+    width: 100%;
 }
 
 textarea {
@@ -56,6 +56,6 @@ textarea:-webkit-autofill:focus,
 select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
-  transition: background-color 5000s ease-in-out 0s;
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+    transition: background-color 5000s ease-in-out 0s;
 }

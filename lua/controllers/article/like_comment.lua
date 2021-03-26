@@ -55,11 +55,16 @@ local function post_rev_advocate(_, rev_advocator_id, comment_id)
 end
 
 local function rev_advocate(app, uid, comment_id)
+    local already_advocated = User:check_advocated_comment(uid, comment_id)
+    
+    if not already_advocated then
+        error("forbidden", 0)
+    end
+
     local comment = Comment:find_by_id(comment_id)
 
     if not comment then
-        app.status = 400
-        error("comment.not.exists")
+        error("comment.not.exists", 0)
     end
 
     Comment:query([[
@@ -87,15 +92,13 @@ local function like_comment(app)
 
     -- Validation of parameters
     if not comment_id then
-        app.status = 400
-        error("comment.not.exists")
+        error("comment.not.exists", 0)
     end
 
     local user = User:find_by_id(uid)
 
     if user.fame <= 0 then
-        app.status = 403
-        error("fame.too.low")
+        error("fame.too.low", 0)
     end
 
     if attitude == "advocate" then
@@ -103,8 +106,7 @@ local function like_comment(app)
     elseif attitude == "rev_advocate" then
         return rev_advocate(app, uid, comment_id)
     else
-        app.status = 400
-        error("unknown.attitude")
+        error("unknown.attitude", 0)
     end
 end
 

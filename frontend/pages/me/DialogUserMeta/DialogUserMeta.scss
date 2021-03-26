@@ -1,142 +1,142 @@
 @import "colors.scss";
 
 .-dialog.user-meta {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  padding: 1rem 0;
-  background-color: hsla(0, 0%, 100%, 0.8);
-  transition: transform 200ms;
-  transform: translate3d(0, 100%, 0);
-
-  &.visible {
-    transform: translate3d(0, 0, 0);
-  }
-
-  .box {
-    position: relative;
-    margin: auto;
-    max-width: 560px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    background-color: $white;
-    box-shadow: 0 3px 5px $grey-light;
-    border-radius: 0.3rem;
+    padding: 1rem 0;
+    background-color: hsla(0, 0%, 100%, 0.8);
+    transition: transform 200ms;
+    transform: translate3d(0, 100%, 0);
 
-    .header {
-      display: flex;
-      align-items: center;
-      padding-left: 0.8rem;
-      color: $grey;
-      border-bottom: 1px solid $light;
-
-      svg {
-        width: 1.3rem;
-        height: 1.3rem;
-      }
-
-      .x-btn {
-        margin-left: auto;
-        padding: 0.15rem;
-        cursor: pointer;
-        svg {
-          width: 2rem;
-          height: 2rem;
-          color: $grey-dark;
-          transition: color 300ms;
-          &:hover {
-            color: $red;
-          }
-        }
-      }
+    &.visible {
+        transform: translate3d(0, 0, 0);
     }
 
-    .body {
-      flex: 1;
-      overflow: hidden auto;
-
-      .row {
-        padding: 1rem 2rem;
-        display: flex;
-        align-items: flex-start;
-
-        &.bg {
-          .bg-preview {
-            width: 16rem;
-            max-width: 16rem;
-            height: 9rem;
-            max-height: 9rem;
-            background-color: $light;
-            background-size: cover;
-            border-radius: 0.2rem;
-            cursor: pointer;
-          }
-        }
-
-        &.profile {
-          .profile-preview {
-            width: 6rem;
-            height: 6rem;
-            background-color: $light;
-            background-size: cover;
-            border-radius: 50%;
-            cursor: pointer;
-          }
-        }
-
-        &.nickname {
-          align-items: center;
-        }
-
-        label {
-          width: 8rem;
-          cursor: pointer;
-        }
-      }
-
-      svg {
+    .box {
         position: relative;
-        top: 0.2rem;
-        width: 1.2rem;
-        height: 1.2rem;
-      }
+        margin: auto;
+        max-width: 560px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background-color: $white;
+        box-shadow: 0 3px 5px $grey-light;
+        border-radius: 0.3rem;
 
-      input {
-        border: none;
-        border-bottom: 1px solid $dark;
-        &:focus {
-          border-color: $link;
+        .header {
+            display: flex;
+            align-items: center;
+            padding-left: 0.8rem;
+            color: $grey;
+            border-bottom: 1px solid $light;
+
+            svg {
+                width: 1.3rem;
+                height: 1.3rem;
+            }
+
+            .x-btn {
+                margin-left: auto;
+                padding: 0.15rem;
+                cursor: pointer;
+                svg {
+                    width: 2rem;
+                    height: 2rem;
+                    color: $grey-dark;
+                    transition: color 300ms;
+                    &:hover {
+                        color: $red;
+                    }
+                }
+            }
         }
-      }
 
-      textarea {
-        border: 1px solid $dark;
-        border-radius: 0.2rem;
-        outline: none;
-        &:focus {
-          border-color: $link;
+        .body {
+            flex: 1;
+            overflow: hidden auto;
+
+            .row {
+                padding: 1rem 2rem;
+                display: flex;
+                align-items: flex-start;
+
+                &.bg {
+                    .bg-preview {
+                        width: 16rem;
+                        max-width: 16rem;
+                        height: 9rem;
+                        max-height: 9rem;
+                        background-color: $light;
+                        background-size: cover;
+                        border-radius: 0.2rem;
+                        cursor: pointer;
+                    }
+                }
+
+                &.profile {
+                    .profile-preview {
+                        width: 6rem;
+                        height: 6rem;
+                        background-color: $light;
+                        background-size: cover;
+                        border-radius: 50%;
+                        cursor: pointer;
+                    }
+                }
+
+                &.nickname {
+                    align-items: center;
+                }
+
+                label {
+                    width: 8rem;
+                    cursor: pointer;
+                }
+            }
+
+            svg {
+                position: relative;
+                top: 0.2rem;
+                width: 1.2rem;
+                height: 1.2rem;
+            }
+
+            input {
+                border: none;
+                border-bottom: 1px solid $dark;
+                &:focus {
+                    border-color: $link;
+                }
+            }
+
+            textarea {
+                border: 1px solid $dark;
+                border-radius: 0.2rem;
+                outline: none;
+                &:focus {
+                    border-color: $link;
+                }
+            }
         }
-      }
-    }
 
-    .footer {
-      padding: 1.5rem 2.5rem;
-      border-top: 1px solid $light;
-      button {
-        display: block;
-        width: 100%;
-      }
-    }
+        .footer {
+            padding: 1.5rem 2.5rem;
+            border-top: 1px solid $light;
+            button {
+                display: block;
+                width: 100%;
+            }
+        }
 
-    input[type="file"] {
-      width: 1px;
-      height: 1px;
-      position: absolute;
-      left: -99999px;
-      top: -99999px;
+        input[type="file"] {
+            width: 1px;
+            height: 1px;
+            position: absolute;
+            left: -99999px;
+            top: -99999px;
+        }
     }
-  }
 }

@@ -1,19 +1,19 @@
 @import "colors.scss";
 
 footer {
-  margin-top: auto;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
+    margin-top: auto;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
 
-  svg {
-    width: 1rem;
-    height: 1rem;
-    vertical-align: middle;
-  }
+    svg {
+        width: 1rem;
+        height: 1rem;
+        vertical-align: middle;
+    }
 
-  p {
-    margin: 0;
-    line-height: 1.8;
-    color: $grey-light;
-  }
+    p {
+        margin: 0;
+        line-height: 1.8;
+        color: $grey-light;
+    }
 }

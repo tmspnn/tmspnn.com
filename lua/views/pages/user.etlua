@@ -1,0 +1,44 @@
+<div class="-page-container">
+    <% render("views/components/navbar_me") %>
+    <div class="main">
+        <div class="bg-container">
+            <img src="<%= ctx.data.user.bg_image %>" alt="bg_image"
+            <% if #ctx.data.user.bg_image == 0 then %>hidden<% end %>>
+        </div>
+        <div class="profile-container">
+            <% if #ctx.data.user.profile > 0 then %>
+            <div class="profile" style="background-image: url(<%= ctx.data.user.profile %>)"></div>
+            <% else %>
+            <div class="profile">匿</div>
+            <% end %>
+        </div>
+        <div class="events">
+            <% for i, f in ipairs(ctx.data.events) do -%>
+            <div class="event"></div>
+            <% end -%>
+        </div>
+    </div>
+    <div class="relations">
+        <h3>
+            <% render("views/icons/heart") %>
+            <span>他的关注</span>
+        </h3>
+        <div>
+            <% for i, f in ipairs(ctx.data.followings) do -%>
+            <div class="profile" style="background-image: url(<%= f.profile %>)"></div>
+            <% end -%>
+        </div>
+        <h3 class="fans">
+            <% render("views/icons/user_group") %>
+            <span>他的粉丝</span>
+        </h3>
+        <div>
+            <% for i, f in ipairs(ctx.data.followers) do -%>
+            <div class="profile" style="background-image: url(<%= f.profile %>)"></div>
+            <% end -%>
+        </div>
+    </div>
+</div>
+<% render("views/components/toast") %>
+<% render("views/components/progress_bar") %>
+<script id="_data" type="application/json"><%- ctx.data_json %></script>

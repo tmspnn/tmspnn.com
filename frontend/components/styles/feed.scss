@@ -1,67 +1,67 @@
 @import "colors.scss";
 
 .-feed {
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 3rem;
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
 
-  .cover {
-    display: block;
-    position: relative;
-    background-size: cover;
-    padding-bottom: 56.25%; /* 16:9 */
+    .cover {
+        display: block;
+        position: relative;
+        background-size: cover;
+        padding-bottom: 56.25%; /* 16:9 */
 
-    &:hover {
-      h1,
-      h3 {
-        color: $white;
-      }
+        &:hover {
+            h1,
+            h3 {
+                color: $white;
+            }
+        }
+
+        h1 {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            margin: 0;
+            padding: 0.6rem 1rem;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 1), transparent);
+            color: $light;
+            font-size: 2.8rem;
+            transition: color 120ms;
+        }
     }
 
-    h1 {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      margin: 0;
-      padding: 0.6rem 1rem;
-      background: linear-gradient(0deg, rgba(0, 0, 0, 1), transparent);
-      color: $light;
-      font-size: 2.8rem;
-      transition: color 120ms;
+    .meta {
+        display: flex;
+        font-size: 0.9rem;
+
+        .item {
+            padding: 0.5rem 1.5rem 0.5rem 0.5rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: $grey-dark;
+
+            svg {
+                width: 1rem;
+                height: 1rem;
+                margin-right: 0.2rem;
+            }
+        }
     }
-  }
 
-  .meta {
-    display: flex;
-    font-size: 0.9rem;
-
-    .item {
-      padding: 0.5rem 1.5rem 0.5rem 0.5rem;
-      display: flex;
-      align-items: center;
-      text-decoration: none;
-      color: $grey-dark;
-
-      svg {
-        width: 1rem;
-        height: 1rem;
-        margin-right: 0.2rem;
-      }
+    .tags {
+        padding: 0 0.2rem;
+        line-height: 1;
     }
-  }
 
-  .tags {
-    padding: 0 0.2rem;
-    line-height: 1;
-  }
-
-  .summary {
-    display: block;
-    padding: 0.6rem;
-    font-size: 0.9rem;
-    color: $grey-light;
-    text-decoration: none;
-  }
+    .summary {
+        display: block;
+        padding: 0.6rem;
+        font-size: 0.9rem;
+        color: $grey-light;
+        text-decoration: none;
+    }
 }

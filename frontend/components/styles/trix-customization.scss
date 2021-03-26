@@ -1,34 +1,34 @@
 @import "colors.scss";
 
 .no-icon {
-  overflow: hidden;
-  text-indent: 0;
+    overflow: hidden;
+    text-indent: 0;
 
-  &:before {
-    background-image: none;
-  }
+    &:before {
+        background-image: none;
+    }
 }
 
 trix-editor {
-  background-color: $white;
+    background-color: $white;
 }
 
 trix-toolbar {
-  .trix-button--icon-bold {
-    @extend .no-icon;
-  }
+    .trix-button--icon-bold {
+        @extend .no-icon;
+    }
 
-  .trix-button--icon-italic {
-    @extend .no-icon;
-    font-style: italic;
-  }
+    .trix-button--icon-italic {
+        @extend .no-icon;
+        font-style: italic;
+    }
 
-  .trix-button--icon-strike {
-    @extend .no-icon;
-    text-decoration: line-through;
-  }
+    .trix-button--icon-strike {
+        @extend .no-icon;
+        text-decoration: line-through;
+    }
 
-  .trix-dialog--link {
-    border: 1px solid $grey-light;
-  }
+    .trix-dialog--link {
+        border: 1px solid $grey-light;
+    }
 }

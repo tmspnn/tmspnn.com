@@ -1,42 +1,42 @@
 @import "colors.scss";
 
 .-richtext {
-  line-height: 1.6;
+    line-height: 1.6;
 
-  h1 {
-    font-size: 2rem !important;
-    padding: 1.5rem 0 !important;
-  }
+    h1 {
+        font-size: 2rem !important;
+        padding: 1.5rem 0 !important;
+    }
 
-  p {
-    margin: 0;
-    padding: 0 1rem;
-  }
+    p {
+        margin: 0;
+        padding: 0 1rem;
+    }
 
-  pre {
-    padding: 1rem;
-    font-family: monospace;
-    background: $grey-lighter;
-    border-radius: 0.2rem;
-  }
+    pre {
+        padding: 1rem;
+        font-family: monospace;
+        background: $grey-lighter;
+        border-radius: 0.2rem;
+    }
 
-  img {
-    display: block;
-    max-width: 100%;
-    margin: 0.6rem 0;
-  }
+    img {
+        display: block;
+        max-width: 100%;
+        margin: 0.6rem 0;
+    }
 
-  blockquote {
-    margin: 0.6rem 0;
-    padding: 1rem;
-    border-left: 3px solid $link;
-    border-radius: 0.2rem;
-    background-color: $grey-lighter;
-  }
+    blockquote {
+        margin: 0.6rem 0;
+        padding: 1rem;
+        border-left: 3px solid $link;
+        border-radius: 0.2rem;
+        background-color: $grey-lighter;
+    }
 
-  ul,
-  ol {
-    margin: 0;
-    padding: 1rem;
-  }
+    ul,
+    ol {
+        margin: 0;
+        padding: 1rem;
+    }
 }

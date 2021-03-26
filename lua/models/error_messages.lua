@@ -94,6 +94,10 @@ local error_messages = {
     ["duplicated.advocation"] = {
         status = 403,
         message = "不可重复点赞."
+    },
+    ["user.not.exists"] = {
+        status = 400,
+        message = "用户不存在."
     }
 }
 

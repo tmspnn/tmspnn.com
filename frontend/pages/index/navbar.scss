@@ -1,11 +1,11 @@
 .-navigation-bar {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 20%;
-  height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20%;
+    height: 100%;
 
-  &.invisible {
-    transform: translate3d(-4rem, 0, 0);
-  }
+    &.invisible {
+        transform: translate3d(-4rem, 0, 0);
+    }
 }

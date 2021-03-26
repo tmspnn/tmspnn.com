@@ -18,21 +18,21 @@ local function me_data(app)
 
     if #following_ids > 0 then
         followings = User:find(
-                         "id, profile, nickname from \"user\" where id in ?",
-                         following_ids)
+        [[ id, profile, nickname from "user" where id in ? ]],
+        following_ids)
     end
 
     local followers = {}
 
     if #follower_ids > 0 then
         followers = User:find(
-                        "id, profile, nickname from \"user\" where id in ?",
-                        follower_ids)
+        [[ id, profile, nickname from "user" where id in ? ]],
+        follower_ids)
     end
 
     local events = Event:find(
-                       "* from \"event\" where created_by = ? order by id desc limit ?",
-                       uid, 20)
+    [[ * from "event" where created_by = ? order by id desc limit ? ]],
+    uid, 20)
 
     local policy, signature = User:generate_oss_upload_token(uid)
 

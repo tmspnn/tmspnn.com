@@ -1,29 +1,29 @@
 .relations {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 20%;
-  height: 100%;
-  overflow: hidden;
-  transition-delay: 250ms;
-  border-left: 1px solid $grey-lighter;
-  h3 {
-    color: $grey-dark;
-    font-size: 1.5rem;
-    margin: 0;
-    padding: 1rem;
-    border-bottom: 1px solid $grey-lighter;
-    &.fans {
-      svg {
-        top: -0.2rem;
-      }
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 20%;
+    height: 100%;
+    overflow: hidden;
+    transition-delay: 250ms;
+    border-left: 1px solid $grey-lighter;
+    h3 {
+        color: $grey-dark;
+        font-size: 1.5rem;
+        margin: 0;
+        padding: 1rem;
+        border-bottom: 1px solid $grey-lighter;
+        &.fans {
+            svg {
+                top: -0.2rem;
+            }
+        }
+        svg {
+            position: relative;
+            top: -0.15rem;
+            width: 1.8rem;
+            height: 1.8rem;
+            vertical-align: middle;
+        }
     }
-    svg {
-      position: relative;
-      top: -0.15rem;
-      width: 1.8rem;
-      height: 1.8rem;
-      vertical-align: middle;
-    }
-  }
 }

@@ -2,93 +2,99 @@
 import isEmail from "validator/lib/isEmail";
 
 export default class SignUpController extends Controller {
-  blocked = false;
-  countdown = 0;
-  intervalId = 0;
+    blocked = false;
+    countdown = 0;
+    intervalId = 0;
 
-  constructor() {
-    super("signUp");
-  }
-
-  clickVcodeBtn = (args) => {
-    if (this.blocked || this.intervalId != 0) return;
-
-    const { email } = args;
-
-    if (!isEmail(email)) {
-      return this.showToast("请输入正确的邮箱地址.");
+    constructor() {
+        super("signUp");
     }
 
-    this.blocked = true;
-    this.ui("customSpinner::show");
+    clickVcodeBtn = (args) => {
+        if (this.blocked || this.intervalId != 0) return;
 
-    postJSON({
-      url: "/api/verification-codes",
-      data: { email },
-      cb: () => {
-        this.showToast("验证码已发送至您的邮箱.");
-        this.startCountdown();
-      },
-      fail: (e) => {
-        const err = isJSON(e.message) ? JSON.parse(e.message).err : e.message;
-        this.showToast(err);
-      },
-      final: () => {
-        this.blocked = false;
-        this.ui("customSpinner::hide");
-      },
-    });
-  };
+        const { email } = args;
 
-  clickSubmitBtn = (args) => {
-    if (this.blocked) return;
+        if (!isEmail(email)) {
+            return this.showToast("请输入正确的邮箱地址.");
+        }
 
-    const { email, vcode, password } = args;
+        this.blocked = true;
+        this.ui("customSpinner::show");
 
-    if (!isEmail(email)) {
-      return this.showToast("请输入正确的邮箱地址.");
-    }
+        postJSON({
+            url: "/api/verification-codes",
+            data: { email },
+            cb: () => {
+                this.showToast("验证码已发送至您的邮箱.");
+                this.startCountdown();
+            },
+            fail: (e) => {
+                const err = isJSON(e.message)
+                    ? JSON.parse(e.message).err
+                    : e.message;
+                this.showToast(err);
+            },
+            final: () => {
+                this.blocked = false;
+                this.ui("customSpinner::hide");
+            }
+        });
+    };
 
-    if (!_.isNumber(+vcode)) {
-      return this.showToast("请输入4位数字验证码.");
-    }
+    clickSubmitBtn = (args) => {
+        if (this.blocked) return;
 
-    if (password.length < 6) {
-      return this.showToast("请输入至少6位的密码.");
-    }
+        const { email, vcode, password } = args;
 
-    this.blocked = true;
-    this.ui("customSpinner::show");
+        if (!isEmail(email)) {
+            return this.showToast("请输入正确的邮箱地址.");
+        }
 
-    postJSON({
-      url: "/api/sign-up",
-      data: args,
-      cb: () => {
-        location.href = "/";
-      },
-      fail: (e) => {
-        const err = isJSON(e.message) ? JSON.parse(e.message).err : e.message;
-        this.showToast(err);
-      },
-      final: () => {
-        this.blocked = false;
-        this.ui("customSpinner::hide");
-      },
-    });
-  };
+        if (!_.isNumber(+vcode)) {
+            return this.showToast("请输入4位数字验证码.");
+        }
 
-  startCountdown = () => {
-    this.countdown = 60;
-    this.intervalId = setInterval(() => {
-      this.ui("signUp::setVcodeCountdown", { countdown: --this.countdown });
-      if (this.countdown == 0) {
-        clearInterval(this.intervalId);
-        this.intervalId = 0;
-      }
-    }, 1000);
-  };
+        if (password.length < 6) {
+            return this.showToast("请输入至少6位的密码.");
+        }
 
-  showToast = (texts) => {
-    this.ui("toast::show", { texts });
-  };
+        this.blocked = true;
+        this.ui("customSpinner::show");
+
+        postJSON({
+            url: "/api/sign-up",
+            data: args,
+            cb: () => {
+                location.href = "/";
+            },
+            fail: (e) => {
+                const err = isJSON(e.message)
+                    ? JSON.parse(e.message).err
+                    : e.message;
+                this.showToast(err);
+            },
+            final: () => {
+                this.blocked = false;
+                this.ui("customSpinner::hide");
+            }
+        });
+    };
+
+    startCountdown = () => {
+        this.countdown = 60;
+        this.intervalId = setInterval(() => {
+            this.ui("signUp::setVcodeCountdown", {
+                countdown: --this.countdown
+            });
+            if (this.countdown == 0) {
+                clearInterval(this.intervalId);
+                this.intervalId = 0;
+            }
+        }, 1000);
+    };
+
+    showToast = (texts) => {
+        this.ui("toast::show", { texts });
+    };
 }
