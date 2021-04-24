@@ -1,30 +1,27 @@
-// Env and version
+// Environment and version
 const isProduction = process.env.NODE_ENV == "production";
 const version = require("./package.json").version;
 
 // External modules
 const _ = require("lodash");
 const webpack = require("webpack");
-const autoprefixer = require("autoprefixer");
-const colorFunction = require("postcss-color-function");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const precss = require("precss");
 
 // Pages
 const pages = [
-    "index",
-    "signIn",
-    "signUp",
-    "forgotPassword",
-    "resetPassword",
-    "editor",
-    "article",
-    "me",
-    "user"
+    "index"
+    // "signIn",
+    // "signUp",
+    // "forgotPassword",
+    // "resetPassword",
+    // "editor",
+    // "article",
+    // "me",
+    // "user"
 ];
 
 module.exports = {
-    context: __dirname + "/frontend",
+    context: __dirname + "/app",
     entry: _(pages)
         .keyBy()
         .mapValues((p) => `/pages/${p}/${p}.js`)
@@ -49,16 +46,10 @@ module.exports = {
                                 plugins: [
                                     [
                                         "postcss-import",
-                                        {
-                                            path: [
-                                                "frontend/components",
-                                                "frontend/components/styles"
-                                            ]
-                                        }
+                                        { path: ["app/styles"] }
                                     ],
-                                    precss,
-                                    colorFunction,
-                                    autoprefixer
+                                    "autoprefixer",
+                                    "precss"
                                 ]
                             }
                         }
@@ -87,8 +78,8 @@ module.exports = {
     },
     resolve: {
         alias: {
-            "@components": __dirname + "/frontend/components",
-            "@util": __dirname + "/frontend/util"
+            "@components": __dirname + "/app/components",
+            "@helpers": __dirname + "/app/helpers"
         },
         extensions: [".js", ".json"]
     },
@@ -99,26 +90,10 @@ module.exports = {
     plugins: [
         new webpack.ProvidePlugin({
             _: "lodash",
-            View: ["@components/vc", "View"],
-            Controller: ["@components/vc", "Controller"],
-            getJSON: ["@util/xhr", "getJSON"],
-            postJSON: ["@util/xhr", "postJSON"],
-            postFormData: ["@util/xhr", "postFormData"],
-            xhr: ["@util/xhr", "default"],
-            isJSON: ["@util/isJSON", "default"],
-            $: ["@util/DOM", "$"],
-            $$: ["@util/DOM", "$$"],
-            addClass: ["@util/DOM", "addClass"],
-            removeClass: ["@util/DOM", "removeClass"],
-            toggleClass: ["@util/DOM", "toggleClass"],
-            hasClass: ["@util/DOM", "hasClass"],
-            cloneNode: ["@util/DOM", "cloneNode"],
-            replaceNode: ["@util/DOM", "replaceNode"],
-            clearNode: ["@util/DOM", "clearNode"],
-            html2DOM: ["@util/DOM", "html2DOM"],
-            uploadToOSS: ["@util/uploadToOSS", "default"]
+            View: ["@components/VC", "View"],
+            Controller: ["@components/VC", "Controller"]
         }),
-        pages.map(
+        ...pages.map(
             () =>
                 new MiniCssExtractPlugin({ filename: `[name]-${version}.css` })
         )
