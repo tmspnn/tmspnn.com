@@ -1,11 +1,7 @@
--- External modules
-local ngx = require "ngx" -- The Nginx interface provided by OpenResty
-
 -- Local modules
-local User = require "models/user"
-local auth = {}
+local User = require "models/User"
 
-function auth.get_uid(app)
+local function auth(app)
     local user_token = app.cookies.user_token
 
     if user_token then

@@ -1,13 +1,12 @@
 -- External modules
-local ngx = require "ngx" -- The Nginx interface provided by OpenResty
+-- > The Nginx interface provided by OpenResty
+local ngx = require "ngx"
 
--- Local modules
-local cors = {}
-
+-- Implementation
 local trusted_origins = {"\\.tmspnn.com$"}
+local max_age = 60 * 60 * 24 * 7 -- one week
 
-function cors.add_headers_if_necessary(app)
-    -- app: lapis.Application
+local function CORS(app)
     local origin = app.req.headers.origin
     local http_method = app.req.cmd_mth
 
@@ -20,9 +19,9 @@ function cors.add_headers_if_necessary(app)
             app.res.headers["access-control-allow-origin"] = origin
             app.res.headers["access-control-allow-credentials"] = true
             if http_method == ngx.HTTP_OPTIONS then
-                app.res.headers["access-control-allow-methods"] = "GET,POST,PUT,POST"
+                app.res.headers["access-control-allow-methods"] = "GET,POST,PUT"
                 app.res.headers["access-control-allow-headers"] = "x-requested-with,content-type"
-                app.res.headers["access-control-max-age"] = 60 * 60 * 24 * 7 -- one week
+                app.res.headers["access-control-max-age"] = max_age
                 app:write({
                     status = 204
                 })
@@ -32,4 +31,4 @@ function cors.add_headers_if_necessary(app)
     end
 end
 
-return cors
+return CORS

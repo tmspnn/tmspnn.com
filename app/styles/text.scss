@@ -1,0 +1,84 @@
+@import "base.scss";
+
+h1,
+.h1 {
+    margin: 0;
+    padding: 2rem 0;
+    font-size: 3.4rem;
+    color: $black;
+}
+
+h2,
+.h2 {
+    margin: 0;
+    padding: 1.5rem 0;
+    font-size: 2.6rem;
+    color: $black-grey;
+}
+
+h3,
+.h3 {
+    margin: 0;
+    padding: 1rem 0;
+    font-size: 1.8rem;
+    color: $grey;
+}
+
+h4,
+.h4 {
+    margin: 0;
+    padding: 0.6rem 0;
+    font-size: 1.2rem;
+    color: $grey;
+}
+
+h5,
+.h5 {
+    margin: 0;
+    padding: 0.4rem 0;
+    font-size: 0.9rem;
+    color: $grey;
+}
+
+h6,
+.h6 {
+    margin: 0;
+    padding: 0.2rem 0;
+    font-size: 0.8rem;
+    color: $grey-white;
+}
+
+p,
+div {
+    line-height: 1.5;
+    color: $black-grey;
+}
+
+._truncated {
+    white-space: nowrap;
+    max-width: 6rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Dark theme */
+body.dark {
+    h1,
+    .h1 {
+        color: $white;
+    }
+}
+
+/* Tablet */
+@media screen and (min-width: 768px) and (max-width: 1023.9px) {
+    body {
+        width: 100%;
+    }
+}
+
+/* Desktop */
+@media screen and (min-width: 1024px) {
+    body {
+        width: 100%;
+    }
+}

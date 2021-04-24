@@ -27,10 +27,8 @@ export function replaceNode(newEl, el) {
 
 export function removeNode(node) {
     if (typeof node.remove == "function") {
-        return node.remove();
-    }
-
-    if (node.parentNode) {
+        node.remove();
+    } else if (node.parentNode) {
         node.parentNode.removeChild(node);
     }
 }
@@ -53,16 +51,10 @@ export function hasClass(el, className) {
 
 export function cloneScriptElement(el) {
     const script = document.createElement("script");
-
-    if (el.src) {
-        script.src = el.src;
-    } else {
-        script.textContent = el.textContent;
-    }
-
     if (el.id) script.id = el.id;
-    if (el.type) script.type = el.type;
-
+    if (el.src) script.src = el.src;
+    script.type = el.type || "text/javascript";
+    script.textContent = el.textContent || "";
     return script;
 }
 
@@ -75,7 +67,7 @@ export function createStyleElement(texts) {
 export function filterVisibleElements(elements) {
     const visibleElements = [];
 
-    for (let i = 0; i < elements.length; i++) {
+    for (let i = 0; i < elements.length; ++i) {
         const el = elements[i];
         if (el.offsetParent || el.offsetWidth > 0) {
             visibleElements.push(el);

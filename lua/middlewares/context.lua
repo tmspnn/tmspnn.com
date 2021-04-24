@@ -1,10 +1,8 @@
 -- External modules
-local lapis_util = require("lapis.util")
+local lapis_util = require "lapis.util"
 
 -- Implementation
-local context = {}
-
-function context.init(app)
+local function context(app)
     app.ctx = {
         escape = lapis_util.escape,
         snake_case = lapis_util.underscore,

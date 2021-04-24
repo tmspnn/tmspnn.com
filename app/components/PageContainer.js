@@ -1,12 +1,17 @@
-import { createStyleElement, filterVisibleElements } from "@util/DOM";
-import isJSON from "@util/isJSON";
-import isSameOrigin from "@util/isSameOrigin";
-import createDocument from "@util/createDocument";
-
-const win = window;
+import {
+    $,
+    $$,
+    addClass,
+    createStyleElement,
+    filterVisibleElements
+} from "@helpers/DOM";
+import isJSON from "@helpers/isJSON";
+import isSameOrigin from "@helpers/isSameOrigin";
+import createDocument from "@helpers/createDocument";
 
 export default class PageContainer extends View {
     _name = "pageContainer";
+
     defaultStyle = `
     .-page-container > * {
       transition: all 200ms ease;
@@ -17,6 +22,7 @@ export default class PageContainer extends View {
       transform: translate3d(0, 2.4rem, 0);
     }
   `;
+
     cache = {};
     lastUrl = null;
     currentUrl = location.href.replace(/#.*/, "");
@@ -29,27 +35,27 @@ export default class PageContainer extends View {
         super(namespace);
 
         if (!$("style.-page-container", document.head)) {
-            this.insertDefaultStyles();
+            this.insertDefaultStyle();
         }
 
-        if (!win._pageContainer) {
+        if (!window._pageContainer) {
             this.cache[location.href] = {
                 documentElement: document.documentElement,
                 loaded: true
             };
             history.replaceState({ url: this.currentUrl, from: null }, "");
-            win.on("popstate", this.onPopState);
-            win._pageContainer = this;
+            window.on("popstate", this.onPopState);
+            window._pageContainer = this;
         }
 
-        const container = win._pageContainer || this;
+        const container = window._pageContainer || this;
 
         $$("a").forEach((a) => {
             a.on("click", (e) => container.onLinkClick(e), { passive: false });
         });
     }
 
-    insertDefaultStyles = (doc = document) => {
+    insertDefaultStyle = (doc = document) => {
         const style = createStyleElement(this.defaultStyle);
         addClass(style, ".-page-container");
         const head = $("head", doc);
@@ -57,8 +63,8 @@ export default class PageContainer extends View {
     };
 
     onLinkClick = (e) => {
-        const a = e.currentTarget;
-        const url = a.href.replace(/#.*/, "");
+        const link = e.currentTarget;
+        const url = link.href.replace(/#.*/, "");
 
         if (!isSameOrigin(url)) return;
 
@@ -78,10 +84,9 @@ export default class PageContainer extends View {
         this.switchPage();
     };
 
-    toPage = (args) => {
-        const { url, shouldPushState = true } = args;
+    toPage = (url, shouldPushState = true) => {
         const link = document.createElement("a");
-        link.href = url; // transform relative paths to absolute paths
+        link.href = url; // Transform relative path to absolute path
         const parsedUrl = link.href.replace(/#.*/, "");
 
         if (!isSameOrigin(parsedUrl) || this.currentUrl == parsedUrl) return;
@@ -105,7 +110,7 @@ export default class PageContainer extends View {
                 addClass(el, "invisible");
             });
         } else {
-            setTimeout(this.next, 0);
+            setTimeout(this.next);
         }
 
         // Load new page
@@ -135,7 +140,7 @@ export default class PageContainer extends View {
 
             if (xhr.status >= 200 && xhr.status < 400) {
                 const docModel = createDocument(xhr.responseText);
-                this.insertDefaultStyles(docModel.documentElement);
+                this.insertDefaultStyle(docModel.documentElement);
                 this.cache[responseUrl] = docModel;
 
                 // In case of redirection
@@ -194,7 +199,7 @@ export default class PageContainer extends View {
                 });
             }, 20);
         } else {
-            setTimeout(this.next, 0);
+            setTimeout(this.next);
         }
 
         if (this.shouldPushState) {

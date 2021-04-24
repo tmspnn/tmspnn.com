@@ -1,4 +1,16 @@
-<div class="-page-container">
+<%
+local lang = ctx.lang or "zh-cn"
+local theme = ctx.theme or "light"
+local data = ctx.data or {}
+%>
+
+<h1>Home</h1>
+<p>testing = <%= data.testing %></p>
+<div class="_round _aurora test"></div>
+
+<%
+--[[%>
+ <div class="-page-container">
   <% render("views/components/navigation_bar") %>
   <div class="main">
     <% render("views/components/search_bar") %>
@@ -46,3 +58,5 @@
 </div>
 <% render("views/components/progress_bar") %>
 <script id="_data" type="application/json"><%- ctx.data_json %></script>
+<%
+]]%>

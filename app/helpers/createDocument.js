@@ -1,18 +1,18 @@
-import { clearNode, cloneScriptElement } from "@util/DOM";
+import { clearNode, cloneScriptElement } from "@helpers/DOM";
 
 export default function createDocument(html) {
-    // script tags in htmlDoc won"t execute
+    // Script tags in htmlDoc won't execute
     const htmlDoc = document.implementation.createHTMLDocument("");
     htmlDoc.documentElement.innerHTML = html;
     const doc = document.implementation.createHTMLDocument("");
     const scriptsInHead = [];
     const scriptsInBody = [];
 
-    // head
-    clearNode(doc.head);
+    // Head
+    clearNode(doc.head); // Remove the title tag
     const elementsInHead = htmlDoc.head.children;
 
-    for (let i = 0; i < elementsInHead.length; i++) {
+    for (let i = 0; i < elementsInHead.length; ++i) {
         const el = elementsInHead[i];
         if (el instanceof HTMLScriptElement) {
             scriptsInHead.push(cloneScriptElement(el));
@@ -26,7 +26,7 @@ export default function createDocument(html) {
     clearNode(doc.body);
     const elementsInBody = htmlDoc.body.children;
 
-    for (let i = 0; i < elementsInBody.length; i++) {
+    for (let i = 0; i < elementsInBody.length; ++i) {
         const el = elementsInBody[i];
         if (el instanceof HTMLScriptElement) {
             scriptsInBody.push(cloneScriptElement(el));

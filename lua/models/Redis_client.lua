@@ -1,17 +1,21 @@
 -- External modules
-local ngx = require("ngx") -- Provided by OpenResty
+-- > The Nginx interface provided by OpenResty
+local ngx = require "ngx"
 
 -- Implementation
-local redis_client = {}
+local Redis_client = {}
 
-redis_client.__index = redis_client -- As a base class, __index points to self
+-- > As a base class, __index points to self
+Redis_client.__index = Redis_client
 
-function redis_client:new(conf)
-    local resty_redis = require("resty.redis")
+function Redis_client:new(conf)
+    local resty_redis = require "resty.redis"
     local redis = resty_redis:new()
     redis:set_timeout(1000) -- one second
 
-    if not conf then conf = {} end
+    if not conf then
+        conf = {}
+    end
 
     local client = {
         host = conf.host or "127.0.0.1",
@@ -27,7 +31,7 @@ function redis_client:new(conf)
     return setmetatable(client, self)
 end
 
-function redis_client:run(command, ...)
+function Redis_client:run(command, ...)
     if not self.connected then
         self:connect()
     end
@@ -41,21 +45,25 @@ function redis_client:run(command, ...)
 
     self:post_run(command, unpack({...}))
 
-    if res == ngx.null then return nil end
+    if res == ngx.null then
+        return nil
+    end
 
     return res
 end
 
-function redis_client:connect()
+function Redis_client:connect()
     local res, err = self.redis:connect(self.host, self.port)
 
-    if not res then error(err) end
+    if not res then
+        error(err)
+    end
 
     self.connected = true
 end
 
-function redis_client:post_run(command, ...)
-    local params = {...} 
+function Redis_client:post_run(command, ...)
+    local params = {...}
 
     if command == "init_pipeline" then
         self.piping = true
@@ -87,12 +95,14 @@ function redis_client:post_run(command, ...)
         end
     end
 
-    if self.piping or self.transactioning or #self.subscribed_channels > 0 or #self.subscribed_patterns > 0 then return end
+    if self.piping or self.transactioning or #self.subscribed_channels > 0 or #self.subscribed_patterns > 0 then
+        return
+    end
 
     self:release()
 end
 
-function redis_client:release()
+function Redis_client:release()
     if self.piping then
         self.redis:cancel_pipeline()
         self.piping = false
@@ -111,9 +121,11 @@ function redis_client:release()
         res, err = self.redis:set_keepalive(10000, 100)
     end
 
-    if not res then error(err) end
+    if not res then
+        error(err)
+    end
 
     self.connected = false
 end
 
-return redis_client
+return Redis_client

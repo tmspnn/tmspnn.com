@@ -1,5 +1,6 @@
 <% --[[ -%>
 tag: string
 attributes: table
+inner_html: string
 <% --]] -%>
-<<%= tag %> <% for attr, value in pairs(attributes) do %><%= attr %>="<%= value %>" <% end %>></<%= tag %>>
+<<%= tag %> <% for attr, value in pairs(attributes) do %><%= attr %>="<%= value %>" <% end %>><%- inner_html or "" %></<%= tag %>>

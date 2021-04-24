@@ -53,7 +53,7 @@ local error_messages = {
     },
     ["keyword.length"] = {
         status = 400,
-        message = "关键字长度需在64字以内.",
+        message = "关键字长度需在64字以内."
     },
     ["content.length"] = {
         status = 400,

@@ -9,10 +9,10 @@
   <% render("views.components.html_tag", el) %>
   <% end -%>
   <% end -%>
-  <title><%= ctx.page_title or "拾刻阅读 |" %></title>
+  <title><%= ctx.page_title or "一刻阅读 |" %></title>
 </head>
 
-<body>
+<body <% if ctx.data.theme == "dark" then %>class="dark"<% end %>>
   <% content_for("inner") %>
   <% if ctx.tags_in_body then -%>
   <% for i, el in ipairs(ctx.tags_in_body) do -%>

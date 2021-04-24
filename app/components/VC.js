@@ -1,11 +1,11 @@
-import { removeNode } from "@util/DOM";
-import ee from "@util/ee";
+import { removeNode } from "@helpers/DOM";
+import ee from "@helpers/ee";
 
 class Listener {
     _namespace = "";
     _type = "";
 
-    constructor(namespace, type) {
+    constructor(namespace = "", type = "") {
         this._namespace = namespace;
         this._type = type;
         ee.on(this._namespace + "::" + this._type, this._eventHandler);
@@ -25,12 +25,12 @@ export class View extends Listener {
     _data = null;
 
     constructor(namespace, element, data) {
-        super(namespace || "global", "view");
+        super(namespace, "view");
         this._element = element;
         this._data = data;
 
         if (element) {
-            const els = $$("[data-ref]", element);
+            const els = element.querySelectorAll("[data-ref]");
             for (let i = 0; i < els.length; ++i) {
                 const refName = els[i].getAttribute("data-ref");
                 this._refs[refName] = els[i];
@@ -75,7 +75,7 @@ export class View extends Listener {
 }
 
 export class Controller extends Listener {
-    constructor(namespace = "global") {
+    constructor(namespace) {
         super(namespace, "controller");
     }
 

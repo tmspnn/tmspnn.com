@@ -1,10 +1,9 @@
 -- External modules
-local ngx = require "ngx" -- The Nginx interface provided by OpenResty
+-- > The Nginx interface provided by OpenResty
+local ngx = require "ngx"
 
--- Local modules
-local device = {}
-
-function device.detect(app)
+-- Implementation
+local function device(app)
     app.ctx.device = {
         os = nil,
         is_mobile = false

@@ -1,0 +1,91 @@
+/* Colors and shadows */
+$black: hsl(0, 0%, 7%);
+$black-grey: hsl(0, 0%, 30%);
+$grey: hsl(0, 0%, 50%);
+$grey-white: hsl(0, 0%, 70%);
+$light-white: hsl(0, 0%, 90%);
+$white: hsl(0, 0%, 100%);
+$light-blue: #9cecfb;
+$blue: #65c7f7;
+$dark-blue: #0052d4;
+$green: #64f3bc;
+$orange: hsl(28, 98%, 47%);
+$red: #ff5f6d;
+$shadow: 0 0.4rem 1.2rem $grey;
+$dark-shadow: 0 0.4rem 1.2rem $black-grey;
+$light-shadow: 0 0.4rem 1.2rem $grey-white;
+
+/* Layout */
+[hidden] {
+    display: none !important;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+._flex {
+    display: flex;
+    align-items: center;
+}
+
+._inline {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+._block {
+    display: block;
+}
+
+._abs {
+    position: absolute;
+}
+
+._rel {
+    position: relative;
+}
+
+._full-size {
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+._no-overflow {
+    overflow: hidden;
+}
+
+._cover {
+    background-size: cover;
+}
+
+._round {
+    border-radius: 0.4rem;
+}
+
+._blurred {
+    filter: blur(0.8rem);
+}
+
+._blurred-serverely {
+    filter: blur(4rem);
+}
+
+._with-shadow {
+    box-shadow: $shadow;
+}
+
+._with-blurred-backdrop {
+    backdrop-filter: blur(0.8rem);
+}
+
+/* Dark theme */
+body.dark {
+    ._with-shadow {
+        box-shadow: $dark-shadow;
+    }
+}

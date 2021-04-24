@@ -1,4 +1,25 @@
 @import "base.scss";
+@import "page.scss";
+@import "text.scss";
+@import "panel.scss";
+@import "aurora.scss";
+
+body {
+    background-color: $black;
+}
+
+h1 {
+    color: red;
+}
+
+.test {
+    width: 400px;
+    height: 400px;
+    margin: 0 auto;
+}
+
+/*
+@import "base.scss";
 @import "navigationBar.scss";
 @import "feed.scss";
 @import "topic.scss";
@@ -17,3 +38,4 @@
     margin: 0 auto;
     position: relative;
 }
+*/

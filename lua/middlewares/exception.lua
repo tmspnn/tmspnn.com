@@ -1,8 +1,9 @@
 -- External modules
-local ngx = require("ngx") -- Provided by OpenResty
+-- > The Nginx interface provided by OpenResty
+local ngx = require "ngx"
 
 -- Local modules
-local error_messages = require("models/error_messages")
+local error_messages = require "models/error_messages"
 
 -- Implementation
 local exception = {}
@@ -21,13 +22,15 @@ function exception.handle_error(app, err, trace)
     local msg = error_messages[err]
 
     if not msg then
-        ngx.log(ngx.ERR, err, trace) 
+        ngx.log(ngx.ERR, err, trace)
         msg = error_messages["default"]
     end
 
     return {
         status = msg.status,
-        json = { err = msg.message }
+        json = {
+            err = msg.message
+        }
     }
 end
 

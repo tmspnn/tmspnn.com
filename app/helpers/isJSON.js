@@ -1,6 +1,6 @@
 export default function isJSON(v) {
     try {
-        return typeof JSON.parse(v) == "object";
+        return JSON.parse(v) instanceof Object;
     } catch (e) {
         return false;
     }
