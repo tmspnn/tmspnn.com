@@ -1,0 +1,26 @@
+@import "base.scss";
+
+button {
+    @extend ._rel;
+    @extend ._no-overflow;
+    @extend ._round-corner;
+    @extend ._no-border;
+    @extend ._no-outline;
+    @extend ._unselectable;
+    @extend ._cursor-pointer;
+    @extend ._with-transition;
+
+    padding: 0.34em 1.2em 0.44em 0.8em;
+    box-shadow: 0 0.5rem 1rem $blue;
+    color: $white;
+    background-image: radial-gradient(at left top, $green, $blue);
+
+    &:hover {
+        box-shadow: $light-shadow;
+        transform: scale(0.98);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}

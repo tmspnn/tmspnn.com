@@ -2,40 +2,20 @@
 @import "page.scss";
 @import "text.scss";
 @import "panel.scss";
+@import "button.scss";
 @import "aurora.scss";
+@import "feed.scss";
 
 body {
-    background-color: $black;
+    background-color: $bg-white;
 }
-
-h1 {
-    color: red;
-}
-
-.test {
-    width: 400px;
-    height: 400px;
-    margin: 0 auto;
-}
-
-/*
-@import "base.scss";
-@import "navigationBar.scss";
-@import "feed.scss";
-@import "topic.scss";
-@import "button.scss";
-@import "author.scss";
-@import "footer.scss";
-
-@import "./navbar.scss";
-@import "./main.scss";
-@import "./etc.scss";
 
 .-page-container {
-    width: 100%;
-    max-width: 1280px;
-    height: 100%;
+    @extend ._full-size;
+    @extend ._rel;
+
+    max-width: 1024px;
     margin: 0 auto;
-    position: relative;
+    overflow: hidden auto;
+    border-radius: 0;
 }
-*/

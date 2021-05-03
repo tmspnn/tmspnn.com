@@ -1,0 +1,20 @@
+@import "base.scss";
+
+nav {
+    @extend ._flex;
+    @extend ._with-shadow;
+}
+
+/* Tablet */
+@media screen and (min-width: 768px) and (max-width: 1023.9px) {
+    nav {
+        width: 100%;
+    }
+}
+
+/* Desktop */
+@media screen and (min-width: 1024px) {
+    nav {
+        width: 100%;
+    }
+}

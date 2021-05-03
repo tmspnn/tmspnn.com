@@ -3,7 +3,7 @@
 ._panel {
     @extend ._rel;
     @extend ._no-overflow;
-    @extend ._round;
+    @extend ._round-corner;
     @extend ._with-blurred-backdrop;
 
     padding: 1rem;

@@ -9,7 +9,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 // Pages
 const pages = [
-    "index"
+    "index",
+    "article"
     // "signIn",
     // "signUp",
     // "forgotPassword",
@@ -91,7 +92,8 @@ module.exports = {
         new webpack.ProvidePlugin({
             _: "lodash",
             View: ["@components/VC", "View"],
-            Controller: ["@components/VC", "Controller"]
+            Controller: ["@components/VC", "Controller"],
+            kxhr: "k-xhr"
         }),
         ...pages.map(
             () =>

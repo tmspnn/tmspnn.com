@@ -4,31 +4,25 @@
     cursor: pointer;
     width: 3.2rem;
     height: 1.6rem;
-    background-color: $grey-lighter;
+    background-color: $grey;
     border-radius: 2rem;
-    box-shadow: 0 0 3px $grey-light;
+    box-shadow: $small-shadow;
     transition: background-color 200ms;
 
     &.active {
-        background-color: $link;
+        background-color: $blue;
 
-        .switcher {
-            transform: translate3d(100%, 0, 0);
+        .inner {
+            transform: translate3d(1.6rem, 0, 0);
         }
     }
 
-    .switcher {
+    .inner {
         width: 1.6rem;
         height: 1.6rem;
         border-radius: 50%;
         background-color: $white;
-        box-shadow: 0 0 3px $grey-light;
+        box-shadow: $small-shadow;
         transition: transform 300ms;
-    }
-}
-
-/* Dark theme */
-body.dark {
-    ._switch {
     }
 }

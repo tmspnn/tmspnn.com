@@ -1,4 +1,0 @@
-<a href="/topics/<%= ctx.escape(data) %>" class="-topic">
-    <% render("views/icons/hashtag") %>
-    <span><%= data %></span>
-</a>

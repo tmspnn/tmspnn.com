@@ -1,6 +1,5 @@
-import { removeNode } from "@helpers/DOM";
+import { removeNode } from "k-dom";
 import ee from "@helpers/ee";
-
 class Listener {
     _namespace = "";
     _type = "";
@@ -23,6 +22,7 @@ export class View extends Listener {
     _element = null;
     _refs = {};
     _data = null;
+    _classReg = /(^-\w+)|(\s+-\w)/i;
 
     constructor(namespace, element, data) {
         super(namespace, "view");
@@ -30,11 +30,7 @@ export class View extends Listener {
         this._data = data;
 
         if (element) {
-            const els = element.querySelectorAll("[data-ref]");
-            for (let i = 0; i < els.length; ++i) {
-                const refName = els[i].getAttribute("data-ref");
-                this._refs[refName] = els[i];
-            }
+            this.getRefs(element);
         }
 
         setTimeout(() => {
@@ -44,6 +40,21 @@ export class View extends Listener {
             );
         });
     }
+
+    getRefs = (el) => {
+        for (let i = 0; i < el.children.length; ++i) {
+            const ch = el.children[i];
+            if (!this._classReg.test(ch.className)) {
+                const refName = ch.getAttribute("data-ref");
+                if (refName) {
+                    this._refs[refName] = ch;
+                }
+                if (el.children.length > 0) {
+                    this.getRefs(ch);
+                }
+            }
+        }
+    };
 
     ui = (pattern, ...args) => {
         const [componentName, method] = pattern.split("::");

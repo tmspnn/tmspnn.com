@@ -1,37 +1,64 @@
-<div class="-feed">
-    <% if not cover or #cover == 0 then -%>
-    <a href="/articles/<%= id %>" class="header">
-        <h1><%= title %></h1>
-    </a>
-    <% else -%>
-    <a href="/articles/<%= id %>" class="cover" style="background-image: url(<%= cover %>)">
-        <h1><%= title %></h1>
-    </a>
-    <% end -%>
-    <div class="meta">
-        <a href="/users/<%= created_by %>" class="item">
-            <% render("views/icons/user") %>
-            <span><%= author %></span>
-        </a>
-        <div class="item">
-            <% render("views/icons/clock") %>
-            <span><%= created_at %></span>
+<%
+-- Locale
+local lang = lang or "zh-cn"
+local locales = {
+    ["zh-cn"] = {
+        anonymous = "匿名"
+    },
+    ["en-us"] = {
+        anonymous = "Anonymous"
+    }
+}
+local locale = locales[lang]
+
+-- Data
+local id = id or nil
+local created_by = created_by or nil
+local updated_at = updated_at or "5/01"
+local profile = profile or "default profile"
+local nickname = nickname or locale.anonymous
+local cover = cover or nil
+local title = title or ""
+local desc = desc or ""
+local rating = rating or 0
+local ratings_count = ratings_count or 0
+local pageview = pageview or 0
+local comments_count = comments_count or 0
+local tags = tags or {}
+%>
+<div class="-feed _panel _with-shadow">
+    <a href="/articles/<%= id %>" class="cover" style="background-image: url(<%= cover %>)"></a>
+    <div class="content">
+        <div class="head">
+            <a href="/users/<%= created_by %>">
+                <div class="profile" style="background-image: url(<%= profile %>)"></div>
+            </a>
+            <a href="/users/<%= created_by %>" class="author ">
+                <div class="nickname _h5"><b><%= nickname %></b></div>
+            </a>
+            <div class="date _h5"><%= updated_at %></div>
         </div>
-        <div class="item">
-            <% render("views/icons/eye") %>
-            <span>阅读 <%= pageview %></span>
+        <h1>
+            <a href="/articles/<%= id %>"><%= title %></a>
+        </h1>
+        <div class="desc"><a href="/articles/<%= id %>"><%= desc %></a></div>
+        <div class="meta">
+            <div class="rating _h4">
+                <b><% render("views/icons/star") %><%= rating %></b>
+            </div>
+            <div class="pageview">
+                <% render("views/icons/eye") %>
+                <span class="_h5"><%= pageview %></span>
+            </div>
+            <div class="comments_count">
+                <% render("views/icons/chat") %>
+                <span class="_h5"><%= comments_count %></span>
+            </div>
         </div>
-        <div class="item">
-            <% render("views/icons/badge_check") %>
-            <span>评价 <%= rating %></span>
+        <div class="tags">
+            <% for i, t in ipairs(tags) do %>
+            <% render("views/components/tag", {tag_name = t}) %>
+            <% end %>
         </div>
     </div>
-    <div class="tags">
-        <% for i, text in ipairs(keywords) do -%>
-        <% render("views/components/topic", {ctx = ctx, data = text}) %>
-        <% end -%>
-    </div>
-    <a href="/articles/<%= id %>" class="summary">
-        <%= summary %>
-    </a>
 </div>

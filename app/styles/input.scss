@@ -1,0 +1,9 @@
+@import "base.scss";
+
+input {
+    @extend ._cursor-pointer;
+    @extend ._without-outline;
+    @extend ._round-corner;
+
+    padding: 0.4rem 1.5rem;
+}

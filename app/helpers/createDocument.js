@@ -1,4 +1,4 @@
-import { clearNode, cloneScriptElement } from "@helpers/DOM";
+import { clearNode, cloneScriptElement } from "k-dom";
 
 export default function createDocument(html) {
     // Script tags in htmlDoc won't execute

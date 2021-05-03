@@ -32,6 +32,43 @@ $honey-3: #f8ffae;
     }
 }
 
+._aurora-static {
+    @extend ._rel;
+    @extend ._full-size;
+
+    background-image: radial-gradient(
+        at left bottom,
+        $megatron-3,
+        transparent 60%
+    );
+
+    &:after {
+        @extend ._full-size;
+        @extend ._abs;
+
+        content: "";
+        z-index: -1;
+        background-image: radial-gradient(
+            at left top,
+            $megatron-1,
+            transparent
+        );
+    }
+
+    &:before {
+        @extend ._full-size;
+        @extend ._abs;
+
+        content: "";
+        z-index: -1;
+        background-image: radial-gradient(
+            at right bottom,
+            $megatron-2,
+            transparent
+        );
+    }
+}
+
 ._aurora {
     @extend ._rel;
     @extend ._full-size;

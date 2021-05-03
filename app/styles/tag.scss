@@ -1,0 +1,14 @@
+@import "base.scss";
+@import "text.scss";
+
+.-tag {
+    @extend ._truncated;
+    font-weight: bold;
+    margin-right: 0.6rem;
+    max-width: 10rem;
+    color: $black-grey;
+
+    .hash {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+}

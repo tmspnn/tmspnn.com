@@ -1,9 +1,12 @@
+@import "normalize.css";
+
 /* Colors and shadows */
 $black: hsl(0, 0%, 7%);
 $black-grey: hsl(0, 0%, 30%);
 $grey: hsl(0, 0%, 50%);
 $grey-white: hsl(0, 0%, 70%);
 $light-white: hsl(0, 0%, 90%);
+$bg-white: hsl(0, 0%, 96%);
 $white: hsl(0, 0%, 100%);
 $light-blue: #9cecfb;
 $blue: #65c7f7;
@@ -11,9 +14,9 @@ $dark-blue: #0052d4;
 $green: #64f3bc;
 $orange: hsl(28, 98%, 47%);
 $red: #ff5f6d;
-$shadow: 0 0.4rem 1.2rem $grey;
-$dark-shadow: 0 0.4rem 1.2rem $black-grey;
-$light-shadow: 0 0.4rem 1.2rem $grey-white;
+$shadow: 0 0.4rem 1.2rem rgba(0, 0, 0, 0.15);
+$light-shadow: 0 0.4rem 1.2rem rgba(255, 255, 255, 0.15);
+$small-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.15);
 
 /* Layout */
 [hidden] {
@@ -46,6 +49,10 @@ $light-shadow: 0 0.4rem 1.2rem $grey-white;
     position: relative;
 }
 
+._to-right {
+    margin-left: auto;
+}
+
 ._full-size {
     width: 100%;
     height: 100%;
@@ -53,6 +60,11 @@ $light-shadow: 0 0.4rem 1.2rem $grey-white;
     top: 0;
     right: 0;
     bottom: 0;
+}
+
+._full-width {
+    width: 100%;
+    max-width: 100%;
 }
 
 ._no-overflow {
@@ -63,8 +75,12 @@ $light-shadow: 0 0.4rem 1.2rem $grey-white;
     background-size: cover;
 }
 
-._round {
+._round-corner {
     border-radius: 0.4rem;
+}
+
+._round {
+    border-radius: 50%;
 }
 
 ._blurred {
@@ -83,9 +99,54 @@ $light-shadow: 0 0.4rem 1.2rem $grey-white;
     backdrop-filter: blur(0.8rem);
 }
 
+._cursor-pointer {
+    cursor: pointer;
+}
+
+._without-outline {
+    outline: none;
+}
+
+._with-transition {
+    transition: all 300ms;
+}
+
+._with-icon {
+    svg {
+        @extend ._inline;
+        margin-right: 0.4em;
+        width: 1.2em;
+        height: 1.2em;
+    }
+}
+
+._no-border {
+    border: none;
+}
+
+._no-outline {
+    outline: none;
+
+    &:hover,
+    &:focus,
+    &:active {
+        outline: none;
+    }
+}
+
+._unselectable {
+    user-select: none;
+}
+
+._small-profile {
+    @extend ._round;
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
 /* Dark theme */
 body.dark {
     ._with-shadow {
-        box-shadow: $dark-shadow;
+        box-shadow: $light-shadow;
     }
 }

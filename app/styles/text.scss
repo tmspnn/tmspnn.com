@@ -1,7 +1,7 @@
 @import "base.scss";
 
 h1,
-.h1 {
+._h1 {
     margin: 0;
     padding: 2rem 0;
     font-size: 3.4rem;
@@ -9,7 +9,7 @@ h1,
 }
 
 h2,
-.h2 {
+._h2 {
     margin: 0;
     padding: 1.5rem 0;
     font-size: 2.6rem;
@@ -17,7 +17,7 @@ h2,
 }
 
 h3,
-.h3 {
+._h3 {
     margin: 0;
     padding: 1rem 0;
     font-size: 1.8rem;
@@ -25,7 +25,7 @@ h3,
 }
 
 h4,
-.h4 {
+._h4 {
     margin: 0;
     padding: 0.6rem 0;
     font-size: 1.2rem;
@@ -33,7 +33,7 @@ h4,
 }
 
 h5,
-.h5 {
+._h5 {
     margin: 0;
     padding: 0.4rem 0;
     font-size: 0.9rem;
@@ -41,7 +41,7 @@ h5,
 }
 
 h6,
-.h6 {
+._h6 {
     margin: 0;
     padding: 0.2rem 0;
     font-size: 0.8rem;
@@ -61,10 +61,16 @@ div {
     text-overflow: ellipsis;
 }
 
+._with-gradient {
+    background: radial-gradient(at left top, $dark-blue, $green);
+    background-clip: text;
+    color: transparent;
+}
+
 /* Dark theme */
 body.dark {
     h1,
-    .h1 {
+    ._h1 {
         color: $white;
     }
 }

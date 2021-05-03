@@ -1,0 +1,8 @@
+@import "base.scss";
+
+a {
+    @extend ._inline;
+    border-bottom: 0.125rem solid $dark-blue;
+    text-decoration: none;
+    color: $blue;
+}

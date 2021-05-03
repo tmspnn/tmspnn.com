@@ -12,17 +12,3 @@ body {
         "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
         "Helvetica Neue", sans-serif;
 }
-
-/* Tablet */
-@media screen and (min-width: 768px) and (max-width: 1023.9px) {
-    body {
-        width: 100%;
-    }
-}
-
-/* Desktop */
-@media screen and (min-width: 1024px) {
-    body {
-        width: 100%;
-    }
-}

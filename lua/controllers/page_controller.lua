@@ -43,24 +43,76 @@ local function json_tag(data)
     }
 end
 
+local function index(app)
+    local ctx = app.ctx
+
+    ctx.page_title = "一刻阅读 | 首页"
+    ctx.tags_in_head = {css_tag("index")}
+    ctx.tags_in_body = {json_tag({
+        testing = true,
+        xxx = "xxx"
+    }), js_tag("index")}
+    ctx.data = {
+        lang = "zh-cn",
+        theme = "light",
+        testing = true,
+        feeds = {{
+            id = 10001,
+            cover = "https://cdn.pixabay.com/photo/2016/02/09/19/57/aurora-1190254__480.jpg",
+            title = "This is a test title",
+            updated_at = "5/01",
+            created_by = 10007,
+            profile = "https://cdn.pixabay.com/photo/2019/10/19/11/35/wolf-4561204__480.png",
+            nickname = "Thomas Peng Li",
+            desc = "This is a testing desc, this is a testing desc, blublublu",
+            rating = 4.3,
+            ratings_count = 25,
+            pageview = 101,
+            comments_count = 18,
+            tags = {"Linux", "OpenResty", "木兰", "Security"}
+        }}
+    }
+
+    return {
+        render = "pages.index"
+    }
+end
+
+local function article(app)
+    local ctx = app.ctx
+
+    local article_id = tonumber(app.params.article_id)
+
+    ctx.page_title = ""
+    ctx.tags_in_head = {css_tag("article")}
+    ctx.tags_in_body = {json_tag({}), js_tag("article")}
+    ctx.data = {
+        lang = "zh-cn",
+        theme = "light",
+        id = 10001,
+        cover = "https://cdn.pixabay.com/photo/2016/02/09/19/57/aurora-1190254__480.jpg",
+        title = "This is a test title, This is a test title, This is a test title",
+        updated_at = "5/01",
+        created_by = 10007,
+        profile = "https://cdn.pixabay.com/photo/2019/10/19/11/35/wolf-4561204__480.png",
+        nickname = "Thomas Peng Li",
+        desc = "This is a testing desc, this is a testing desc, blublublu",
+        rating = 4.3,
+        ratings_count = 25,
+        pageview = 101,
+        comments_count = 18,
+        tags = {"Linux", "OpenResty", "木兰", "Security"},
+        content = "<p>This is a testing paragraph blublublu...</p>"
+    }
+
+    return {
+        render = "pages.article"
+    }
+end
+
 local function page_controller(app)
-    app:get("/", function(app)
-        local ctx = app.ctx
-
-        ctx.page_title = "一刻阅读 | 首页"
-        ctx.tags_in_head = {css_tag("index")}
-        ctx.tags_in_body = {json_tag({
-            testing = true,
-            xxx = "xxx"
-        }), js_tag("index")}
-        ctx.data = {
-            testing = true
-        }
-
-        return {
-            render = "pages.index"
-        }
-    end)
+    app:get("/", index)
+    app:get("/articles/:article_id", article)
 end
 
 -- page_ctrl.css_path = ""
