@@ -5,17 +5,68 @@
 @import "button.scss";
 @import "aurora.scss";
 @import "feed.scss";
+@import "navbar.scss";
+@import "tabbar.scss";
+@import "input.scss";
 
 body {
     background-color: $bg-white;
 }
 
 .-page-container {
-    @extend ._full-size;
-    @extend ._rel;
-
-    max-width: 1024px;
-    margin: 0 auto;
+    @extend ._abs;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    padding: 3.5rem 0;
     overflow: hidden auto;
     border-radius: 0;
+}
+
+.search-bar {
+    @extend ._rel;
+    @extend ._with-icon;
+    padding: 1rem;
+
+    input {
+        @extend ._block;
+        @extend ._full-width;
+        height: 2.5rem;
+        line-height: 2.4rem;
+        padding: 0 2rem 0 3rem;
+        background: $white;
+        color: $black-grey;
+        font-size: 1.3rem;
+        font-weight: bold;
+        border-radius: 2rem;
+    }
+
+    svg {
+        @extend ._abs;
+        top: 1.5rem;
+        left: 1.6rem;
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+}
+
+.hot-tags {
+    white-space: nowrap;
+    overflow: auto hidden;
+    padding: 1rem 1rem 2rem;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    .-tag {
+        @extend ._inline;
+        @extend ._with-shadow;
+        padding: 0.3rem 0.8rem;
+        font-size: 1.1rem;
+        background-color: $white;
+        border-radius: 2rem;
+    }
 }

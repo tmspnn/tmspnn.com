@@ -8,6 +8,10 @@ local fmt = string.format
 -- Local modules
 local render_component = require "controllers/page/render_component"
 
+-- Faked data for testing
+local faked_index = require "faked_data/faked_index"
+local faked_trending = require "faked_data/faked_trending"
+
 -- Implementation
 local assets_prefix = ""
 local version = "1.0.0"
@@ -44,37 +48,27 @@ local function json_tag(data)
 end
 
 local function index(app)
+    -- TODO: 搜索框 + 热搜tags + Recommended Feeds + Followings' Feeds
     local ctx = app.ctx
-
     ctx.page_title = "一刻阅读 | 首页"
     ctx.tags_in_head = {css_tag("index")}
-    ctx.tags_in_body = {json_tag({
-        testing = true,
-        xxx = "xxx"
-    }), js_tag("index")}
-    ctx.data = {
-        lang = "zh-cn",
-        theme = "light",
-        testing = true,
-        feeds = {{
-            id = 10001,
-            cover = "https://cdn.pixabay.com/photo/2016/02/09/19/57/aurora-1190254__480.jpg",
-            title = "This is a test title",
-            updated_at = "5/01",
-            created_by = 10007,
-            profile = "https://cdn.pixabay.com/photo/2019/10/19/11/35/wolf-4561204__480.png",
-            nickname = "Thomas Peng Li",
-            desc = "This is a testing desc, this is a testing desc, blublublu",
-            rating = 4.3,
-            ratings_count = 25,
-            pageview = 101,
-            comments_count = 18,
-            tags = {"Linux", "OpenResty", "木兰", "Security"}
-        }}
-    }
+    ctx.tags_in_body = {json_tag(faked_index), js_tag("index")}
+    ctx.data = faked_index
 
     return {
         render = "pages.index"
+    }
+end
+
+local function trending(app)
+    local ctx = app.ctx
+    ctx.page_title = "一刻阅读 | 排行"
+    ctx.tags_in_head = {css_tag("trending")}
+    ctx.tags_in_body = {json_tag(faked_trending), js_tag("trending")}
+    ctx.data = faked_trending
+
+    return {
+        render = "pages.trending"
     }
 end
 
@@ -113,6 +107,7 @@ end
 local function page_controller(app)
     app:get("/", index)
     app:get("/articles/:article_id", article)
+    app:get("/trending", trending)
 end
 
 -- page_ctrl.css_path = ""

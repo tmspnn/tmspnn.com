@@ -1,0 +1,15 @@
+<% local active_tab = active_tab or "home" %>
+<nav class="-tabbar _panel _with-shadow">
+    <div class="tab <% if active_tab == "home" then %>active<% end %>">
+        <% render("views/icons/home") %>
+    </div>
+    <div class="tab <% if active_tab == "trending" then %>active<% end %>">
+        <% render("views/icons/trending_up") %>
+    </div>
+    <div class="tab <% if active_tab == "messages" then %>active<% end %>">
+        <% render("views/icons/chat") %>
+    </div>
+    <div class="tab <% if active_tab == "me" then %>active<% end %>">
+        <% render("views/icons/user") %>
+    </div>
+</nav>

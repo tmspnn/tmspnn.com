@@ -1,0 +1,36 @@
+<%
+local id = id or 0
+local nickname = nickname
+local profile = profile
+local fame = fame
+local desc = desc
+local gender = gender
+local location = location
+local mobile = mobile or id .. ":mobile"
+local email = email or id .. ":email"
+local identity_no = indentity_no or id .. ":identity_no"
+local articles_count = articles_count
+local followings_count = followings_count
+local followers_count = followings_count
+local obj = obj
+%>
+<a class="-author-card" href="/users/<%= id %>">
+    <% if #profile > 0 then %>
+    <div class="profile" style="background-image: url(<%= profile %>)"></div>
+    <% else %>
+    <div class="profile">匿</div>
+    <% end %>
+    <div class="meta">
+        <div class="nickname"><%= nickname %></div>
+        <div class="statistics">
+            <div class="articles-count">
+                <% render("views/icons/document_text") %>
+                <span><%= articles_count %></span>
+            </div>
+            <div class="fame">
+                <% render("views/icons/fire") %>
+                <span><%= fame %></span>
+            </div>
+        </div>
+    </div>
+</a>

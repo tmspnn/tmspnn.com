@@ -2,8 +2,9 @@
 
 input {
     @extend ._cursor-pointer;
-    @extend ._without-outline;
+    @extend ._no-outline;
     @extend ._round-corner;
-
+    @extend ._with-shadow;
     padding: 0.4rem 1.5rem;
+    border: none;
 }

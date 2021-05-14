@@ -52,6 +52,7 @@ p,
 div {
     line-height: 1.5;
     color: $black-grey;
+    word-break: break-all;
 }
 
 ._truncated {

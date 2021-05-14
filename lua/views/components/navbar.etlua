@@ -1,0 +1,15 @@
+<nav class="-navbar _panel _with-shadow">
+    <div class="left">
+        <div class="btn back" hidden>
+            <% render("views/icons/chevron_left") %>
+        </div>
+    </div>
+    <div class="center">
+        <b><%= ctx.page_title %></b>
+    </div>
+    <div class="right">
+        <div class="btn back" hidden>
+            <% render("views/icons/share") %>
+        </div>
+    </div>
+</nav>

@@ -1,3 +1,7 @@
+-- TODO: 整个 App 是 内容发布 + 评价机制 + 社交功能. 核心是内容的评价机制.
+-- TODO: 文章评价 rating 影响用户声望 fame, 文章评分 rating 和文章权重 weight.
+-- TODO: 用户声望代表用户的品质, 文章的 rating * weight = fame 代表文章的品质.
+-- TODO: 对品质进行奖惩, 保证App的内省机制, 有益于产生更高品质的内容.
 -- External modules
 local lapis = require "lapis"
 

@@ -4,6 +4,8 @@
 .-feed {
     padding: 0;
     background: $white;
+    border-radius: 0;
+    margin-bottom: 1rem;
 
     a {
         text-decoration: none;
@@ -68,17 +70,18 @@
             }
 
             .rating {
+                @extend ._felx;
                 padding: 0.2rem 0;
-
-                svg {
-                    @extend ._rel;
-                    top: -0.1rem;
-                }
             }
 
             .pageview {
+                @extend ._felx;
                 @extend ._to-right;
                 margin-right: 1rem;
+            }
+
+            .comments-count {
+                @extend ._felx;
             }
         }
 
@@ -88,7 +91,7 @@
     }
 }
 
-.-feed.brief {
+.-feed:not(:first-child) {
     @extend ._flex;
     flex-direction: row-reverse;
     align-items: flex-start;
@@ -122,7 +125,10 @@
             font-size: 1.1rem;
         }
 
-        .desc,
+        .desc {
+            font-size: 0.9rem;
+        }
+
         .meta,
         .tags {
             display: none;

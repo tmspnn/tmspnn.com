@@ -1,0 +1,33 @@
+@import "base.scss";
+@import "text.scss";
+
+.-tabbar {
+    @extend ._abs;
+    @extend ._full-width;
+    @extend ._no-radius;
+    @extend ._flex;
+    left: 0;
+    bottom: 0;
+    height: 3.5rem;
+    padding: 0 2rem;
+    justify-content: space-between;
+
+    .tab {
+        @extend ._flex;
+        @extend ._content-center;
+        width: 3rem;
+        height: 3rem;
+
+        &.active {
+            svg {
+                color: $blue;
+            }
+        }
+
+        svg {
+            width: 2rem;
+            height: 2rem;
+            color: $black;
+        }
+    }
+}

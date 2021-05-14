@@ -32,6 +32,10 @@ $small-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.15);
     align-items: center;
 }
 
+._content-center {
+    justify-content: center;
+}
+
 ._inline {
     display: inline-block;
     vertical-align: middle;
@@ -67,6 +71,10 @@ $small-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.15);
     max-width: 100%;
 }
 
+._full-height {
+    height: 100%;
+}
+
 ._no-overflow {
     overflow: hidden;
 }
@@ -81,6 +89,10 @@ $small-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.15);
 
 ._round {
     border-radius: 50%;
+}
+
+._no-radius {
+    border-radius: 0;
 }
 
 ._blurred {
@@ -103,7 +115,7 @@ $small-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.15);
     cursor: pointer;
 }
 
-._without-outline {
+._no-outline {
     outline: none;
 }
 
@@ -142,6 +154,21 @@ $small-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.15);
     @extend ._round;
     width: 1.4rem;
     height: 1.4rem;
+}
+
+._horizontal-scrolling {
+    @extend ._full-width;
+    white-space: nowrap;
+    overflow: auto hidden;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    > * {
+        @extend ._inline;
+    }
 }
 
 /* Dark theme */

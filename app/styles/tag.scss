@@ -3,12 +3,11 @@
 
 .-tag {
     @extend ._truncated;
+    @extend ._no-outline;
     font-weight: bold;
     margin-right: 0.6rem;
     max-width: 10rem;
+    text-decoration: none;
     color: $black-grey;
-
-    .hash {
-        font-family: Arial, Helvetica, sans-serif;
-    }
+    -webkit-tap-highlight-color: transparent;
 }

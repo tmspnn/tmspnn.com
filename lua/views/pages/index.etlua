@@ -1,10 +1,25 @@
 <%
 local lang = ctx.lang or "zh-cn"
 local theme = ctx.theme or "light"
+local hot_tags = ctx.data.hot_tags or {}
 local feeds = ctx.data.feeds or {}
+local title = ctx.page_title
 %>
 <div class="-page-container">
-  <% for i, fd in ipairs(feeds) do %>
-  <% render("views/components/feed", fd) %>
-  <% end %>
+  <div class="search-bar">
+    <input type="text">
+    <% render("views/icons/search") %>
+  </div>
+  <div class="hot-tags">
+    <% for i, t in ipairs(hot_tags) do %>
+    <% render("views/components/tag", {tag_name = t}) %>
+    <% end %>
+  </div>
+  <div class="feeds">
+    <% for i, fd in ipairs(feeds) do %>
+    <% render("views/components/feed", fd) %>
+    <% end %>
+  </div>
 </div>
+<% render("views/components/navbar", { title = title }) %>
+<% render("views/components/tabbar", { active_tab = "home" }) %>

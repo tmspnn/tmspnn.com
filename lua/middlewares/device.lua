@@ -11,6 +11,11 @@ local function device(app)
 
     local ua = app.req.headers["user-agent"]
 
+    if type(ua) ~= "string" then
+        app.ctx.device.os = "Unknown"
+        app.ctx.device.is_mobile = false
+    end
+
     if string.match(ua, "iPhone") or string.match(ua, "iPad") then
         app.ctx.device.os = "iOS"
         app.ctx.device.is_mobile = true
