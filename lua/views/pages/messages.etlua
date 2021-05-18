@@ -1,6 +1,14 @@
+<%
+local title = ctx.page_title
+local messages = ctx.data.messages or {}
+%>
 <div class="-page-container">
-    <h1>messages</h1>
+    <div class="personal">
+        <% for i, m in ipairs(messages.personal) do %>
+        <% render("views/components/message", m) %>
+        <% end %>
+    </div>
+    <div class="organizations"></div>
 </div>
-<% render("views/components/toast") %>
-<% render("views/components/progress_bar") %>
-<script id="_data" type="application/json"><%- ctx.data_json %></script>
+<% render("views/components/navbar", { title = title }) %>
+<% render("views/components/tabbar", { active_tab = "messages" }) %>

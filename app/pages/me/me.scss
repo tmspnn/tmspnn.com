@@ -1,16 +1,79 @@
 @import "base.scss";
+@import "page.scss";
+@import "text.scss";
+@import "panel.scss";
 @import "button.scss";
-@import "logoHeader.scss";
-@import "truncated.scss";
+@import "feed.scss";
+@import "navbar.scss";
+@import "tabbar.scss";
+@import "input.scss";
 
-@import "navbarMe.scss";
-@import "./center.scss";
-@import "./right.scss";
+.bg {
+    @extend ._rel;
+    @extend ._no-overflow;
+    padding-bottom: 60%;
 
-.-page-container {
-    width: 100%;
-    max-width: 1280px;
-    height: 100%;
-    margin: 0 auto;
-    position: relative;
+    > img {
+        @extend ._abs;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+}
+
+.meta {
+    @extend ._rel;
+    padding-top: 6rem;
+
+    .profile {
+        @extend ._abs;
+        @extend ._round;
+        left: 2rem;
+        top: -4rem;
+        width: 8rem;
+        height: 8rem;
+        background-size: cover;
+    }
+
+    > button {
+        @extend ._abs;
+        @extend ._flex;
+        right: 1rem;
+        top: 1rem;
+    }
+
+    .row {
+        @extend ._flex;
+        @extend ._with-icon;
+        @extend ._with-shadow;
+        padding: 1rem 1rem 1rem 2rem;
+        background-color: $white;
+
+        label {
+            @extend ._flex;
+            width: 6rem;
+            font-weight: bold;
+        }
+
+        svg:last-child {
+            margin-left: auto;
+        }
+
+        > span {
+            color: $black;
+        }
+    }
+
+    .operations {
+        button {
+            @extend ._block;
+            @extend ._full-width;
+            margin-right: 1rem;
+        }
+
+        .sign-out {
+            background-image: radial-gradient(at left top, $orange, $red);
+            box-shadow: 0 0.5rem 1rem $red;
+        }
+    }
 }

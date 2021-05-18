@@ -1,0 +1,14 @@
+<div class="-message">
+    <div class="profile">
+        <% for i, p in ipairs(conversation_profiles) do %>
+        <% if i <= 3 then %>
+        <div class="img" style="background-image: url(<%= conversation_profiles[i] %>)"></div>
+        <% end %>
+        <% end %>
+    </div>
+    <div class="meta">
+        <div class="conversation-name"><%= conversation_name %></div>
+        <div class="last-message"><%= last_message %></div>
+    </div>
+    <div class="last-updated"><%= last_updated %></div>
+</div>

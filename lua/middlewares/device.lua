@@ -14,6 +14,7 @@ local function device(app)
     if type(ua) ~= "string" then
         app.ctx.device.os = "Unknown"
         app.ctx.device.is_mobile = false
+        return
     end
 
     if string.match(ua, "iPhone") or string.match(ua, "iPad") then

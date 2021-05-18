@@ -1,0 +1,51 @@
+@import "base.scss";
+
+.-message {
+    @extend ._flex;
+    @extend ._with-shadow;
+    padding: 0.8rem 0.5rem;
+    background-color: $white;
+    font-size: 0.9rem;
+
+    .profile {
+        @extend ._rel;
+        width: 4rem;
+        min-width: 4rem;
+        height: 3rem;
+
+        > .img {
+            @extend ._round;
+            @extend ._abs;
+            @extend ._with-shadow;
+            border: 1px solid $light-white;
+
+            width: 3rem;
+            height: 3rem;
+            left: 0;
+            top: 0;
+            background-size: cover;
+
+            &:nth-child(2) {
+                left: 0.5rem;
+            }
+
+            &:nth-child(3) {
+                left: 1rem;
+            }
+        }
+    }
+
+    .meta {
+        flex: 1;
+        padding: 0 0.5rem;
+
+        .conversation-name {
+            font-weight: bold;
+            color: $black;
+        }
+    }
+
+    .last-updated {
+        font-size: 0.8rem;
+    }
+}

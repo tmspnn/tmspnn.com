@@ -1,45 +1,88 @@
+<%
+local data = ctx.data
+local id = data.id
+local nickname = data.nickname
+local cover = data.cover
+local profile = data.profile
+local fame = data.fame
+local gender = data.gender
+local location = data.location
+local mobile = data.mobile
+local email = data.email
+local indentity_no = data.indentity_no
+local articles_count = data.articles_count
+local followings_count = data.followings_count
+local followers_count = data.followers_count
+local obj = data.obj
+local created_at = data.created_at
+local updated_at = data.updated_at
+local desc = data.desc
+%>
 <div class="-page-container">
-    <% render("views/components/navbar_me") %>
-    <div class="main">
-        <div class="bg-container">
-            <img src="<%= ctx.data.user.bg_image %>" alt="bg_image"
-                <% if #ctx.data.user.bg_image == 0 then %>hidden<% end %> />
-        </div>
-        <div class="profile-container">
-            <% if #ctx.data.user.profile > 0 then %>
-            <div class="profile" style="background-image: url(<%= ctx.data.user.profile %>)"></div>
-            <% else %>
-            <div class="profile">匿</div>
-            <% end %>
-        </div>
-        <div class="events">
-            <% for i, f in ipairs(ctx.data.events) do -%>
-            <div class="event"></div>
-            <% end -%>
-        </div>
+    <div class="bg">
+        <img src="<%= cover %>" alt="cover" class="cover">
     </div>
-    <div class="relations">
-        <h3>
-            <% render("views/icons/heart") %>
-            <span>我的关注</span>
-        </h3>
-        <div>
-            <% for i, f in ipairs(ctx.data.followings) do -%>
-            <div class="profile" style="background-image: url(<%= f.profile %>)"></div>
-            <% end -%>
+    <div class="meta">
+        <div class="profile" style="background-image: url(<%= profile %>)"></div>
+        <button>
+            <% render("views/icons/document_add") %>
+            <span>写一篇</span>
+        </button>
+        <div class="row">
+            <label>
+                <% render("views/icons/user") %>
+                <span>昵称</span>
+            </label>
+            <span><%= nickname %></span>
         </div>
-        <h3 class="fans">
-            <% render("views/icons/user_group") %>
-            <span>我的粉丝</span>
-        </h3>
-        <div>
-            <% for i, f in ipairs(ctx.data.followers) do -%>
-            <div class="profile" style="background-image: url(<%= f.profile %>)"></div>
-            <% end -%>
+        <div class="row">
+            <label>
+                <% render("views/icons/user_circle") %>
+                <span>性别</span>
+            </label>
+            <span><%= gender == 1 and "女" or "男" %></span>
+        </div>
+        <div class="row">
+            <label>
+                <% render("views/icons/location_marker") %>
+                <span>地区</span>
+            </label>
+            <span><%= location %></span>
+        </div>
+        <div class="row">
+            <label>
+                <% render("views/icons/flag") %>
+                <span>声望</span>
+            </label>
+            <span><%= fame %></span>
+        </div>
+        <div class="row">
+            <label>
+                <% render("views/icons/heart") %>
+                <span>关注</span>
+            </label>
+            <span><%= followings_count %></span>
+            <% render("views/icons/chevron_right") %>
+        </div>
+        <div class="row">
+            <label>
+                <% render("views/icons/users") %>
+                <span>粉丝</span>
+            </label>
+            <span><%= followers_count %></span>
+            <% render("views/icons/chevron_right") %>
+        </div>
+        <div class="row operations">
+            <button class="sign-in" hidden>
+                <% render("views/icons/login") %>
+                <span>登录</span>
+            </button>
+            <button class="sign-out">
+                <% render("views/icons/logout") %>
+                <span>退出登录</span>
+            </button>
         </div>
     </div>
 </div>
-<% render("views/components/dialog_user_meta") %>
-<% render("views/components/toast") %>
-<% render("views/components/progress_bar") %>
-<script id="_data" type="application/json"><%- ctx.data_json %></script>
+<% render("views/components/navbar", { title = title }) %>
+<% render("views/components/tabbar", { active_tab = "me" }) %>

@@ -9,6 +9,7 @@ button {
     @extend ._unselectable;
     @extend ._cursor-pointer;
     @extend ._with-transition;
+    @extend ._with-icon;
 
     padding: 0.34em 1.2em 0.44em 0.8em;
     box-shadow: 0 0.5rem 1rem $blue;

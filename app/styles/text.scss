@@ -62,6 +62,13 @@ div {
     text-overflow: ellipsis;
 }
 
+._line-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+}
+
 ._with-gradient {
     background: radial-gradient(at left top, $dark-blue, $green);
     background-clip: text;

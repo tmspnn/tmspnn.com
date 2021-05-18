@@ -9,21 +9,6 @@
 @import "tabbar.scss";
 @import "input.scss";
 
-body {
-    background-color: $bg-white;
-}
-
-.-page-container {
-    @extend ._abs;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    padding: 3.5rem 0;
-    overflow: hidden auto;
-    border-radius: 0;
-}
-
 .search-bar {
     @extend ._rel;
     @extend ._with-icon;
