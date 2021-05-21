@@ -43,7 +43,7 @@ luac.out
 certs
 
 # Static assets
-assets
+build
 
 # MacOS
 .DS_Store
