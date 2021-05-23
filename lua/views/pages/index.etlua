@@ -6,13 +6,16 @@ local feeds = ctx.data.feeds or {}
 local title = ctx.page_title
 %>
 <div class="-page-container">
-  <div class="search-bar">
-    <input type="text">
-    <% render("views/icons/search") %>
+  <div class="search">
+    <div>
+      <input type="search" data-ref="input">
+      <% render("views/icons/search") %>
+    </div>
+    <ul data-ref="results"></ul>
   </div>
   <div class="hot-tags">
     <% for i, t in ipairs(hot_tags) do %>
-    <% render("views/components/tag", {tag_name = t}) %>
+    <% render("views/components/tag", { tag_name = t }) %>
     <% end %>
   </div>
   <div class="feeds">

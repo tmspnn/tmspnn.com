@@ -28,7 +28,7 @@ local obj = obj
                 <span><%= articles_count %></span>
             </div>
             <div class="fame">
-                <% render("views/icons/fire") %>
+                <% render("views/icons/flag") %>
                 <span><%= fame %></span>
             </div>
         </div>

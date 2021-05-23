@@ -26,7 +26,7 @@ local pageview = pageview or 0
 local comments_count = comments_count or 0
 local tags = tags or {}
 %>
-<div class="-feed _panel _with-shadow <% if not is_headline then %>brief<% end %>">
+<div class="-feed _with-shadow <% if not is_headline then %>brief<% end %>">
     <a href="/articles/<%= id %>" class="cover" style="background-image: url(<%= cover %>)"></a>
     <div class="content">
         <div class="head">

@@ -10,10 +10,10 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 // Pages
 const pages = [
     "index",
-    "article",
-    "trending",
-    "messages",
-    "me"
+    // "article",
+    "trending"
+    // "messages",
+    // "me"
     // "signIn",
     // "signUp",
     // "forgotPassword",
@@ -31,7 +31,7 @@ module.exports = {
         .value(),
     mode: isProduction ? "production" : "development",
     output: {
-        path: __dirname + "/assets",
+        path: __dirname + "/build",
         filename: `[name]-${version}.js`,
         publicPath: ""
     },
@@ -90,18 +90,26 @@ module.exports = {
         },
         extensions: [".js", ".json"]
     },
-    devtool:
-        process.env.NODE_ENV === "production"
-            ? "nosources-source-map"
-            : "cheap-module-source-map",
+    devtool: "source-map",
     plugins: [
         new webpack.ProvidePlugin({
             _: "lodash",
             View: ["@components/VC", "View"],
             Controller: ["@components/VC", "Controller"],
-            kxhr: "k-xhr",
-            kdom: "k-dom",
-            kutil: "k-util"
+            kxhr: ["k-xhr", "default"],
+            $: ["k-dom", "$"],
+            $$: ["k-dom", "$$"],
+            addClass: ["k-dom", "addClass"],
+            removeClass: ["k-dom", "removeClass"],
+            clearNode: ["k-dom", "clearNode"],
+            removeNode: ["k-dom", "removeNode"],
+            isInt: ["k-util", "isInt"],
+            isJSON: ["k-util", "isJSON"],
+            parseJSON: ["k-util", "parseJSON"],
+            at: ["k-util", "at"],
+            toArray: ["k-util", "toArray"],
+            each: ["k-util", "each"],
+            at: ["k-util", "at"]
         }),
         ...pages.map(
             () =>

@@ -1,27 +1,16 @@
-import {
-    $,
-    $$,
-    addClass,
-    createStyleElement,
-    filterVisibleElements
-} from "@helpers/DOM";
-import isJSON from "@helpers/isJSON";
+import { createStyleElement, filterVisibleElements } from "k-dom";
 import isSameOrigin from "@helpers/isSameOrigin";
 import createDocument from "@helpers/createDocument";
 
 export default class PageContainer extends View {
-    _name = "pageContainer";
-
-    defaultStyle = `
-    .-page-container > * {
+    defaultStyle = `.-page-container > * {
       transition: all 200ms ease;
     }
 
     .-page-container > .invisible {
       opacity: 0;
-      transform: translate3d(0, 2.4rem, 0);
-    }
-  `;
+      transform: translate3d(0, 1rem, 0);
+    }`;
 
     cache = {};
     lastUrl = null;
@@ -29,10 +18,12 @@ export default class PageContainer extends View {
     destUrl = null;
     transitingElementsCount = 0;
     shouldPushState = false;
-    next = () => {};
+    emptyCb = () => {};
+    next = this.emptyCb;
 
     constructor(namespace) {
         super(namespace);
+        this._name = "pageContainer";
 
         if (!$("style.-page-container", document.head)) {
             this.insertDefaultStyle();
@@ -74,7 +65,7 @@ export default class PageContainer extends View {
         if (this.currentUrl == url || this.destUrl == url) return;
 
         this.destUrl = url;
-        this.shouldPushState = true;
+        this.shouldPushState = !link.hasAttribute("data-nopush");
         this.switchPage();
     };
 
@@ -85,8 +76,9 @@ export default class PageContainer extends View {
     };
 
     toPage = (url, shouldPushState = true) => {
+        // Transform relative path to absolute path
         const link = document.createElement("a");
-        link.href = url; // Transform relative path to absolute path
+        link.href = url;
         const parsedUrl = link.href.replace(/#.*/, "");
 
         if (!isSameOrigin(parsedUrl) || this.currentUrl == parsedUrl) return;
@@ -235,6 +227,4 @@ export default class PageContainer extends View {
         this.destUrl = null;
         this.next = this.emptyCb;
     };
-
-    emptyCb = () => {};
 }

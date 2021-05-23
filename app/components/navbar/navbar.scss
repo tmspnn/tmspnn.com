@@ -1,0 +1,70 @@
+@import "base.scss";
+
+.-navbar {
+    @extend ._flex;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 3.5rem;
+    padding: 0;
+    background-image: linear-gradient(
+        hsla(0, 0%, 100%, 1) 70%,
+        hsla(0, 0%, 100%, 0.9)
+    );
+    color: var(--black);
+    box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.02);
+
+    > * {
+        @extend ._with-icon;
+        position: relative;
+        height: 100%;
+    }
+
+    > .left,
+    > .right {
+        width: 3.5rem;
+    }
+
+    > .center {
+        flex: 1;
+        padding: 0 1rem;
+        text-align: center;
+        line-height: 3.5rem;
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: var(--black);
+        overflow: hidden;
+    }
+
+    .btn {
+        @extend ._flex;
+        @extend ._full-size;
+        @extend ._content-center;
+        color: var(--black);
+        svg {
+            margin: 0;
+        }
+
+        &.back {
+            svg {
+                font-size: 1.8rem;
+            }
+        }
+
+        &.share {
+            svg {
+                font-size: 1.3rem;
+            }
+        }
+    }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .-navbar {
+        > * {
+            color: var(--white);
+        }
+    }
+}

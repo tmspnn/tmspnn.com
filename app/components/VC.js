@@ -1,4 +1,3 @@
-import { removeNode } from "k-dom";
 import ee from "@helpers/ee";
 class Listener {
     _namespace = "";
@@ -22,7 +21,7 @@ export class View extends Listener {
     _element = null;
     _refs = {};
     _data = null;
-    _classReg = /(^-\w+)|(\s+-\w)/i;
+    _classReg = /(^-\w)|(\s+-\w)/i;
 
     constructor(namespace, element, data) {
         super(namespace, "view");

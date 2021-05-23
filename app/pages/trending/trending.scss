@@ -1,35 +1,11 @@
 @import "base.scss";
-@import "page.scss";
-@import "text.scss";
-@import "panel.scss";
-@import "button.scss";
-@import "aurora.scss";
-@import "feed.scss";
-@import "navbar.scss";
-@import "tabbar.scss";
-@import "authorCard.scss";
-
-body {
-    background-color: $bg-white;
-}
-
-.-page-container {
-    @extend ._abs;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    padding: 3.5rem 0;
-    overflow: hidden auto;
-    border-radius: 0;
-}
 
 h2 {
     @extend ._flex;
     @extend ._with-icon;
     font-size: 2rem;
     padding: 0.8rem;
-    color: $black;
+    color: var(--black);
 
     &:not(:first-child) {
         margin-top: 3rem;
@@ -55,8 +31,8 @@ h2 {
 .more {
     @extend ._flex;
     @extend ._with-icon;
-    @extend ._content-center;
-    color: $black-grey;
+    justify-content: center;
+    color: var(--black-grey);
     text-decoration: none;
 
     svg {
