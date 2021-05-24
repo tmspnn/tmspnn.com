@@ -1,33 +1,16 @@
-import { createStyleElement, filterVisibleElements } from "k-dom";
 import isSameOrigin from "@helpers/isSameOrigin";
 import createDocument from "@helpers/createDocument";
 
 export default class PageContainer extends View {
-    defaultStyle = `.-page-container > * {
-      transition: all 200ms ease;
-    }
-
-    .-page-container > .invisible {
-      opacity: 0;
-      transform: translate3d(0, 1rem, 0);
-    }`;
-
     cache = {};
     lastUrl = null;
     currentUrl = location.href.replace(/#.*/, "");
     destUrl = null;
-    transitingElementsCount = 0;
-    shouldPushState = false;
-    emptyCb = () => {};
-    next = this.emptyCb;
+    pushState = false;
 
     constructor(namespace) {
         super(namespace);
         this._name = "pageContainer";
-
-        if (!$("style.-page-container", document.head)) {
-            this.insertDefaultStyle();
-        }
 
         if (!window._pageContainer) {
             this.cache[location.href] = {
@@ -39,19 +22,14 @@ export default class PageContainer extends View {
             window._pageContainer = this;
         }
 
-        const container = window._pageContainer || this;
+        const container = window._pageContainer;
 
-        $$("a").forEach((a) => {
-            a.on("click", (e) => container.onLinkClick(e), { passive: false });
+        $$("a").forEach((link) => {
+            link.on("click", (e) => container.onLinkClick(e), {
+                passive: false
+            });
         });
     }
-
-    insertDefaultStyle = (doc = document) => {
-        const style = createStyleElement(this.defaultStyle);
-        addClass(style, ".-page-container");
-        const head = $("head", doc);
-        head.insertBefore(style, head.firstChild);
-    };
 
     onLinkClick = (e) => {
         const link = e.currentTarget;
@@ -65,17 +43,17 @@ export default class PageContainer extends View {
         if (this.currentUrl == url || this.destUrl == url) return;
 
         this.destUrl = url;
-        this.shouldPushState = !link.hasAttribute("data-nopush");
+        this.pushState = !link.hasAttribute("data-nopush");
         this.switchPage();
     };
 
     onPopState = (e) => {
         this.destUrl = e.state.url;
-        this.shouldPushState = false;
+        this.pushState = false;
         this.switchPage();
     };
 
-    toPage = (url, shouldPushState = true) => {
+    toPage = (url, pushState = true) => {
         // Transform relative path to absolute path
         const link = document.createElement("a");
         link.href = url;
@@ -84,68 +62,33 @@ export default class PageContainer extends View {
         if (!isSameOrigin(parsedUrl) || this.currentUrl == parsedUrl) return;
 
         this.destUrl = parsedUrl;
-        this.shouldPushState = shouldPushState;
+        this.pushState = pushState;
         this.switchPage();
     };
 
     switchPage = () => {
-        const elementsToHide = filterVisibleElements(
-            $$(".-page-container > :not(.invisible)")
-        );
-
-        if (elementsToHide.length > 0 && this.transitingElementsCount == 0) {
-            // Hide current page
-            elementsToHide.forEach((el) => {
-                ++this.transitingElementsCount;
-                el._onceHandler = (e) => this.onElementTransitionEnd(e);
-                el.on("transitionend", el._onceHandler);
-                addClass(el, "invisible");
-            });
+        if (this.destUrl in this.cache) {
+            this.showDestPage();
         } else {
-            setTimeout(this.next);
-        }
-
-        // Load new page
-        if (!(this.destUrl in this.cache)) {
-            this.loadPage();
-        }
-
-        this.next = this.showDestPage;
-    };
-
-    onElementTransitionEnd = (e) => {
-        const el = e.currentTarget;
-        el.off("transitionend", el._onceHandler);
-        delete el._onceHandler;
-
-        if (--this.transitingElementsCount == 0) {
-            this.next();
+            this.loadPage(this.showDestPage);
         }
     };
 
-    loadPage = () => {
+    loadPage = (onLoad) => {
         const xhr = new XMLHttpRequest();
         xhr._url = this.destUrl;
         xhr.open("GET", this.destUrl, true);
         xhr.onload = () => {
-            const responseUrl = xhr.responseURL || xhr._url;
-
+            this.destUrl = xhr.responseURL;
             if (xhr.status >= 200 && xhr.status < 400) {
-                const docModel = createDocument(xhr.responseText);
-                this.insertDefaultStyle(docModel.documentElement);
-                this.cache[responseUrl] = docModel;
-
-                // In case of redirection
-                if (this.destUrl == xhr._url) {
-                    this.destUrl = responseUrl;
-                    this.next();
-                }
+                this.cache[this.destUrl] = createDocument(xhr.responseText);
+                onLoad();
             } else {
                 this.onXHRError(xhr);
             }
         };
         xhr.onerror = () => this.onXHRError(xhr);
-        xhr.onprogress = (e) => this.onXHRProgress(e);
+        xhr.onprogress = this.onXHRProgress;
         xhr.send();
     };
 
@@ -163,68 +106,52 @@ export default class PageContainer extends View {
     };
 
     showDestPage = () => {
-        if (this.transitingElementsCount != 0) return;
-
         const doc = this.cache[this.destUrl];
 
-        if (!doc) return;
+        if (document.documentElement != doc.documentElement) {
+            const eBeforePageHide = new Event("beforepagehide", {
+                bubbles: true
+            });
+            const eBeforePageShow = new Event("beforepageshow", {
+                bubbles: true
+            });
+            const ePageHide = new Event("pagehide", { bubbles: true });
+            const ePageShow = new Event("pageshow", { bubbles: true });
+            const docToHide = document.documentElement;
+            const docToShow = doc.documentElement;
 
-        const elementsToShow = $$(".-page-container > *", doc.documentElement);
+            docToHide.dispatchEvent(eBeforePageHide);
+            docToShow.dispatchEvent(eBeforePageShow);
+            document.replaceChild(docToShow, docToHide);
 
-        if (elementsToShow.length > 0) {
-            elementsToShow.forEach((el) => addClass(el, "invisible"));
+            if (!doc.loaded) {
+                for (let i = 0; i < doc.scriptsInHead.length; ++i) {
+                    document.head.appendChild(doc.scriptsInHead[i]);
+                }
 
-            if (document.documentElement != doc.documentElement) {
-                this.loadDocument(doc);
+                for (let i = 0; i < doc.scriptsInBody.length; ++i) {
+                    document.body.appendChild(doc.scriptsInBody[i]);
+                }
+
+                doc.loaded = true;
             }
 
-            setTimeout(() => {
-                const transitingElements = filterVisibleElements(
-                    $$(".-page-container > .invisible")
-                );
-
-                transitingElements.forEach((el) => {
-                    ++this.transitingElementsCount;
-                    el._onceHandler = (e) => this.onElementTransitionEnd(e);
-                    el.on("transitionend", el._onceHandler);
-                    removeClass(el, "invisible");
-                });
-            }, 20);
-        } else {
-            setTimeout(this.next);
-        }
-
-        if (this.shouldPushState) {
-            history.pushState(
+            history[this.pushState ? "pushState" : "replaceState"](
                 { url: this.destUrl, from: this.currentUrl },
                 "",
                 this.destUrl
             );
+
+            docToHide.dispatchEvent(ePageHide);
+            docToShow.dispatchEvent(ePageShow);
         }
 
-        this.next = this.cleanUp;
-    };
-
-    loadDocument = (doc) => {
-        document.replaceChild(doc.documentElement, document.documentElement);
-
-        if (!doc.loaded) {
-            for (let i = 0; i < doc.scriptsInHead.length; ++i) {
-                document.head.appendChild(doc.scriptsInHead[i]);
-            }
-
-            for (let i = 0; i < doc.scriptsInBody.length; ++i) {
-                document.body.appendChild(doc.scriptsInBody[i]);
-            }
-
-            doc.loaded = true;
-        }
+        this.cleanUp();
     };
 
     cleanUp = () => {
         this.lastUrl = this.currentUrl;
         this.currentUrl = this.destUrl;
         this.destUrl = null;
-        this.next = this.emptyCb;
     };
 }

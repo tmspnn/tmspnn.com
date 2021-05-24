@@ -8,19 +8,15 @@
     margin-bottom: 1rem;
     padding: 0;
 
-    a {
-        text-decoration: none;
-    }
-
     b {
         color: var(--black);
     }
 
     .cover {
-        @extend ._block;
-        @extend ._full-width;
-        @extend ._cover;
+        display: block;
+        width: 100%;
         padding-bottom: 60%;
+        background-size: cover;
     }
 
     .content {
@@ -28,9 +24,12 @@
 
         .head {
             @extend ._flex;
+            padding: 0.4rem 0;
 
             .profile {
-                @extend ._small-profile;
+                width: 1.4rem;
+                height: 1.4rem;
+                border-radius: 50%;
                 margin-right: 0.5rem;
                 box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.02);
             }
@@ -41,53 +40,51 @@
             }
 
             .date {
-                @extend ._to-right;
+                margin-left: auto;
             }
         }
 
         h1 {
-            padding: 0 0 0.1rem;
+            @extend ._line-clamp;
+            margin: 0;
+            padding: 0 0 0.3rem;
             font-size: 1.8rem;
             line-height: 1.2;
             word-break: break-all;
-
-            a {
-                color: var(--black);
-            }
-        }
-
-        .desc {
-            a {
-                color: var(--black-grey);
-            }
+            color: var(--black);
         }
 
         .meta {
             @extend ._flex;
             @extend ._with-icon;
+            padding-top: 0.2rem;
+
+            > div {
+                @extend ._flex;
+            }
 
             svg {
                 margin-right: 0;
             }
 
             .rating {
-                @extend ._felx;
-                padding: 0.2rem 0;
+                margin-right: 1rem;
+                svg {
+                    width: 1.4rem;
+                    height: 1.4rem;
+                }
             }
 
             .pageview {
-                @extend ._felx;
-                @extend ._to-right;
-                margin-right: 1rem;
-            }
-
-            .comments-count {
-                @extend ._felx;
+                margin: 0 1rem 0 auto;
             }
         }
 
-        .tags {
-            padding: 0 0.2rem;
+        .desc {
+            @extend ._line-clamp;
+            -webkit-line-clamp: 2;
+            line-height: 1.3;
+            color: var(--black-grey);
         }
     }
 }
@@ -106,7 +103,7 @@
 
     .content {
         flex: 1;
-        padding: 0.2rem 0.8rem 0.4rem;
+        padding: 0 0.8rem 0.4rem;
 
         .head {
             line-height: 1;
@@ -114,10 +111,6 @@
             .nickname {
                 font-size: 0.9rem;
                 max-width: 8rem;
-
-                b {
-                    color: var(--black-grey);
-                }
             }
         }
 
@@ -130,8 +123,7 @@
             font-size: 0.9rem;
         }
 
-        .meta,
-        .tags {
+        .meta {
             display: none;
         }
     }

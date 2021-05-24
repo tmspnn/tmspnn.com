@@ -26,7 +26,7 @@ local pageview = pageview or 0
 local comments_count = comments_count or 0
 local tags = tags or {}
 %>
-<div class="-feed _with-shadow <% if not is_headline then %>brief<% end %>">
+<div class="-feed">
     <a href="/articles/<%= id %>" class="cover" style="background-image: url(<%= cover %>)"></a>
     <div class="content">
         <div class="head">
@@ -36,29 +36,24 @@ local tags = tags or {}
             <a href="/users/<%= created_by %>" class="author ">
                 <div class="nickname _h5"><b><%= nickname %></b></div>
             </a>
-            <div class="date _h5"><%= updated_at %></div>
+            <div class="date"><%= updated_at %></div>
         </div>
         <h1>
             <a href="/articles/<%= id %>"><%= title %></a>
         </h1>
         <div class="desc"><a href="/articles/<%= id %>"><%= desc %></a></div>
         <div class="meta">
-            <div class="rating _h4">
+            <div class="rating">
                 <b><% render("views/icons/star") %><%= rating %></b>
             </div>
             <div class="pageview">
                 <% render("views/icons/eye") %>
-                <span class="_h5"><%= pageview %></span>
+                <span><%= pageview %></span>
             </div>
             <div class="comments_count">
                 <% render("views/icons/chat") %>
-                <span class="_h5"><%= comments_count %></span>
+                <span><%= comments_count %></span>
             </div>
-        </div>
-        <div class="tags">
-            <% for i, t in ipairs(tags) do %>
-            <% render("views/components/tag", {tag_name = t}) %>
-            <% end %>
         </div>
     </div>
 </div>

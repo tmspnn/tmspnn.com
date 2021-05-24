@@ -33,6 +33,7 @@ body {
 }
 
 body {
+    position: relative;
     max-width: 1024px;
     margin: 0 auto;
     overflow: hidden;
@@ -44,7 +45,7 @@ body {
 
 a {
     text-decoration: none;
-    color: var(--dark-blue);
+    color: inherit;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -133,6 +134,7 @@ ul {
 
 ._line-clamp {
     display: -webkit-box;
+    text-overflow: ellipsis;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
     overflow: hidden;
@@ -147,8 +149,8 @@ ul {
     svg {
         @extend ._inline;
         margin-right: 0.4em;
-        width: 1.2em;
-        height: 1.2em;
+        width: 1.3em;
+        height: 1.3em;
     }
 }
 
