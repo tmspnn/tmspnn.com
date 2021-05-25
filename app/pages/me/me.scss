@@ -1,19 +1,12 @@
 @import "base.scss";
-@import "page.scss";
-@import "text.scss";
-@import "panel.scss";
-@import "button.scss";
-@import "feed.scss";
-@import "tabbar.scss";
-@import "input.scss";
 
 .bg {
-    @extend ._rel;
-    @extend ._no-overflow;
+    position: relative;
+    overflow: hidden;
     padding-bottom: 60%;
 
     > img {
-        @extend ._abs;
+        position: absolute;
         left: 0;
         top: 0;
         width: 100%;
@@ -21,12 +14,13 @@
 }
 
 .meta {
-    @extend ._rel;
-    padding-top: 6rem;
+    position: relative;
+    padding-top: 5.5rem;
+    background-color: var(--white);
 
     .profile {
-        @extend ._abs;
-        @extend ._round;
+        position: absolute;
+        border-radius: 50%;
         left: 2rem;
         top: -4rem;
         width: 8rem;
@@ -35,8 +29,8 @@
     }
 
     > button {
-        @extend ._abs;
         @extend ._flex;
+        position: absolute;
         right: 1rem;
         top: 1rem;
     }
@@ -44,9 +38,21 @@
     .row {
         @extend ._flex;
         @extend ._with-icon;
-        @extend ._with-shadow;
+        position: relative;
+        box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.05);
         padding: 1rem 1rem 1rem 2rem;
-        background-color: $white;
+        background-color: var(--white);
+
+        &:before {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 1px;
+            content: "";
+            background-color: var(--light-white);
+            transform: scaleY(0.5);
+        }
 
         label {
             @extend ._flex;
@@ -59,20 +65,24 @@
         }
 
         > span {
-            color: $black;
+            color: var(--black);
         }
     }
 
     .operations {
         button {
-            @extend ._block;
-            @extend ._full-width;
-            margin-right: 1rem;
+            display: block;
+            width: 100%;
         }
 
         .sign-out {
-            background-image: radial-gradient(at left top, $orange, $red);
-            box-shadow: 0 0.5rem 1rem $red;
+            margin: 2rem 1rem 1.2rem 0;
+            padding: 0.6rem 1.2rem;
+            background-image: radial-gradient(
+                at left top,
+                var(--orange),
+                var(--red)
+            );
         }
     }
 }

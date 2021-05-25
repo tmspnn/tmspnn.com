@@ -11,9 +11,9 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const pages = [
     "index",
     // "article",
-    "trending"
-    // "messages",
-    // "me"
+    "trending",
+    "messages",
+    "me"
     // "signIn",
     // "signUp",
     // "forgotPassword",
