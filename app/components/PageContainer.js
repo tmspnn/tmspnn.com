@@ -109,14 +109,10 @@ export default class PageContainer extends View {
         const doc = this.cache[this.destUrl];
 
         if (document.documentElement != doc.documentElement) {
-            const eBeforePageHide = new Event("beforepagehide", {
-                bubbles: true
-            });
-            const eBeforePageShow = new Event("beforepageshow", {
-                bubbles: true
-            });
-            const ePageHide = new Event("pagehide", { bubbles: true });
-            const ePageShow = new Event("pageshow", { bubbles: true });
+            const eBeforePageHide = new Event("beforepagehide");
+            const eBeforePageShow = new Event("beforepageshow");
+            const ePageHide = new Event("pagehide");
+            const ePageShow = new Event("pageshow");
             const docToHide = document.documentElement;
             const docToShow = doc.documentElement;
 

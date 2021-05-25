@@ -1,8 +1,9 @@
 import "./index.scss";
+import immediatelyScrollTo from "@helpers/immediatelyScrollTo";
 import PageContainer from "@components/PageContainer";
 import navbar from "@components/navbar/navbar";
 import tabbar from "@components/tabbar/tabbar";
-import "@components/feed.scss"; // Static component
+import "@components/feed.scss";
 
 const namespace = "index";
 
@@ -20,7 +21,14 @@ function view() {
 
     // Event listeners
     const container = $(".-page-container");
-    container.on("scroll", (e) => {
+
+    document.documentElement.on("pageshow", () => {
+        if (data.scrollTop > 0) {
+            immediatelyScrollTo(container, data.scrollTop | 0);
+        }
+    });
+
+    container.on("scroll", () => {
         data.scrollTop = container.scrollTop;
     });
 }

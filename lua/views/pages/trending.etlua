@@ -6,17 +6,19 @@ local authors_overall = ctx.data.authors_24h or {}
 %>
 <div class="-page-container">
   <h2>
-    <% render("views/icons/fire") %>
+    <% render("views/icons/clipboard_list") %>
     24小时热文
   </h2>
   <div>
     <% for i, a in ipairs(articles_24h) do %>
     <% render("views/components/feed", a) %>
     <% end %>
-    <a href="/" class="more">
-      <% render("views/icons/dots_circle_horizontal") %>
-      <span>查看更多</span>
-    </a>
+    <button class="more">
+      <a href="/">
+        <% render("views/icons/dots_circle_horizontal") %>
+        <span>查看更多</span>
+      </a>
+    </button>
   </div>
   <h2>
     <% render("views/icons/users") %>
@@ -26,23 +28,27 @@ local authors_overall = ctx.data.authors_24h or {}
     <% for i, a in ipairs(authors_24h) do %>
     <% render("views/components/author_card", a) %>
     <% end %>
-    <a href="/" class="more">
-      <% render("views/icons/dots_circle_horizontal") %>
-      <span>查看更多</span>
-    </a>
+    <button class="more">
+      <a href="/">
+        <% render("views/icons/dots_circle_horizontal") %>
+        <span>查看更多</span>
+      </a>
+    </button>
   </div>
   <h2>
-    <% render("views/icons/fire") %>
+    <% render("views/icons/clipboard_list") %>
     全站热文
   </h2>
   <div>
     <% for i, a in ipairs(articles_overall) do %>
     <% render("views/components/feed", a) %>
     <% end %>
-    <a href="/" class="more">
-      <% render("views/icons/dots_circle_horizontal") %>
-      <span>查看更多</span>
-    </a>
+    <button class="more">
+      <a href="/">
+        <% render("views/icons/dots_circle_horizontal") %>
+        <span>查看更多</span>
+      </a>
+    </button>
   </div>
   <h2>
     <% render("views/icons/users") %>
@@ -52,10 +58,12 @@ local authors_overall = ctx.data.authors_24h or {}
     <% for i, a in ipairs(authors_overall) do %>
     <% render("views/components/author_card", a) %>
     <% end %>
-    <a href="/" class="more">
-      <% render("views/icons/dots_circle_horizontal") %>
-      <span>查看更多</span>
-    </a>
+    <button class="more">
+      <a href="/">
+        <% render("views/icons/dots_circle_horizontal") %>
+        <span>查看更多</span>
+      </a>
+    </button>
   </div>
 </div>
 <% render("views/components/navbar", { title = title }) %>

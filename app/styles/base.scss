@@ -50,7 +50,9 @@ a {
 }
 
 button {
-    padding: 0.34em 1.2em 0.44em 0.8em;
+    padding: 0.4rem 1.2em 0.4em 0.8em;
+    border: none;
+    border-radius: 0.2rem;
     box-shadow: 0 0.2rem 0.4rem var(--blue);
     color: var(--white);
     background-image: radial-gradient(at left top, var(--green), var(--blue));
@@ -63,6 +65,12 @@ button {
 
     &:active {
         transform: scale(0.95);
+    }
+
+    svg {
+        width: 1.2rem;
+        height: 1.2rem;
+        vertical-align: middle;
     }
 }
 

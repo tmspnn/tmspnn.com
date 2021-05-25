@@ -3,12 +3,33 @@
 h2 {
     @extend ._flex;
     @extend ._with-icon;
-    font-size: 2rem;
-    padding: 0.8rem;
-    color: var(--black);
+    font-size: 1.2rem;
+    margin: 0;
+    padding: 1rem 0.6rem;
+    justify-content: center;
+    color: var(--black-grey);
 
     &:not(:first-child) {
         margin-top: 3rem;
+    }
+
+    svg {
+        margin-right: 0.1rem;
+    }
+}
+
+button.more {
+    display: block;
+    margin: 2.5rem auto 4rem;
+
+    a {
+        @extend ._flex;
+        width: 100%;
+        height: 100%;
+
+        svg {
+            margin-right: 0.2rem;
+        }
     }
 }
 
@@ -16,28 +37,10 @@ h2 {
     @extend ._horizontal-scrolling;
     padding: 0 1rem 1rem;
 
-    .more {
-        @extend ._inline;
-
-        svg {
-            position: relative;
-            top: -0.1rem;
-            vertical-align: middle;
-            margin: 0;
-        }
-    }
-}
-
-.more {
-    @extend ._flex;
-    @extend ._with-icon;
-    justify-content: center;
-    color: var(--black-grey);
-    text-decoration: none;
-
-    svg {
-        width: 1.3rem;
-        height: 1.3rem;
-        margin-right: 0.2rem;
+    button.more {
+        display: inline-block;
+        position: relative;
+        top: -3.8rem;
+        margin: 0;
     }
 }
