@@ -8,8 +8,8 @@ export default class PageContainer extends View {
     destUrl = null;
     pushState = false;
 
-    constructor(namespace) {
-        super(namespace);
+    constructor() {
+        super();
         this._name = "pageContainer";
 
         if (!window._pageContainer) {
@@ -21,15 +21,16 @@ export default class PageContainer extends View {
             window.on("popstate", this.onPopState);
             window._pageContainer = this;
         }
+    }
 
+    captureLinks = () => {
         const container = window._pageContainer;
-
         $$("a").forEach((link) => {
             link.on("click", (e) => container.onLinkClick(e), {
                 passive: false
             });
         });
-    }
+    };
 
     onLinkClick = (e) => {
         const link = e.currentTarget;
@@ -54,13 +55,8 @@ export default class PageContainer extends View {
     };
 
     toPage = (url, pushState = true) => {
-        // Transform relative path to absolute path
-        const link = document.createElement("a");
-        link.href = url;
-        const parsedUrl = link.href.replace(/#.*/, "");
-
+        const parsedUrl = this.toAbsolutePath(url);
         if (!isSameOrigin(parsedUrl) || this.currentUrl == parsedUrl) return;
-
         this.destUrl = parsedUrl;
         this.pushState = pushState;
         this.switchPage();
@@ -70,19 +66,28 @@ export default class PageContainer extends View {
         if (this.destUrl in this.cache) {
             this.showDestPage();
         } else {
-            this.loadPage(this.showDestPage);
+            this.loadPage(this.destUrl, (xhr) => {
+                this.destUrl = xhr.responseURL;
+                this.showDestPage();
+            });
         }
     };
 
-    loadPage = (onLoad) => {
+    loadPage = (url, onLoad, force = false) => {
+        const parsedUrl = this.toAbsolutePath(url);
+
+        if (!isSameOrigin(url)) return;
+
+        if (parsedUrl in this.cache && !force) return;
+
         const xhr = new XMLHttpRequest();
-        xhr._url = this.destUrl;
-        xhr.open("GET", this.destUrl, true);
+        xhr.open("GET", parsedUrl, true);
         xhr.onload = () => {
-            this.destUrl = xhr.responseURL;
             if (xhr.status >= 200 && xhr.status < 400) {
-                this.cache[this.destUrl] = createDocument(xhr.responseText);
-                onLoad();
+                this.cache[xhr.responseURL] = createDocument(xhr.responseText);
+                if (typeof onLoad == "function") {
+                    onLoad(xhr);
+                }
             } else {
                 this.onXHRError(xhr);
             }
@@ -120,7 +125,17 @@ export default class PageContainer extends View {
             docToShow.dispatchEvent(eBeforePageShow);
             document.replaceChild(docToShow, docToHide);
 
-            if (!doc.loaded) {
+            history[this.pushState ? "pushState" : "replaceState"](
+                { url: this.destUrl, from: this.currentUrl },
+                "",
+                this.destUrl
+            );
+
+            docToHide.dispatchEvent(ePageHide);
+
+            if (doc.loaded) {
+                docToShow.dispatchEvent(ePageShow);
+            } else {
                 for (let i = 0; i < doc.scriptsInHead.length; ++i) {
                     document.head.appendChild(doc.scriptsInHead[i]);
                 }
@@ -130,19 +145,28 @@ export default class PageContainer extends View {
                 }
 
                 doc.loaded = true;
+
+                setTimeout(() => {
+                    docToShow.dispatchEvent(ePageShow);
+                }, 52); // Three frames, 17 * 3 = 51
             }
-
-            history[this.pushState ? "pushState" : "replaceState"](
-                { url: this.destUrl, from: this.currentUrl },
-                "",
-                this.destUrl
-            );
-
-            docToHide.dispatchEvent(ePageHide);
-            docToShow.dispatchEvent(ePageShow);
         }
 
         this.cleanUp();
+    };
+
+    toAbsolutePath = (url) => {
+        let absPath;
+
+        if (/^https?:\/\//i.test(url)) {
+            absPath = url;
+        } else {
+            const link = document.createElement("a");
+            link.href = url;
+            absPath = link.href;
+        }
+
+        return absPath.replace(/#.*/, "");
     };
 
     cleanUp = () => {
