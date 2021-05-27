@@ -1,73 +1,36 @@
-@import "colors.scss";
+@import "base.scss";
 
 .-logo-header {
-    $logo-size: 5rem;
+    --logo-size: 5.3rem;
 
     > a {
-        display: flex;
-        align-items: flex-start;
-        text-decoration: none;
-        > div {
-            flex: 1;
-        }
-        &:hover {
-            svg {
-                path {
-                    stroke: hsl(213, 92%, 28%);
-                }
-            }
-        }
+        @extend ._flex;
 
         svg {
-            width: $logo-size;
-            min-width: $logo-size;
-            height: $logo-size;
-            min-height: $logo-size;
+            width: var(--logo-size);
+            height: var(--logo-size);
 
             g {
                 fill: url(#logo-gradient);
             }
 
             path {
-                stroke: $dark;
+                stroke: var(--dark);
                 transition: stroke 300ms;
             }
         }
 
         h1 {
-            font-size: 2.2rem;
+            font-size: 2.7rem;
             font-weight: bold;
             white-space: nowrap;
             margin: 0;
-            color: $dark;
-        }
-
-        .sub-title {
-            display: flex;
-            align-items: center;
-        }
-
-        h3 {
-            flex: 1;
-            font-size: 0.9rem;
-            font-weight: normal;
-            white-space: nowrap;
-            margin: 0;
-            background-image: linear-gradient(
-                130deg,
-                $primary 0%,
-                $secondary 100%
-            );
-            background-size: 100%;
-            background-clip: text;
-            background-color: $link;
-            -webkit-text-fill-color: transparent;
-            -moz-text-fill-color: transparent;
+            color: var(--dark);
         }
 
         .meta {
             padding-right: 1rem;
-            color: $red;
+            color: var(--red);
             font-size: 0.8rem;
             font-style: italic;
             font-weight: normal;

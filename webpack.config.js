@@ -13,8 +13,8 @@ const pages = [
     // "article",
     "trending",
     "messages",
-    "me"
-    // "signIn",
+    "me",
+    "signIn"
     // "signUp",
     // "forgotPassword",
     // "resetPassword",
@@ -106,7 +106,6 @@ module.exports = {
             isInt: ["k-util", "isInt"],
             isJSON: ["k-util", "isJSON"],
             parseJSON: ["k-util", "parseJSON"],
-            at: ["k-util", "at"],
             toArray: ["k-util", "toArray"],
             each: ["k-util", "each"],
             at: ["k-util", "at"]

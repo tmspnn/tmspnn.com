@@ -5,9 +5,8 @@ h2 {
     @extend ._with-icon;
     font-size: 1.2rem;
     margin: 0;
-    padding: 1rem 0.6rem;
-    justify-content: center;
-    color: var(--black-grey);
+    padding: 1rem;
+    color: var(--black);
 
     &:not(:first-child) {
         margin-top: 3rem;

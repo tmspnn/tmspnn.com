@@ -1,6 +1,12 @@
 import "./signIn.scss";
-import SignInView from "./SignInView";
-import SignInController from "./SignInController";
+import Page from "@components/Page";
+import "@components/logoHeader.scss";
 
-new SignInView();
-new SignInController();
+const namespace = "signIn";
+
+/**
+ * @property {Number} root._data.scrollTop
+ */
+const root = new Page(namespace);
+
+const ctrl = new Controller(namespace);

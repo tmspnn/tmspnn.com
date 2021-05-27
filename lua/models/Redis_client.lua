@@ -1,11 +1,10 @@
--- External modules
--- > The Nginx interface provided by OpenResty
+-- Nginx interface provided by OpenResty
 local ngx = require "ngx"
 
 -- Implementation
 local Redis_client = {}
 
--- > As a base class, __index points to self
+-- As a base class, __index points to self
 Redis_client.__index = Redis_client
 
 function Redis_client:new(conf)

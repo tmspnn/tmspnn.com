@@ -1,21 +1,16 @@
 @import "base.scss";
-@import "button.scss";
-@import "logoHeader.scss";
 
-body {
-    overflow: hidden;
-}
-
-.main {
+.center {
     margin: 0 auto;
-    padding: 1rem 0;
+    padding: 1rem;
     width: 100%;
-    max-width: 18rem;
+    max-width: 20rem;
 
     .row {
-        display: flex;
-        align-items: center;
-        padding: 1.2rem 0;
+        @extend ._flex;
+        @extend ._with-icon;
+
+        padding: 1.2rem 1rem;
 
         &:nth-child(2) {
             margin-top: 1rem;
@@ -31,36 +26,23 @@ body {
                 right: 1rem;
                 width: 1.2rem;
                 height: 1.2rem;
-                color: $grey-dark;
+                color: var(--grey-dark);
                 cursor: pointer;
                 z-index: 0;
                 &.light {
-                    color: $link;
+                    color: var(--link);
                 }
             }
         }
 
-        label {
-            width: 2rem;
-            text-align: right;
-            padding-right: 1rem;
-            color: $grey-dark;
-
-            svg {
-                width: 1.2rem;
-                height: 1.2rem;
-                vertical-align: middle;
-            }
-        }
-
         input {
-            width: 15rem;
+            width: 100%;
             border: none;
-            border-bottom: 1px solid $grey-dark;
-            background-color: $light;
+            border-bottom: 1px solid var(--grey-dark);
+            background-color: var(--light);
 
             &:focus {
-                border-bottom: 1px solid $link;
+                border-bottom: 1px solid var(--link);
             }
 
             &.small {
@@ -79,6 +61,6 @@ body {
         user-select: none;
         padding: 0.5rem 1rem;
         font-size: 0.9rem;
-        color: $grey-dark;
+        color: var(--grey-dark);
     }
 }

@@ -1,5 +1,6 @@
 -- External modules
 local to_json = require("lapis.util").to_json
+local respond_to = require("lapis.application").respond_to
 local json_params = require("lapis.application").json_params
 
 -- Aliases
@@ -47,6 +48,14 @@ local function json_tag(data)
         },
         inner_html = to_json(data)
     }
+end
+
+local function sign_in_required(app)
+    if not app.ctx.uid then
+        app:write({
+            redirect_to = "/sign-in"
+        })
+    end
 end
 
 local function index(app)
@@ -130,12 +139,28 @@ local function me(app)
     }
 end
 
+local function sign_in(app)
+    local ctx = app.ctx
+    ctx.page_title = "一刻阅读 | 登录"
+    ctx.tags_in_head = {css_tag("signIn")}
+    ctx.tags_in_body = {json_tag({}), js_tag("signIn")}
+    ctx.data = {}
+
+    return {
+        render = "pages.sign_in"
+    }
+end
+
 local function page_controller(app)
     app:get("/", index)
     app:get("/articles/:article_id", article)
     app:get("/trending", trending)
     app:get("/messages", messages)
-    app:get("/me", me)
+    app:match("/me", respond_to({
+        before = sign_in_required,
+        GET = me
+    }))
+    app:get("/sign-in", sign_in)
 end
 
 -- page_ctrl.css_path = ""

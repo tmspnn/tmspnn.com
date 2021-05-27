@@ -1,12 +1,6 @@
 <div class="-logo-header">
     <a href="https://tmspnn.com">
         <% render("views/components/logo") %>
-        <div>
-            <h1>一刻阅读</h1>
-            <div class="sub-title">
-                <h3>尊重创作的价值</h3>
-                <span class="meta">内测版</span>
-            </div>
-        </div>
+        <h1>一刻阅读<span class="meta">内测版</span></h1>
     </a>
 </div>

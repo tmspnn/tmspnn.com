@@ -23,7 +23,7 @@ create table "user" (
 
 create index user_fame_idx on "user" (fame);
 create index user_followers_count_idx on "user" (followers_count);
-create index user_obj_gin on "user" using gin (obj);
+create index user_obj_gin on "user" using gin (obj jsonb_path_ops);
 create index user_search_idx on "user" using gin (ts_vector);
 
 -- Article
@@ -48,5 +48,5 @@ create table "article" (
 create index article_weight_idx on "article" (weight);
 create index article_fame_idx on "article" (fame);
 create index article_create_by_idx on "article" (created_by);
-create index article_obj_gin on "article" using gin (obj);
+create index article_obj_gin on "article" using gin (obj jsonb_path_ops);
 create index article_search_idx on "article" using gin (ts_vector);
