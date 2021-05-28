@@ -43,14 +43,17 @@ export class View extends Listener {
     getRefs = (el) => {
         for (let i = 0; i < el.children.length; ++i) {
             const ch = el.children[i];
-            if (!this._classReg.test(ch.className)) {
-                const refName = ch.getAttribute("data-ref");
-                if (refName) {
-                    this._refs[refName] = ch;
-                }
-                if (el.children.length > 0) {
-                    this.getRefs(ch);
-                }
+
+            if (this._classReg.test(ch.className)) continue;
+
+            const refName = ch.getAttribute("data-ref");
+
+            if (refName) {
+                this._refs[refName] = ch;
+            }
+
+            if (el.children.length > 0) {
+                this.getRefs(ch);
             }
         }
     };

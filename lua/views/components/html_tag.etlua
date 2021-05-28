@@ -1,6 +1,6 @@
-<% --[[ -%>
-tag: string
-attributes: table
-inner_html: string
-<% --]] -%>
+<%
+local tag = tag or "meta"
+local attributes = attributes or {}
+local inner_html = inner_html or ""
+%>
 <<%= tag %> <% for attr, value in pairs(attributes) do %><%= attr %>="<%= value %>" <% end %>><%- inner_html or "" %></<%= tag %>>

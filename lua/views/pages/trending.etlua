@@ -4,7 +4,7 @@ local articles_overall = ctx.data.articles_overall or {}
 local authors_24h = ctx.data.authors_24h or {}
 local authors_overall = ctx.data.authors_24h or {}
 %>
-<div class="-page-container">
+<div class="page-container">
   <h2>
     <% render("views/icons/clipboard_list") %>
     24小时热文

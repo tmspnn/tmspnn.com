@@ -7,7 +7,7 @@ config("production", {
     secret = "tmspnn.com:openresty",
     logging = false,
     postgres = {
-        host = ngx.var.redis_host,
+        host = ngx.var.pg_host,
         user = ngx.var.pg_user,
         password = ngx.var.pg_password,
         database = "tmspnn"

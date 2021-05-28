@@ -28,7 +28,7 @@ local comments_count = data.comments_count or 0
 local tags = data.tags or {}
 local content = data.content or ""
 %>
-<div class="-page-container">
+<div class="page-container">
     <div class="head">
         <a href="/users/<%= created_by %>" class="profile" style="background-image: url(<%= profile %>)"></a>
         <a href="/users/<%= created_by %>" class="author nickname _h5"><b><%= nickname %></b></a>

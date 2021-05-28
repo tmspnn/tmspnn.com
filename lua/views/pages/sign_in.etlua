@@ -1,17 +1,17 @@
-<div class="-page-container">
+<div class="page-container">
 	<div class="center">
 		<% render("views/components/logo_header") %>
 		<div class="row">
-			<input type="email" id="email" placeholder="E-mail">
 			<% render("views/icons/at_symbol") %>
+			<input type="email" placeholder="E-mail" data-ref="emailInput">
 		</div>
 		<div class="row">
-			<input type="password" id="password" placeholder="密码">
 			<% render("views/icons/key") %>
+			<input type="password" id="password" placeholder="密码" data-ref="passInput">
 			<% render("views/icons/eye") %>
 		</div>
 		<div class="row">
-			<button>
+			<button data-ref="signInBtn">
 				<% render("views/icons/login") %>
 				<span>登录</span>
 			</button>

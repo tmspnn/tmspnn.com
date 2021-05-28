@@ -5,7 +5,7 @@ local hot_tags = ctx.data.hot_tags or {}
 local feeds = ctx.data.feeds or {}
 local title = ctx.page_title
 %>
-<div class="-page-container">
+<div class="page-container">
   <div class="search">
     <div>
       <input type="search" data-ref="input">

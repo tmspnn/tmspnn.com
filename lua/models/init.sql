@@ -3,6 +3,7 @@ create database tmspnn;
 -- User
 create table "user" (
     id serial primary key,
+    password text not null,
     nickname varchar(256) not null default '',
     profile varchar(256) not null default '',
     fame numeric not null default 1.0,

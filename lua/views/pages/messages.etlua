@@ -2,7 +2,7 @@
 local title = ctx.page_title
 local messages = ctx.data.messages or {}
 %>
-<div class="-page-container">
+<div class="page-container">
     <div class="personal">
         <% for i, m in ipairs(messages.personal) do %>
         <% render("views/components/message", m) %>

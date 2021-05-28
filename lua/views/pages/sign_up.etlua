@@ -1,4 +1,4 @@
-<div class="-page-container">
+<div class="page-container">
 	<div class="main">
 		<% render("views/components/logo_header") %>
 		<div class="row">

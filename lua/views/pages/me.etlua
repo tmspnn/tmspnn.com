@@ -18,7 +18,7 @@ local created_at = data.created_at
 local updated_at = data.updated_at
 local desc = data.desc
 %>
-<div class="-page-container">
+<div class="page-container">
     <div class="bg">
         <img src="<%= cover %>" alt="cover" class="cover">
     </div>

@@ -17,7 +17,7 @@ export default class Page extends View {
             each(this.prefetch, (p) => this.pageContainer.loadPage(p));
 
             // Event listeners
-            const container = $(".-page-container");
+            const container = $(".page-container");
 
             document.documentElement.on("beforepageshow", (e) => {
                 $("body", e.currentTarget).style.visibility = "hidden";

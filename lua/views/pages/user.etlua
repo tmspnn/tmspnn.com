@@ -1,4 +1,4 @@
-<div class="-page-container">
+<div class="page-container">
     <% render("views/components/navbar_me") %>
     <div class="main">
         <div class="bg-container">

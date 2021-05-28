@@ -12,7 +12,7 @@ local context = require "middlewares/context"
 local device = require "middlewares/device"
 local exception = require "middlewares/exception"
 local page_controller = require "controllers/page_controller"
--- local user_controller = require "controllers/user/user_controller"
+local user_controller = require "controllers/user_controller"
 -- local article_controller = require "controllers/article/article_controller"
 -- local search_controller = require "controllers/search/search_controller"
 
@@ -33,7 +33,7 @@ app:before_filter(auth)
 
 -- Controllers
 page_controller(app)
--- user_controller:register(app)
+user_controller(app)
 -- article_controller:register(app)
 -- search_controller:register(app)
 

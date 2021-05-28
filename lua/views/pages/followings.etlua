@@ -1,4 +1,4 @@
-<div class="-page-container">
+<div class="page-container">
     <% render("views/components/navigation_bar") %>
     <div class="main">
         <div class="filter">
