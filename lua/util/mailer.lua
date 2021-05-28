@@ -1,5 +1,6 @@
--- @External
-local ngx = require "ngx" -- The Nginx interface provided by OpenResty
+-- External modules
+-- Nginx interface provided by OpenResty
+local ngx = require "ngx"
 local mail = require "resty.mail"
 
 local mailer, err = mail.new({
@@ -11,8 +12,8 @@ local mailer, err = mail.new({
 })
 
 if err then
-    ngx.log(ngx.ERR, "mail.new error: ", err)
-    return ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
+    ngx.log(ngx.ERR, "ERROR: mail.new, ", err)
+    ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
 end
 
 return mailer

@@ -151,6 +151,18 @@ local function sign_in(app)
     }
 end
 
+local function sign_up(app)
+    local ctx = app.ctx
+    ctx.page_title = "一刻阅读 | 登录"
+    ctx.tags_in_head = {css_tag("signUp")}
+    ctx.tags_in_body = {json_tag({}), js_tag("signUp")}
+    ctx.data = {}
+
+    return {
+        render = "pages.sign_up"
+    }
+end
+
 local function page_controller(app)
     app:get("/", index)
     app:get("/articles/:article_id", article)
@@ -161,6 +173,7 @@ local function page_controller(app)
         GET = me
     }))
     app:get("/sign-in", sign_in)
+    app:get("/sign-up", sign_up)
 end
 
 -- page_ctrl.css_path = ""

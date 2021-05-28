@@ -14,8 +14,8 @@ const pages = [
     "trending",
     "messages",
     "me",
-    "signIn"
-    // "signUp",
+    "signIn",
+    "signUp"
     // "forgotPassword",
     // "resetPassword",
     // "editor",
@@ -66,7 +66,10 @@ module.exports = {
                     loader: "babel-loader",
                     options: {
                         presets: [
-                            ["@babel/preset-env", { targets: "defaults" }]
+                            [
+                                "@babel/preset-env",
+                                { targets: "last 1 chrome version" }
+                            ]
                         ],
                         plugins: [
                             [

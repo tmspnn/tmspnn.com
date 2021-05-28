@@ -8,6 +8,7 @@ uuid.seed()
 
 -- Local modules
 local User = require "models/User"
+local mailer = require "util/mailer"
 
 local function sign_in(app)
     local ctx = app.ctx
@@ -47,8 +48,49 @@ local function sign_in(app)
     }
 end
 
+local function send_vcode_email(app)
+    local ctx = app.ctx
+    ctx.trim_all(app.params)
+
+    local email = app.params.email
+
+    local is_email, _ = validation.email(email)
+
+    if not is_email then
+        error("email.invalid", 0)
+    end
+
+    local existed_vcode = User:get_vcode(email)
+
+    if existed_vcode then
+        error("vcode.not.available", 0)
+    end
+
+    local vcode = string.sub(math.random(), -4)
+
+    local ok, err = mailer:send({
+        from = "一刻阅读 <tmspnn@163.com>",
+        to = {email},
+        cc = {},
+        subject = "验证码:" .. vcode .. " | 拾刻阅读",
+        text = vcode,
+        html = string.format("<h1>%s</h1>", vcode)
+    })
+
+    if not ok then
+        error(err)
+    end
+
+    User:set_vcode(vcode, email)
+
+    return {
+        status = 204
+    }
+end
+
 local function user_controller(app)
     app:post("/api/sign-in", json_params(sign_in))
+    app:post("/api/vcodes", json_params(send_vcode_email))
 end
 
 return user_controller

@@ -19,7 +19,7 @@ local Redis_client = require "models/Redis_client"
 local User = Model:new("user")
 
 local token_ttl = 60 * 60 * 24 * 14 -- two weeks
--- local vcode_ttl = 60 * 10 -- ten minutes
+local vcode_ttl = 60 * 10 -- ten minutes˝
 -- local password_sequence_ttl = 60 * 60 * 24 -- one day
 
 function User:get_id_by_token(user_token)
@@ -39,18 +39,18 @@ function User:set_token(token, uid)
     client:run("setex", fmt("user_token(%s):uid", token), token_ttl, uid)
 end
 
+function User:get_vcode(email)
+    local client = Redis_client:new()
+    return client:run("get", fmt("email(%s):vcode", email))
+end
+
+function User:set_vcode(vcode, email)
+    local client = Redis_client:new()
+    client:run("setex", fmt("email(%s):vcode", email), vcode_ttl, vcode)
+end
+
 -- function user:get_recommended()
 --     return self:find([[ * from "user" order by id desc limit 5 ]])
--- end
-
--- function user:get_vcode(email)
---     local client = Redis_client:new()
---     return client:run("get", fmt("email(%s):vcode", email))
--- end
-
--- function user:set_vcode(vcode, email)
---     local client = Redis_client:new()
---     client:run("setex", fmt("email(%s):vcode", email), vcode_ttl, vcode)
 -- end
 
 -- function user:remove_vcode(email)
