@@ -14,7 +14,7 @@ local article = model:new("article")
 
 function article:get_latest(start_id)
     local condition = start_id and "where id < ?" or ""
-    local params = start_id and { start_id } or {}
+    local params = start_id and {start_id} or {}
     local sql = fmt([[ * from "article" %s order by id desc limit 20 ]], condition)
     return self:find(sql, unpack(params))
 end
@@ -30,28 +30,22 @@ end
 
 function article:add_comment_advocator(comment_id, uid)
     local client = redis_client:new()
-    return client:run("zadd",
-                      fmt("comment(%d):advocators", comment_id),
-                      util.timestamp(), uid)
+    return client:run("zadd", fmt("comment(%d):advocators", comment_id), util.timestamp(), uid)
 end
 
 function article:remove_comment_advocator(comment_id, uid)
     local client = redis_client:new()
-    return client:run("zrem",
-                      fmt("comment(%d):advocators", comment_id), uid)
+    return client:run("zrem", fmt("comment(%d):advocators", comment_id), uid)
 end
 
 function article:add_comment_opposer(comment_id, uid)
     local client = redis_client:new()
-    return client:run("zadd",
-                      fmt("comment(%d):opposers", comment_id),
-                      util.timestamp(), uid)
+    return client:run("zadd", fmt("comment(%d):opposers", comment_id), util.timestamp(), uid)
 end
 
 function article:remove_comment_opposer(comment_id, uid)
     local client = redis_client:new()
-    return client:run("zrem",
-                      fmt("comment(%d):opposers", comment_id), uid)
+    return client:run("zrem", fmt("comment(%d):opposers", comment_id), uid)
 end
 
 function article:regularize(ins)

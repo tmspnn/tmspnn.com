@@ -1,8 +1,9 @@
 -- External modules
 local bcrypt = require "bcrypt"
-local validation = require "resty.validation"
 local json_params = require("lapis.application").json_params
 local uuid = require "resty.jit-uuid"
+local validation = require "resty.validation"
+
 uuid.seed()
 
 -- Local modules
@@ -25,7 +26,9 @@ local function sign_in(app)
         error("password.invalid", 0)
     end
 
-    local user_in_db = User:find("id, email, password from \"user\" where email = ?", email)[1]
+    local user_in_db = User:find([[
+        id, email, password from "user" where email = ?
+    ]], email)[1]
 
     if not user_in_db then
         error("email.not.registered", 0)

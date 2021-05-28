@@ -6,7 +6,8 @@ local db = require "lapis.db"
 -- Implementation
 local Model = {}
 
-Model.__index = Model -- As a base class, __index points to self
+-- As a base class, __index points to self
+Model.__index = Model
 
 function Model:new(table_name)
     local m = {
@@ -16,7 +17,9 @@ function Model:new(table_name)
 end
 
 function Model:find_by_id(id)
-    local res, err = db.select(string.format([[ * from "%s" where id = ? ]], self.table_name), id)
+    local res, err = db.select(string.format([[
+        * from "%s" where id = ?
+    ]], self.table_name), id)
     if not res then
         error(err)
     end
