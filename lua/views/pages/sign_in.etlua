@@ -3,11 +3,11 @@
 		<% render("views/components/logo_header") %>
 		<div class="row">
 			<% render("views/icons/device_mobile") %>
-			<input type="text" placeholder="手机号" data-ref="mobileInput">
+			<input type="text" placeholder="手机号" spellcheck="false" data-ref="mobileInput">
 		</div>
 		<div class="row">
 			<% render("views/icons/key") %>
-			<input type="password" id="password" placeholder="密码" data-ref="passInput">
+			<input type="password" id="password" placeholder="密码" spellcheck="false" data-ref="passInput">
 			<% render("views/icons/eye") %>
 		</div>
 		<div class="row">

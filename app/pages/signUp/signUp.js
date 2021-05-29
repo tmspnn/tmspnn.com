@@ -18,6 +18,16 @@ root.customSpinner = customSpinner(namespace);
 const { mobileInput, vcodeInput, vcodeBtn, passInput, signUpBtn } = root._refs;
 const eyeIcon = passInput.nextElementSibling;
 
+// Auto completion
+const localMobile = localStorage.getItem("signUp.mobile");
+const localVcode = localStorage.getItem("signUp.vcode");
+if (localMobile) {
+    mobileInput.value = localMobile;
+}
+if (localVcode) {
+    vcodeInput.value = localVcode;
+}
+
 // UI reactions
 root.countdown = () => {
     root._data.countdown = 60;
@@ -29,6 +39,10 @@ root.countdown = () => {
             vcodeBtn.textContent = root._data.countdown;
         }
     }, 1000);
+};
+
+root.setVcode = (vcode) => {
+    vcodeInput.value = vcode;
 };
 
 // Event listeners
@@ -50,8 +64,9 @@ eyeIcon.on("click", () => {
 
 signUpBtn.on("click", () => {
     const mobile = mobileInput.value.trim();
+    const vcode = vcodeInput.value.trim();
     const password = passInput.value.trim();
-    root.dispatch("submit", mobile, password);
+    root.dispatch("submit", mobile, vcode, password);
 });
 
 /**
@@ -68,15 +83,22 @@ ctrl.handleException = (e) => {
 
 ctrl.acquireVcode = async (mobile) => {
     ctrl.postJson("/api/vcodes", { mobile })
-        .then(() => {
-            ctrl.toast("验证码已发送, 请登录邮箱查看.");
-            ctrl.ui("root::countdown");
+        .then((res) => {
+            ctrl.toast(`验证码${res.vcode}, 10分钟内有效.`);
+            ctrl.ui("root::countdown").ui("root::setVcode", res.vcode);
+            localStorage.setItem("signUp.mobile", mobile);
+            localStorage.setItem("signUp.vcode", res.vcode);
         })
         .catch(ctrl.handleException);
 };
 
-ctrl.submit = (mobile, password) => {
-    ctrl.postJson("/api/sign-in", { mobile, password })
-        .then((res) => console.log(res))
+ctrl.submit = (mobile, vcode, password) => {
+    ctrl.postJson("/api/sign-up", { mobile, vcode, password })
+        .then(() => {
+            localStorage.removeItem("signUp.mobile");
+            localStorage.removeItem("signUp.vcode");
+            const from = at(history, "state.from");
+            location.replace(from || "/");
+        })
         .catch(ctrl.handleException);
 };

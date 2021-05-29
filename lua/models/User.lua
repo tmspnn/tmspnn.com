@@ -39,23 +39,23 @@ function User:set_token(token, uid)
     client:run("setex", fmt("user_token(%s):uid", token), token_ttl, uid)
 end
 
-function User:get_vcode(email)
+function User:get_vcode(mobile)
     local client = Redis_client:new()
-    return client:run("get", fmt("email(%s):vcode", email))
+    return client:run("get", fmt("mobile(%s):vcode", mobile))
 end
 
-function User:set_vcode(vcode, email)
+function User:set_vcode(vcode, mobile)
     local client = Redis_client:new()
-    client:run("setex", fmt("email(%s):vcode", email), vcode_ttl, vcode)
+    client:run("setex", fmt("mobile(%s):vcode", mobile), vcode_ttl, vcode)
+end
+
+function User:remove_vcode(mobile)
+    local client = Redis_client:new()
+    client:run("del", fmt("mobile(%s):vcode", mobile))
 end
 
 -- function user:get_recommended()
 --     return self:find([[ * from "user" order by id desc limit 5 ]])
--- end
-
--- function user:remove_vcode(email)
---     local client = Redis_client:new()
---     client:run("del", fmt("email(%s):vcode", email))
 -- end
 
 -- function user:get_password_sequence(email)
