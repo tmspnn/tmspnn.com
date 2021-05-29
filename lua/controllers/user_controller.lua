@@ -10,52 +10,6 @@ uuid.seed()
 -- Local modules
 local User = require "models/User"
 
-local function send_email(options)
-    -- local mailer, err = mail.new({
-    --     host = ngx.var.customer_service_mail_host,
-    --     port = 465,
-    --     ssl = true,
-    --     starttls = false,
-    --     username = ngx.var.customer_service_mail,
-    --     password = ngx.var.customer_service_mail_password
-    -- })
-
-    -- local mailer, err = mail.new({
-    --     host = "smtp.163.com",
-    --     port = 465,
-    --     ssl = true,
-    --     starttls = false,
-    --     username = "tmspnn@163.com",
-    --     password = "NFUILQRFIKUOVGXN"
-    -- })
-
-    -- if err then
-    --     error(err, 0)
-    -- end
-
-    -- local ok, err = mailer:send({
-    --     from = options.from or "一刻阅读 <tmspnn@gmail.com>",
-    --     to = {options.email},
-    --     cc = options.cc or {},
-    --     subject = options.subject,
-    --     text = options.text,
-    --     html = options.html
-    -- })
-
-    -- local ok, err = mailer:send({
-    --     from = "一刻阅读 <tmspnn@163.com>",
-    --     to = {"tmspnn@163.com"},
-    --     cc = {},
-    --     subject = "验证码: " .. "1111",
-    --     text = "1111",
-    --     html = "<h1>1111</h1>"
-    -- })
-
-    -- if not ok then
-    --     error(err)
-    -- end
-end
-
 local function sign_in(app)
     local ctx = app.ctx
     ctx.trim_all(app.params)
@@ -93,26 +47,8 @@ local function sign_in(app)
 end
 
 local function send_vcode(app)
-    if true then
-        local r, e = send_email()
-        return {
-            json = {
-                r = r,
-                e = e
-            }
-        }
-    end
-
     local ctx = app.ctx
     ctx.trim_all(app.params)
-
-    local email = app.params.email
-
-    local is_email, _ = validation.email(email)
-
-    if not is_email then
-        error("email.invalid", 0)
-    end
 
     local existed_vcode = User:get_vcode(email)
 
