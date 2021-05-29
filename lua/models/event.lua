@@ -2,9 +2,9 @@
 local db = require "lapis.db"
 
 -- @Local
-local model = require "models/model"
-local redis_client = require "models/redis_client"
+local Model = require "models/Model"
+local Redis_client = require "models/redis_client"
 
-local event = model:new("event")
+local event = Model:new("event")
 
 return event

@@ -2,8 +2,8 @@
 	<div class="center">
 		<% render("views/components/logo_header") %>
 		<div class="row">
-			<% render("views/icons/at_symbol") %>
-			<input type="email" placeholder="E-mail" data-ref="emailInput">
+			<% render("views/icons/device_mobile") %>
+			<input type="text" placeholder="手机号" data-ref="mobileInput">
 		</div>
 		<div class="row">
 			<% render("views/icons/annotation") %>
@@ -26,7 +26,7 @@
 		</div>
 		<p class="tips">
 			<% render("views/icons/exclamation_circle") %>
-			在一刻阅读创作的<b>所有</b>作品, 版权均归<b>原作者</b>所有.
+			在一刻阅读创作的作品, 版权归<b>原作者</b>所有.
 		</p>
 	</div>
 </div>

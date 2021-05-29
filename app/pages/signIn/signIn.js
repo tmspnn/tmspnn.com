@@ -15,7 +15,7 @@ root.toast = toast(namespace);
 root.customSpinner = customSpinner(namespace);
 
 // DOM references
-const { emailInput, passInput, signInBtn } = root._refs;
+const { mobileInput, passInput, signInBtn } = root._refs;
 const eyeIcon = passInput.nextElementSibling;
 
 eyeIcon.on("click", () => {
@@ -29,9 +29,9 @@ eyeIcon.on("click", () => {
 });
 
 signInBtn.on("click", () => {
-    const email = emailInput.value.trim();
+    const mobile = mobileInput.value.trim();
     const password = passInput.value.trim();
-    root.dispatch("submit", email, password);
+    root.dispatch("submit", mobile, password);
 });
 
 /**
@@ -39,8 +39,8 @@ signInBtn.on("click", () => {
  */
 const ctrl = new PageController(namespace);
 
-ctrl.submit = (email, password) => {
-    ctrl.postJson("/api/sign-in", { email, password })
+ctrl.submit = (mobile, password) => {
+    ctrl.postJson("/api/sign-in", { mobile, password })
         .then((res) => console.log(res))
         .catch((e) => {
             if (isJSON(e.message)) {

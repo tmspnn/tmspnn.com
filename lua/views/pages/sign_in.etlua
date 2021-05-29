@@ -2,8 +2,8 @@
 	<div class="center">
 		<% render("views/components/logo_header") %>
 		<div class="row">
-			<% render("views/icons/at_symbol") %>
-			<input type="email" placeholder="E-mail" data-ref="emailInput">
+			<% render("views/icons/device_mobile") %>
+			<input type="text" placeholder="手机号" data-ref="mobileInput">
 		</div>
 		<div class="row">
 			<% render("views/icons/key") %>

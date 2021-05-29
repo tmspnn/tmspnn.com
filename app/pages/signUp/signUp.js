@@ -15,12 +15,27 @@ root.toast = toast(namespace);
 root.customSpinner = customSpinner(namespace);
 
 // DOM references
-const { emailInput, vcodeInput, vcodeBtn, passInput, signUpBtn } = root._refs;
+const { mobileInput, vcodeInput, vcodeBtn, passInput, signUpBtn } = root._refs;
 const eyeIcon = passInput.nextElementSibling;
 
+// UI reactions
+root.countdown = () => {
+    root._data.countdown = 60;
+    root._data.countdownInterval = setInterval(() => {
+        if (--root._data.countdown == 0) {
+            clearInterval(root._data.countdownInterval);
+            vcodeBtn.textContent = "获取";
+        } else {
+            vcodeBtn.textContent = root._data.countdown;
+        }
+    }, 1000);
+};
+
+// Event listeners
 vcodeBtn.on("click", () => {
-    const email = emailInput.value.trim();
-    root.dispatch("acquireVcode", email);
+    if (root._data.countdown > 0) return;
+    const mobile = mobileInput.value.trim();
+    root.dispatch("acquireVcode", mobile);
 });
 
 eyeIcon.on("click", () => {
@@ -34,9 +49,9 @@ eyeIcon.on("click", () => {
 });
 
 signUpBtn.on("click", () => {
-    const email = emailInput.value.trim();
+    const mobile = mobileInput.value.trim();
     const password = passInput.value.trim();
-    root.dispatch("submit", email, password);
+    root.dispatch("submit", mobile, password);
 });
 
 /**
@@ -51,14 +66,17 @@ ctrl.handleException = (e) => {
     }
 };
 
-ctrl.acquireVcode = async (email) => {
-    ctrl.postJson("/api/vcodes", { email })
-        .then((res) => console.log(res))
+ctrl.acquireVcode = async (mobile) => {
+    ctrl.postJson("/api/vcodes", { mobile })
+        .then(() => {
+            ctrl.toast("验证码已发送, 请登录邮箱查看.");
+            ctrl.ui("root::countdown");
+        })
         .catch(ctrl.handleException);
 };
 
-ctrl.submit = (email, password) => {
-    ctrl.postJson("/api/sign-in", { email, password })
+ctrl.submit = (mobile, password) => {
+    ctrl.postJson("/api/sign-in", { mobile, password })
         .then((res) => console.log(res))
         .catch(ctrl.handleException);
 };
