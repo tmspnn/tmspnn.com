@@ -15,10 +15,10 @@ const pages = [
     "messages",
     "me",
     "signIn",
-    "signUp"
+    "signUp",
+    "editor"
     // "forgotPassword",
     // "resetPassword",
-    // "editor",
     // "article",
     // "user"
 ];

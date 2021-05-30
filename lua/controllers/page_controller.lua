@@ -163,6 +163,18 @@ local function sign_up(app)
     }
 end
 
+local function editor(app)
+    local ctx = app.ctx
+    ctx.page_title = "一刻阅读 | 编辑"
+    ctx.tags_in_head = {css_tag("editor")}
+    ctx.tags_in_body = {json_tag({}), js_tag("editor")}
+    ctx.data = {}
+
+    return {
+        render = "pages.editor"
+    }
+end
+
 local function page_controller(app)
     app:get("/", index)
     app:get("/articles/:article_id", article)
@@ -174,6 +186,7 @@ local function page_controller(app)
     }))
     app:get("/sign-in", sign_in)
     app:get("/sign-up", sign_up)
+    app:get("/editor", editor)
 end
 
 -- page_ctrl.css_path = ""

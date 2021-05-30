@@ -1,151 +1,52 @@
 @import "base.scss";
-@import "logoHeader.scss";
-@import "pageContainer.scss";
-@import "layout.scss";
-@import "trix-customization.scss";
-@import "richtext.scss";
+
+#editorjs {
+    margin: 0 1rem;
+    height: 100%;
+}
+
+.page-container {
+    padding: 3.5rem 0 0;
+}
 
 .header {
-    flex: 1;
-    text-align: right;
+    @extend ._flex;
+    user-select: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 3.5rem;
+    color: var(--black);
+    background-color: var(--white);
+    box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.02);
 
-    .-logo-header {
-        text-align: left;
+    > * {
+        @extend ._flex;
+        @extend ._with-icon;
+        justify-content: center;
+        height: 100%;
     }
 
-    .options {
-        padding-top: 2.8rem;
+    .close-btn {
+        width: 3.5rem;
 
-        button {
-            display: block;
-            margin-left: auto;
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-            border: none;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            padding: 0.36rem 1.2rem 0.3rem 0.8rem;
-            color: $white;
-            background-color: $primary;
-            box-shadow: 0 0 4px $grey-light;
-            outline: none;
-            transition: transform 500ms, background-color 200ms;
-            user-select: none;
-            width: 6rem;
-
-            &:hover {
-                background-color: color($primary blackness(+5%));
-            }
-
-            &:active {
-                transform: scale(0.9);
-            }
-
-            svg {
-                position: relative;
-                top: -0.1rem;
-                width: 1.1rem;
-                height: 1.1rem;
-                vertical-align: middle;
-            }
-        }
-
-        > div {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            color: $dark;
-            font-size: 0.9rem;
-
-            label {
-                cursor: pointer;
-            }
-
-            #is-public {
-                cursor: pointer;
-                margin: 0 0.5rem;
-                width: 3.2rem;
-                height: 1.6rem;
-                background-color: $grey-lighter;
-                border-radius: 2rem;
-                box-shadow: 0 0 3px $grey-light;
-                transition: background-color 200ms;
-
-                &.active {
-                    background-color: $link;
-
-                    .switcher {
-                        transform: translate3d(100%, 0, 0);
-                    }
-                }
-
-                .switcher {
-                    width: 1.6rem;
-                    height: 1.6rem;
-                    border-radius: 50%;
-                    background-color: $white;
-                    box-shadow: 0 0 3px $grey-light;
-                    transition: transform 300ms;
-                }
-            }
+        svg {
+            font-size: 1.5rem;
         }
     }
-}
 
-.main {
-    flex: 4;
-    display: flex;
-    align-items: baseline;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
-}
+    .publish-btn {
+        margin-left: auto;
+        padding: 0 1rem;
+        color: var(--dark-green);
 
-.row {
-    width: 100%;
-    display: flex;
-    align-items: flex-end;
-
-    .keyword {
-        width: 6rem;
-        margin-left: 1rem;
-        padding: 0.3rem 0;
-        color: $grey-dark;
-
-        &:last-child {
-            margin-right: 1rem;
+        span {
+            font-size: 1.1rem;
         }
-    }
-}
 
-#title {
-    flex: 1;
-    padding: 0.5rem 1rem;
-    font-size: 2rem;
-    color: $dark;
-}
-
-.richtext-editor {
-    width: 100%;
-    flex: 1;
-    padding: 1rem 1rem 1rem 0;
-    overflow: hidden;
-
-    trix-editor {
-        min-height: 93%;
-        max-height: 93%;
-        overflow: hidden auto;
-        padding-bottom: 20rem;
-    }
-}
-
-input {
-    background-color: $light;
-    border: none;
-    border-bottom: 1px solid $grey-dark;
-
-    &:focus {
-        border-color: $link;
+        svg {
+            font-size: 1.2rem;
+        }
     }
 }
