@@ -17,7 +17,7 @@ create table "user" (
     followings_count integer not null default 0,
     followers_count integer not null default 0,
     obj jsonb not null default '{}'::jsonb,
-    ts_vector tsvector not null,
+    ts_vector tsvector not null default to_tsvector(''),
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now()
 );
@@ -41,7 +41,7 @@ create table "article" (
     content text not null,
     tags varchar(64)[] not null default '{}',
     obj jsonb not null default '{}'::jsonb,
-    ts_vector tsvector not null,
+    ts_vector tsvector not null default to_tsvector(''),
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now()
 );

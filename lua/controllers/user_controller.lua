@@ -20,7 +20,7 @@ local function sign_in(app)
     local ctx = app.ctx
     ctx.trim_all(app.params)
 
-    local mobile = app.params.email
+    local mobile = app.params.mobile
     local password = app.params.password
 
     if not string.match(mobile, "1[34578]%d%d%d%d%d%d%d%d%d") then
@@ -32,7 +32,7 @@ local function sign_in(app)
     end
 
     local user_in_db = User:find([[
-        id, email, password from "user" where mobile = ?
+        id, mobile, password from "user" where mobile = ?
     ]], mobile)[1]
 
     if not user_in_db then
@@ -41,6 +41,10 @@ local function sign_in(app)
 
     if not bcrypt.verify(password, user_in_db.password) then
         error("password.not.match", 0)
+    end
+
+    if app.cookies.user_token then
+        User:remove_token(app.cookies.user_token)
     end
 
     local user_token = User:generate_user_token(user_in_db.id)
@@ -77,7 +81,7 @@ local function sign_up(app)
     ]], mobile)
 
     if #duplicated > 0 then
-        error("email.already.exists", 0)
+        error("mobile.already.exists", 0)
     end
 
     local existed_vcode = User:get_vcode(mobile)
@@ -96,11 +100,14 @@ local function sign_up(app)
         password = digested_password,
         nickname = uid,
         mobile = mobile,
-        email = uid .. ":mobile",
+        email = uid .. ":email",
         identity_no = uid .. ":identity_no",
-        obj = db.raw(fmt("'%s'::jsonb", json)),
-        ts_vector = db.raw("to_tsvector('')")
+        obj = db.raw(fmt("'%s'::jsonb", json))
     })
+
+    if app.cookies.user_token then
+        User:remove_token(app.cookies.user_token)
+    end
 
     local user_token = User:generate_user_token(user.id)
     User:set_token(user_token, user.id)

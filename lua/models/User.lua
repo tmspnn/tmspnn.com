@@ -39,6 +39,11 @@ function User:set_token(token, uid)
     client:run("setex", fmt("user_token(%s):uid", token), token_ttl, uid)
 end
 
+function User:remove_token(token)
+    local client = Redis_client:new()
+    client:run("del", fmt("user_token(%s):uid", token))
+end
+
 function User:get_vcode(mobile)
     local client = Redis_client:new()
     return client:run("get", fmt("mobile(%s):vcode", mobile))

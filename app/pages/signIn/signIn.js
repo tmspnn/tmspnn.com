@@ -41,7 +41,10 @@ const ctrl = new PageController(namespace);
 
 ctrl.submit = (mobile, password) => {
     ctrl.postJson("/api/sign-in", { mobile, password })
-        .then((res) => console.log(res))
+        .then(() => {
+            const from = at(history, "state.from");
+            location.replace(from || "/me");
+        })
         .catch((e) => {
             if (isJSON(e.message)) {
                 const { err } = parseJSON(e.message);

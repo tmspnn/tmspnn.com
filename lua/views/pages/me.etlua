@@ -25,8 +25,10 @@ local desc = data.desc
     <div class="meta">
         <div class="profile" style="background-image: url(<%= profile %>)"></div>
         <button>
-            <% render("views/icons/document_add") %>
-            <span>写一篇</span>
+            <a href="/editor">
+                <% render("views/icons/document_add") %>
+                <span>写一篇</span>
+            </a>
         </button>
         <div class="row">
             <label>

@@ -19,7 +19,7 @@
 		<div class="row tips">
 			没有账号? 点击<a href="/sign-up">注册</a>.
 		</div>
-		<div class="row tips">
+		<div class="row tips" hidden>
 			忘记密码? 点击<a href="/forgot-password">找回</a>.
 		</div>
 	</div>

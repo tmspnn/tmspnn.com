@@ -50,25 +50,27 @@ a {
 }
 
 button {
+    @extend ._flex;
+    justify-content: center;
     padding: 0.5rem 1.2em;
     border: none;
     border-radius: 0.2rem;
     color: var(--white);
     background-image: radial-gradient(at left top, var(--green), var(--blue));
     transition: all 200ms;
+    font-size: 1.2rem;
 
     &:hover {
         transform: scale(0.98);
     }
 
     &:active {
-        transform: scale(0.95);
+        transform: scale(0.96);
     }
 
     svg {
         width: 1.2rem;
         height: 1.2rem;
-        vertical-align: middle;
     }
 }
 
@@ -116,6 +118,10 @@ ul {
 }
 
 /* Layout */
+.hidden {
+    display: none !important;
+}
+
 .page-container {
     position: absolute;
     left: 0;
@@ -154,7 +160,7 @@ ul {
 ._with-icon {
     svg {
         @extend ._inline;
-        margin-right: 0.4em;
+        margin-right: 0.2em;
         width: 1.3em;
         height: 1.3em;
     }

@@ -98,7 +98,7 @@ ctrl.submit = (mobile, vcode, password) => {
             localStorage.removeItem("signUp.mobile");
             localStorage.removeItem("signUp.vcode");
             const from = at(history, "state.from");
-            location.replace(from || "/");
+            location.replace(from || "/me");
         })
         .catch(ctrl.handleException);
 };

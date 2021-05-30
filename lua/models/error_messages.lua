@@ -11,6 +11,10 @@ local error_messages = {
         status = 401,
         message = "此手机号还未注册."
     },
+    ["mobile.already.exists"] = {
+        status = 403,
+        message = "此手机号注册过账户, 请勿重复注册."
+    },
     ["email.invalid"] = {
         status = 400,
         message = "请输入合法的邮箱地址."
