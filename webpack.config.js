@@ -99,7 +99,7 @@ module.exports = {
             _: "lodash",
             View: ["@components/VC", "View"],
             Controller: ["@components/VC", "Controller"],
-            kxhr: ["k-xhr", "default"],
+            kxhr: "k-xhr",
             $: ["k-dom", "$"],
             $$: ["k-dom", "$$"],
             hasClass: ["k-dom", "hasClass"],

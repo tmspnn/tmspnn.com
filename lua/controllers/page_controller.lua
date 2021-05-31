@@ -1,7 +1,8 @@
 -- External modules
-local to_json = require("lapis.util").to_json
+-- local json_params = require("lapis.application").json_params
 local respond_to = require("lapis.application").respond_to
-local json_params = require("lapis.application").json_params
+local to_json = require("lapis.util").to_json
+local User = require "models/User"
 
 -- Aliases
 local fmt = string.format
@@ -165,9 +166,15 @@ end
 
 local function editor(app)
     local ctx = app.ctx
+    local policy, signature = User:generate_oss_upload_token(ctx.uid)
+
     ctx.page_title = "一刻阅读 | 编辑"
     ctx.tags_in_head = {css_tag("editor")}
-    ctx.tags_in_body = {json_tag({}), js_tag("editor")}
+    ctx.tags_in_body = {json_tag({
+        user_id = ctx.uid,
+        oss_policy = policy,
+        oss_signature = signature
+    }), js_tag("editor")}
     ctx.data = {}
 
     return {
@@ -186,7 +193,10 @@ local function page_controller(app)
     }))
     app:get("/sign-in", sign_in)
     app:get("/sign-up", sign_up)
-    app:get("/editor", editor)
+    app:get("/editor", respond_to({
+        before = sign_in_required,
+        GET = editor
+    }))
 end
 
 -- page_ctrl.css_path = ""

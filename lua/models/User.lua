@@ -5,8 +5,8 @@ local basexx = require "basexx"
 local date = require "date"
 local db = require "lapis.db"
 local encode_base64 = require("lapis.util.encoding").encode_base64
--- local to_json = require("lapis.util").to_json
 local sha1 = require "sha1"
+local to_json = require("lapis.util").to_json
 
 -- Aliases
 local fmt = string.format
@@ -59,6 +59,23 @@ function User:remove_vcode(mobile)
     client:run("del", fmt("mobile(%s):vcode", mobile))
 end
 
+function User:generate_oss_upload_token(uid)
+    -- https://support.huaweicloud.com/api-obs/obs_04_0012.html
+    local current_date = date()
+    local expiration_date = current_date:adddays(1)
+    local oss_policy = to_json({
+        expiration = expiration_date:fmt("${iso}Z"),
+        conditions = {{
+            ["x-obs-acl"] = "public-read"
+        }, {
+            ["bucket"] = "tmspnn"
+        }, {"starts-with", "$key", "public/users/" .. uid}, {"starts-with", "$Content-Type", ""}}
+    })
+    local string_to_sign = basexx.to_base64(oss_policy)
+    local signature = basexx.to_base64(sha1.hmac_binary(ngx.var.oss_secret_key, string_to_sign))
+    return string_to_sign, signature
+end
+
 -- function user:get_recommended()
 --     return self:find([[ * from "user" order by id desc limit 5 ]])
 -- end
@@ -76,23 +93,6 @@ end
 -- function user:remove_password_sequence(sequence, email)
 --     local client = Redis_client:new()
 --     return client:run("del", fmt("email(%s):password_sequence", email))
--- end
-
--- function user:generate_oss_upload_token(uid)
---     -- https://support.huaweicloud.com/api-obs/obs_04_0012.html
---     local current_date = date()
---     local expiration_date = current_date:adddays(1)
---     local oss_policy = to_json({
---         expiration = expiration_date:fmt("${iso}Z"),
---         conditions = {{
---             ["x-obs-acl"] = "public-read"
---         }, {
---             ["bucket"] = "tmspnn"
---         }, {"starts-with", "$key", "public/users/" .. uid}, {"starts-with", "$Content-Type", ""}}
---     })
---     local string_to_sign = basexx.to_base64(oss_policy)
---     local signature = basexx.to_base64(sha1.hmac_binary(ngx.var.oss_secret_key, string_to_sign))
---     return string_to_sign, signature
 -- end
 
 -- function user:add_follower(uid, follower_id)

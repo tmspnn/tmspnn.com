@@ -1,11 +1,12 @@
 // External modules
+import { Base64 } from "js-base64";
+import CodeTool from "@editorjs/code";
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
+import ImageTool from "@editorjs/image";
+import InlineCode from "@editorjs/inline-code";
 import List from "@editorjs/list";
 import LinkTool from "@editorjs/link";
-import ImageTool from "@editorjs/image";
-import CodeTool from "@editorjs/code";
-import InlineCode from "@editorjs/inline-code";
 import Quote from "@editorjs/quote";
 
 // Local modules
@@ -47,24 +48,20 @@ root.editor = new EditorJS({
             class: ImageTool,
             config: {
                 uploader: {
-                    uploadByFile(file) {
-                        return MyAjax.upload(file).then(() => {
-                            return {
-                                success: 1,
-                                file: {
-                                    url: "https://codex.so/upload/redactor_images/o_80beea670e49f04931ce9e3b2122ac70.jpg"
-                                }
-                            };
-                        });
+                    uploadByFile: (file) => {
+                        return Promise.resolve(
+                            ctrl.upload(file).then((url) => {
+                                return {
+                                    success: 1,
+                                    file: { url }
+                                };
+                            })
+                        );
                     },
-                    uploadByUrl(url) {
-                        return MyAjax.upload(file).then(() => {
-                            return {
-                                success: 1,
-                                file: {
-                                    url: "https://codex.so/upload/redactor_images/o_e48549d1855c7fc1807308dd14990126.jpg"
-                                }
-                            };
+                    uploadByUrl: (url) => {
+                        return Promise.resolve({
+                            success: 1,
+                            file: { url }
                         });
                     }
                 }
@@ -77,10 +74,32 @@ root.editor = new EditorJS({
 });
 
 const ctrl = new PageController(namespace);
+ctrl.data.ossEntry = "https://tmspnn.obs.cn-east-2.myhuaweicloud.com";
+ctrl.data.accessKey = "ZKDTV75UYIPGRVHLMJAG";
 
 ctrl.handleException = (e) => {
     if (isJSON(e.message)) {
         const { err } = parseJSON(e.message);
         ctrl.toast(err || "服务器繁忙, 请稍后再试.");
     }
+};
+
+ctrl.upload = (file) => {
+    const userId = ctrl.data.user_id;
+    const dateStr = new Date().toISOString().slice(0, 10).split("-").join("/");
+    const fileNameBase64 = Base64.encode(file.name);
+    const key = `public/users/${userId}/${dateStr}/${fileNameBase64}`;
+
+    const fd = new FormData();
+    fd.append("policy", ctrl.data.oss_policy);
+    fd.append("signature", ctrl.data.oss_signature);
+    fd.append("key", key);
+    fd.append("AccessKeyId", ctrl.data.accessKey);
+    fd.append("x-obs-acl", "public-read");
+    fd.append("Content-Type", file.type);
+    fd.append("file", file, file.name);
+
+    return kxhr(ctrl.data.ossEntry, "post", fd).then(
+        () => `${ctrl.data.ossEntry}/${key}`
+    );
 };
