@@ -1,8 +1,11 @@
 @import "base.scss";
 
+button {
+    background-image: none;
+}
+
 #editorjs {
     margin: 0 1rem;
-    height: 100%;
 }
 
 .page-container {
@@ -17,6 +20,7 @@
     right: 0;
     top: 0;
     height: 3.5rem;
+    z-index: 1;
     color: var(--black);
     background-color: var(--white);
     box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.02);
