@@ -26,18 +26,13 @@ root.editor = new EditorJS({
     tools: {
         header: {
             class: Header,
-            inlineToolbar: true,
-            shortcut: "CMD+SHIFT+H",
             config: {
                 placeholder: "请输入标题",
                 levels: [2, 3, 4],
                 defaultLevel: 2
             }
         },
-        list: {
-            class: List,
-            inlineToolbar: true
-        },
+        list: List,
         linkTool: {
             class: LinkTool,
             config: {
@@ -70,6 +65,35 @@ root.editor = new EditorJS({
         code: CodeTool,
         inlineCode: InlineCode,
         quote: Quote
+    },
+    i18n: {
+        messages: {
+            ui: {},
+            toolNames: {
+                Text: "文本",
+                Heading: "标题",
+                List: "列表",
+                Link: "链接",
+                Image: "图片/视频",
+                Code: "代码",
+                InlineCode: "代码",
+                Quote: "引用"
+            },
+            tools: {
+                stub: {
+                    "The block can not be displayed correctly.":
+                        "该格式无法显示"
+                }
+            },
+            blockTunes: {
+                linkTool: {
+                    Link: "链接地址"
+                },
+                image: {
+                    Caption: "图片名称"
+                }
+            }
+        }
     }
 });
 

@@ -8,6 +8,13 @@ button {
     margin: 0 1rem;
 }
 
+.ct--top,
+.ct--bottom,
+.ce-inline-tool--link,
+.ce-toolbox__button[data-tool="paragraph"] {
+    display: none;
+}
+
 .page-container {
     padding: 3.5rem 0 0;
 }

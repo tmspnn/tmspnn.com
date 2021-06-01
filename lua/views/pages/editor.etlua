@@ -1,5 +1,5 @@
 <div class="page-container">
-    <div id="editorjs"></div>
+    <div id="editorjs" spellcheck="false"></div>
 </div>
 <div class="header">
     <div class="close-btn">
