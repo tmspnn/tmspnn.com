@@ -105,9 +105,8 @@ local function create_article(app)
         tokens[#tokens + 1] = t
     end
 
-    d.ts_vector = db.raw(fmt([[
-        to_tsvector('%s')
-    ]], table.concat(tokens, " ")))
+    d.obj = db.raw(fmt("'%s'::jsonb", ctx.to_json(d.obj)))
+    d.ts_vector = db.raw(fmt("to_tsvector('%s')", table.concat(tokens, " ")))
 
     local article = Article:create(d)
 
