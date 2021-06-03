@@ -110,6 +110,18 @@ local error_messages = {
     ["user.not.exists"] = {
         status = 400,
         message = "用户不存在."
+    },
+    ["title.required"] = {
+        status = 400,
+        message = "请输入标题."
+    },
+    ["wordcount.too.small"] = {
+        status = 400,
+        message = "请输入50字以上的内容."
+    },
+    ["wordcount.too.big"] = {
+        status = 400,
+        message = "请输入一万字以内的内容."
     }
 }
 

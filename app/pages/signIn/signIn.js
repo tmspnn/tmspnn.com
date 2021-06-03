@@ -45,10 +45,5 @@ ctrl.submit = (mobile, password) => {
             const from = at(history, "state.from");
             location.replace(from || "/me");
         })
-        .catch((e) => {
-            if (isJSON(e.message)) {
-                const { err } = parseJSON(e.message);
-                ctrl.toast(err);
-            }
-        });
+        .catch(ctrl.handleException);
 };

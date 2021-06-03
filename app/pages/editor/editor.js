@@ -1,6 +1,7 @@
 // External modules
 import { Base64 } from "js-base64";
 import CodeTool from "@editorjs/code";
+import Delimiter from "@editorjs/delimiter";
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import ImageTool from "@editorjs/image";
@@ -17,7 +18,8 @@ import PageController from "@components/PageController";
 const namespace = "editor";
 
 /**
- * @property {Number} root._data.scrollTop
+ * @property {HTMLBodyElement} root._element
+ * @property {Object} root._data
  */
 const root = new Page(namespace);
 root.editor = new EditorJS({
@@ -27,9 +29,8 @@ root.editor = new EditorJS({
         header: {
             class: Header,
             config: {
-                placeholder: "请输入标题",
-                levels: [2, 3, 4],
-                defaultLevel: 2
+                placeholder: "请输入标题...",
+                levels: [1, 2, 3]
             }
         },
         list: List,
@@ -64,7 +65,8 @@ root.editor = new EditorJS({
         },
         code: CodeTool,
         inlineCode: InlineCode,
-        quote: Quote
+        quote: Quote,
+        delimiter: Delimiter
     },
     i18n: {
         messages: {
@@ -94,19 +96,52 @@ root.editor = new EditorJS({
                 }
             }
         }
+    },
+    data: root._data.data ||
+        parseJSON(localStorage.getItem("editor.localData")) || {
+            blocks: [
+                {
+                    type: "header",
+                    data: {
+                        text: "",
+                        level: 1
+                    }
+                }
+            ]
+        }
+});
+
+document.body.on(
+    "input",
+    _.debounce(() => {
+        root.editor.save().then((d) => {
+            localStorage.setItem("editor.localData", JSON.stringify(d));
+        });
+    }, 500)
+);
+
+$(".close-btn").on("click", () => {
+    if (ctrl.data.blocked) return;
+    if (history.state.from) {
+        history.back();
+    } else {
+        location.href = "/";
     }
 });
 
+$(".publish-btn").on("click", () => {
+    if (ctrl.data.blocked) return;
+    root.editor.save().then((d) => {
+        root.dispatch("publishArticle", d);
+    });
+});
+
+/**
+ * @property {Boolean} ctrl.data.blocked
+ */
 const ctrl = new PageController(namespace);
 ctrl.data.ossEntry = "https://tmspnn.obs.cn-east-2.myhuaweicloud.com";
-ctrl.data.accessKey = "ZKDTV75UYIPGRVHLMJAG";
-
-ctrl.handleException = (e) => {
-    if (isJSON(e.message)) {
-        const { err } = parseJSON(e.message);
-        ctrl.toast(err || "服务器繁忙, 请稍后再试.");
-    }
-};
+ctrl.data.accessKey = "Q5VTYEW1FGZCSAQYEPAX";
 
 ctrl.upload = (file) => {
     const userId = ctrl.data.user_id;
@@ -126,4 +161,15 @@ ctrl.upload = (file) => {
     return kxhr(ctrl.data.ossEntry, "post", fd).then(
         () => `${ctrl.data.ossEntry}/${key}`
     );
+};
+
+ctrl.publishArticle = (d) => {
+    ctrl.postJson("/api/articles", d)
+        .then((res) => {
+            ctrl.toast("发布成功");
+            setTimeout(() => {
+                // location.href = "/articles/" + res.id;
+            }, 1800);
+        })
+        .catch(ctrl.handleException);
 };

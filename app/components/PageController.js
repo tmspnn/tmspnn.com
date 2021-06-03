@@ -65,4 +65,11 @@ export default class PageController extends Controller {
             .then((res) => parseJSON(res))
             .finally(() => this.unblock());
     };
+
+    handleException = (e) => {
+        if (isJSON(e.message)) {
+            const { err } = parseJSON(e.message);
+            this.toast(err || "服务器繁忙, 请稍后再试.");
+        }
+    };
 }
