@@ -1,46 +1,112 @@
+-- TODO: 每分钟更新连接状态
+-- TODO: sub自己的收消息channel
+-- TODO: pub对方的收消息channel
+-- TODO: 不在线时存收件箱, 更新收件箱信息数
 -- External modules
-local ngx = require "ngx" -- The Nginx interface provided by OpenResty
+local cjson = require "cjson"
+local ck = require "resty.cookie"
+local ngx = require "ngx"
 local server = require "resty.websocket.server"
 
-local wb, err = server:new{
-    timeout = 5000,
-    max_payload_len = 65535
-}
+-- Local modules
+local Redis_client = require "models/Redis_client"
 
-if not wb then
-    ngx.log(ngx.ERR, "failed to new websocket: ", err)
-    return ngx.exit(444)
+-- Aliases
+local fmt = string.format
+
+-- @param {string} err
+-- @returns {nil}
+local function handle_exception(err)
+    ngx.log(ngx.ERR, "WebSocket: ", err)
+    ngx.exit(444)
 end
 
-while true do
-    local data, typ, err = wb:recv_frame()
-    if wb.fatal then
-        ngx.log(ngx.ERR, "failed to receive frame: ", err)
-        return ngx.exit(444)
+local function get_uid()
+    local cookie, err = ck:new()
+
+    if not cookie then
+        error(err)
     end
-    if not data then
-        local bytes, err = wb:send_ping()
-        if not bytes then
-            ngx.log(ngx.ERR, "failed to send ping: ", err)
-            return ngx.exit(444)
-        end
-    elseif typ == "close" then
-        break
-    elseif typ == "ping" then
-        local bytes, err = wb:send_pong()
-        if not bytes then
-            ngx.log(ngx.ERR, "failed to send pong: ", err)
-            return ngx.exit(444)
-        end
-    elseif typ == "pong" then
-        ngx.log(ngx.INFO, "client ponged")
-    elseif typ == "text" then
-        local bytes, err = wb:send_text("received: " .. data .. "lua: asdasd")
-        if not bytes then
-            ngx.log(ngx.ERR, "failed to send text: ", err)
-            return ngx.exit(444)
-        end
+
+    local uid = nil
+    local user_token, _ = cookie:get("user_token")
+
+    if type(user_token) == "string" and #user_token > 0 then
+        local client = Redis_client:new()
+        uid = client:run("get", fmt("user_token(%s):uid", user_token))
     end
+
+    return tonumber(uid)
 end
 
-wb:send_close()
+local function main()
+    local uid = get_uid()
+
+    if not uid then
+        error("401 - Sign in required.")
+    end
+
+    local wb, err = server:new{
+        timeout = 5000,
+        max_payload_len = 65535
+    }
+
+    if not wb then
+        error(err)
+    end
+
+    local function receive()
+        local client = Redis_client:new()
+        client:run("subscribe", fmt("uid(%s):inbox", uid))
+
+        while true do
+            local msg = client:run("read_reply")
+            local bytes, err = wb:send_text(cjson.encode(msg))
+
+            if not bytes then
+                error(err)
+            end
+
+            ngx.sleep(1)
+        end
+    end
+
+    ngx.thread.spawn(function()
+        xpcall(receive, handle_exception)
+    end)
+
+    local function send()
+        while true do
+            local data, typ, err = wb:recv_frame()
+
+            if not data then
+                error(err)
+            end
+
+            if typ == "close" then
+                local bytes, err = wb:send_close()
+                if not bytes then
+                    error(err)
+                end
+                ngx.exit(499)
+            elseif typ == "ping" then
+                local bytes, err = wb:send_pong()
+                if not bytes then
+                    error(err)
+                end
+            elseif typ == "text" then
+                local json = cjson.decode(data)
+                local to = json.to -- @property {number} json.to
+                
+                local client = Redis_client:new()
+                client:run("publish", fmt("uid(%s):inbox", to))
+            end
+
+            ngx.sleep(1)
+        end
+    end
+
+    send()
+end
+
+xpcall(main, handle_exception)

@@ -167,8 +167,9 @@ ctrl.publishArticle = (d) => {
     ctrl.postJson("/api/articles", d)
         .then((res) => {
             ctrl.toast("发布成功");
+            localStorage.removeItem("editor.localData");
             setTimeout(() => {
-                // location.href = "/articles/" + res.id;
+                location.href = "/articles/" + res.id;
             }, 1800);
         })
         .catch(ctrl.handleException);

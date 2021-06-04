@@ -3,6 +3,7 @@
 -- TODO: 用户声望代表用户的品质, 文章的 rating * weight = fame 代表文章的品质.
 -- TODO: 对品质进行奖惩, 保证App的内省机制, 有益于产生更高品质的内容.
 -- External modules
+local date = require "date"
 local lapis = require "lapis"
 
 -- Local Modules
@@ -14,7 +15,6 @@ local exception = require "middlewares/exception"
 local page_controller = require "controllers/page_controller"
 local user_controller = require "controllers/user_controller"
 local article_controller = require "controllers/article_controller"
--- local search_controller = require "controllers/search/search_controller"
 
 -- Initialization
 local app = lapis.Application()
@@ -24,6 +24,12 @@ app.handle_error = exception.handle_error
 -- Templating
 app:enable("etlua")
 app.layout = require "views.layout"
+
+-- Cookies
+app.cookie_attributes = function(self)
+    local expires = date():adddays(21):fmt("${http}")
+    return "Expires=" .. expires .. "; Path=/; HttpOnly"
+end
 
 -- Middlewares
 app:before_filter(CORS)
@@ -35,6 +41,5 @@ app:before_filter(auth)
 page_controller(app)
 user_controller(app)
 article_controller(app)
--- search_controller:register(app)
 
 lapis.serve(app)
