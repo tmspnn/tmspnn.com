@@ -1,8 +1,8 @@
--- TODO: 不在线时存收件箱, 更新收件箱信息数
 -- External modules
 local cjson = require "cjson"
 local ck = require "resty.cookie"
 local ngx = require "ngx"
+local pgmoon = require "pgmoon"
 local server = require "resty.websocket.server"
 
 -- Local modules
@@ -17,6 +17,24 @@ local fmt = string.format
 local function handle_exception(err)
     ngx.log(ngx.ERR, "WebSocket: ", err)
     ngx.exit(444)
+end
+
+local pg = pgmoon.new({
+    host = ngx.var.pg_host or "127.0.0.1",
+    port = ngx.var.pg_port or 5432,
+    database = "tmspnn",
+    user = "thomas"
+})
+
+-- @param {number} to
+-- @param {string} data
+local function send_to_inbox(to, data)
+    assert(pg:connect(), "PG: Connection Failed!")
+    assert(pg:query(fmt([[
+        update "user"
+        set inbox = array_append(inbox, '%s')
+        where id = %s
+    ]], data, to), "PG: Insertion Failed"))
 end
 
 local function get_uid()
@@ -110,7 +128,9 @@ local function main()
                     if type(to) == "number" and to > 0 then
                         local client = Redis_client:new()
                         local success = client:run("publish", fmt("uid(%s):inbox", to), data)
-                        -- TODO: if not success, add to offline messages(write into db.user.obj)
+                        if success == 0 then
+                            send_to_inbox(to, data)
+                        end
                     end
                 end
             end

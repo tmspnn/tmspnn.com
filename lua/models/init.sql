@@ -16,6 +16,7 @@ create table "user" (
     articles_count integer not null default 0,
     followings_count integer not null default 0,
     followers_count integer not null default 0,
+    inbox text[] not null default '{}',
     obj jsonb not null default '{}'::jsonb,
     ts_vector tsvector not null default to_tsvector(''),
     created_at timestamp with time zone not null default now(),
