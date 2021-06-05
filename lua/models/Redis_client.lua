@@ -38,8 +38,8 @@ function Redis_client:run(command, ...)
     local res, err = self.redis[command](self.redis, unpack({...}))
 
     if not res then
-        self:release()
-        error(err)
+        self:on_error(command, err)
+        return nil
     end
 
     self:post_run(command, unpack({...}))
@@ -59,6 +59,15 @@ function Redis_client:connect()
     end
 
     self.connected = true
+end
+
+function Redis_client:on_error(command, err)
+    if command == "read_reply" and err == "timeout" then
+        return
+    end
+
+    self:release()
+    error(err)
 end
 
 function Redis_client:post_run(command, ...)

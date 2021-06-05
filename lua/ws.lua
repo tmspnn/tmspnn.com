@@ -1,6 +1,3 @@
--- TODO: 每分钟更新连接状态
--- TODO: sub自己的收消息channel
--- TODO: pub对方的收消息channel
 -- TODO: 不在线时存收件箱, 更新收件箱信息数
 -- External modules
 local cjson = require "cjson"
@@ -10,6 +7,7 @@ local server = require "resty.websocket.server"
 
 -- Local modules
 local Redis_client = require "models/Redis_client"
+local unescape = require "util/unescape"
 
 -- Aliases
 local fmt = string.format
@@ -33,7 +31,7 @@ local function get_uid()
 
     if type(user_token) == "string" and #user_token > 0 then
         local client = Redis_client:new()
-        uid = client:run("get", fmt("user_token(%s):uid", user_token))
+        uid = client:run("get", fmt("user_token(%s):uid", unescape(user_token)))
     end
 
     return tonumber(uid)
@@ -47,7 +45,7 @@ local function main()
     end
 
     local wb, err = server:new{
-        timeout = 5000,
+        timeout = 60000,
         max_payload_len = 65535
     }
 
@@ -61,26 +59,27 @@ local function main()
 
         while true do
             local msg = client:run("read_reply")
-            local bytes, err = wb:send_text(cjson.encode(msg))
 
-            if not bytes then
-                error(err)
+            -- ["message","uid(4):inbox","{\"to\":4,\"text\":\"adsasdasdasd\"}"]
+            if msg then
+                local bytes, err = wb:send_text(cjson.encode(msg))
+                if not bytes then
+                    error(err)
+                end
             end
 
             ngx.sleep(1)
         end
     end
 
-    ngx.thread.spawn(function()
-        xpcall(receive, handle_exception)
-    end)
+    ngx.thread.spawn(receive)
 
     local function send()
         while true do
-            local data, typ, err = wb:recv_frame()
+            local data, typ, _ = wb:recv_frame()
 
             if not data then
-                error(err)
+                ngx.exit(444)
             end
 
             if typ == "close" then
@@ -96,10 +95,24 @@ local function main()
                 end
             elseif typ == "text" then
                 local json = cjson.decode(data)
-                local to = json.to -- @property {number} json.to
-                
-                local client = Redis_client:new()
-                client:run("publish", fmt("uid(%s):inbox", to))
+
+                if json.type == "ping" then
+                    local msg = {
+                        type = "pong"
+                    }
+                    local bytes, err = wb:send_text(cjson.encode(msg))
+                    if not bytes then
+                        error(err)
+                    end
+                else
+                    local to = json.to -- @property {number} json.to
+                    
+                    if type(to) == "number" and to > 0 then
+                        local client = Redis_client:new()
+                        local success = client:run("publish", fmt("uid(%s):inbox", to), data)
+                        -- TODO: if not success, add to offline messages(write into db.user.obj)
+                    end
+                end
             end
 
             ngx.sleep(1)

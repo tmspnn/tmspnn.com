@@ -17,6 +17,10 @@ export default class Ws {
 
     createdAt = Date.now();
 
+    retryTimes = 3;
+
+    triedTimes = 0;
+
     constructor() {
         window.addEventListener("storage", () => {
             if (document.hasFocus()) return;
@@ -38,9 +42,9 @@ export default class Ws {
 
         localStorage.setItem("ws.state", "syncing");
 
-        this.timeoutId = setTimeout(this.onClose, 3000);
+        this.timeoutId = setTimeout(this.onClose, 1000);
 
-        this.intervalId = setInterval(() => {
+        setInterval(() => {
             localStorage.setItem("ws.state", "syncing");
         }, 60000);
     }
@@ -78,6 +82,10 @@ export default class Ws {
 
         this.conn = new WebSocket(this.url);
         this.conn.onopen = () => {
+            this.send({ type: "ping" });
+            this.intervalId = setInterval(() => {
+                this.send({ type: "ping" });
+            }, 50000);
             this.state = "online";
             localStorage.setItem("ws.state", "online");
         };
@@ -107,10 +115,15 @@ export default class Ws {
         }
     };
 
-    onClose = () => {
-        this.conn = null;
-        this.state = "offline";
-        this.onStateChange("offline");
-        localStorage.setItem("ws.state", "offline");
-    };
+    onClose = _.debounce(() => {
+        if (this.triedTimes < this.retryTimes) {
+            ++this.triedTimes;
+            this.conn = null;
+            this.state = "offline";
+            this.onStateChange("offline");
+            localStorage.setItem("ws.state", "offline");
+        } else {
+            this.triedTimes = 0;
+        }
+    }, 2000);
 }

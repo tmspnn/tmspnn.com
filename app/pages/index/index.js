@@ -18,8 +18,9 @@ root.$tabbar = tabbar(namespace, $(".-tabbar"), { activeTab: namespace });
 
 const ctrl = new PageController(namespace);
 
-ctrl.onMessage = (json) => {
+ctrl.ws = new Ws();
+ctrl.ws.onMessage = (json) => {
     console.log("onMessage: ", json);
 };
 
-ctrl.ws = new Ws();
+window.ws = ctrl.ws;
