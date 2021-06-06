@@ -35,6 +35,14 @@ local function send_to_inbox(to, data)
         set inbox = array_append(inbox, '%s')
         where id = %s
     ]], data, to), "PG: Insertion Failed"))
+    pg:keepalive()
+end
+
+local function get_offline_messages(uid, page_no, page_size)
+    local offset = page_size * (page_no - 1);
+    return assert(pg:query(fmt([[
+        select inbox[%s:%s] from "user" where id = %s
+    ]], offset + 1, offset + page_size, uid))[1].inbox, "PG: Query Failed")
 end
 
 local function get_uid()
@@ -72,6 +80,20 @@ local function main()
     end
 
     local function receive()
+        assert(pg:connect(), "PG: Connection Failed!")
+
+        local page
+        local page_no = 1
+        local page_size = 2
+
+        repeat
+            page = get_offline_messages(uid, page_no, page_size)
+            wb:send_text(cjson.encode(page))
+            page_no = page_no + 1
+        until #page < page_size
+
+        pg:keepalive()
+
         local client = Redis_client:new()
         client:run("subscribe", fmt("uid(%s):inbox", uid))
 
