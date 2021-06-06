@@ -1,5 +1,6 @@
+-- @param {function} f
 local function assert(f, ...)
-    local r = {f(unpack({...}))}
+    local r = {f(...)}
 
     if not r[1] then
         error(r[2] or "assert: Assertion Failed")

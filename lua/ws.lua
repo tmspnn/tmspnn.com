@@ -34,7 +34,7 @@ local function send_to_inbox(to, data)
         update "user"
         set inbox = array_append(inbox, '%s')
         where id = %s
-    ]], data, to), "PG: Insertion Failed"))
+    ]], pg:escape_literal(data), to), "PG: Insertion Failed"))
     pg:keepalive()
 end
 
