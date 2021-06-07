@@ -1,9 +1,24 @@
+// External
+import "highlight.js/styles/github.css";
+import hljs from "highlight.js";
+
+// Local
 import "./article.scss";
+import Page from "@components/Page";
+import PageController from "@components/PageController";
 
-console.log("article.js running");
+const namespace = "article";
 
-// import ArticleView from "./ArticleView";
-// import ArticleController from "./ArticleController";
+function article() {
+    const root = new Page(namespace);
 
-// new ArticleView();
-// new ArticleController();
+    hljs.highlightAll();
+
+    const ctrl = new PageController(namespace);
+
+    ctrl.onWsMessage = (msg) => {
+        console.log("article onWsMessage: ", json);
+    };
+}
+
+article();

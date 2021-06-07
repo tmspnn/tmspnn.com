@@ -2,23 +2,26 @@
 local ngx = require "ngx"
 
 -- Implementation
-local Redis_client = {}
+local redis_client = {}
 
 -- As a base class, __index points to self
-Redis_client.__index = Redis_client
+redis_client.__index = redis_client
 
-function Redis_client:new(conf)
+function redis_client:new(conf)
     local resty_redis = require "resty.redis"
-    local redis = resty_redis:new()
-    redis:set_timeout(1000) -- one second
 
-    if not conf then
-        conf = {}
-    end
+    -- configuration
+    if not conf then conf = {} end
+    local timeout = conf.timeout or 1000
+    local host = conf.host or "127.0.0.1"
+    local port = conf.port or 6379
+
+    local redis = resty_redis:new()
+    redis:set_timeout(timeout)
 
     local client = {
-        host = conf.host or "127.0.0.1",
-        port = conf.port or 6379,
+        host = host,
+        port = port,
         redis = redis,
         connected = false,
         piping = false,
@@ -30,47 +33,39 @@ function Redis_client:new(conf)
     return setmetatable(client, self)
 end
 
-function Redis_client:run(command, ...)
-    if not self.connected then
-        self:connect()
-    end
+function redis_client:run(command, ...)
+    if not self.connected then self:connect() end
 
-    local res, err = self.redis[command](self.redis, unpack({...}))
+    local res, err = self.redis[command](self.redis, ...)
 
     if not res then
         self:on_error(command, err)
         return nil
     end
 
-    self:post_run(command, unpack({...}))
+    self:post_run(command, ...)
 
-    if res == ngx.null then
-        return nil
-    end
+    if res == ngx.null then return nil end
 
     return res
 end
 
-function Redis_client:connect()
+function redis_client:connect()
     local res, err = self.redis:connect(self.host, self.port)
 
-    if not res then
-        error(err)
-    end
+    if not res then error(err) end
 
     self.connected = true
 end
 
-function Redis_client:on_error(command, err)
-    if command == "read_reply" and err == "timeout" then
-        return
-    end
+function redis_client:on_error(command, err)
+    if command == "read_reply" and err == "timeout" then return end
 
     self:release()
     error(err)
 end
 
-function Redis_client:post_run(command, ...)
+function redis_client:post_run(command, ...)
     local params = {...}
 
     if command == "init_pipeline" then
@@ -103,14 +98,13 @@ function Redis_client:post_run(command, ...)
         end
     end
 
-    if self.piping or self.transactioning or #self.subscribed_channels > 0 or #self.subscribed_patterns > 0 then
-        return
-    end
+    if self.piping or self.transactioning or #self.subscribed_channels > 0 or
+        #self.subscribed_patterns > 0 then return end
 
     self:release()
 end
 
-function Redis_client:release()
+function redis_client:release()
     if self.piping then
         self.redis:cancel_pipeline()
         self.piping = false
@@ -129,11 +123,9 @@ function Redis_client:release()
         res, err = self.redis:set_keepalive(10000, 100)
     end
 
-    if not res then
-        error(err)
-    end
+    if not res then error(err) end
 
     self.connected = false
 end
 
-return Redis_client
+return redis_client

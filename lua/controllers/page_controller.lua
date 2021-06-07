@@ -1,14 +1,16 @@
 -- External modules
--- local json_params = require("lapis.application").json_params
+local date = require "date"
 local respond_to = require("lapis.application").respond_to
+local from_json = require("lapis.util").from_json
 local to_json = require("lapis.util").to_json
-local User = require "models/User"
 
 -- Aliases
 local fmt = string.format
 
 -- Local modules
-local render_component = require "controllers/page/render_component"
+-- local render_component = require "controllers/page/render_component"
+local Article = require "models/Article"
+local User = require "models/User"
 
 -- Faked data for testing
 local faked_index = require "faked_data/faked_index"
@@ -44,19 +46,13 @@ end
 local function json_tag(data)
     return {
         tag = "script",
-        attributes = {
-            type = "application/json"
-        },
+        attributes = {type = "application/json"},
         inner_html = to_json(data)
     }
 end
 
 local function sign_in_required(app)
-    if not app.ctx.uid then
-        app:write({
-            redirect_to = "/sign-in"
-        })
-    end
+    if not app.ctx.uid then app:write({redirect_to = "/sign-in"}) end
 end
 
 local function index(app)
@@ -67,9 +63,7 @@ local function index(app)
     ctx.tags_in_body = {json_tag(faked_index), js_tag("index")}
     ctx.data = faked_index
 
-    return {
-        render = "pages.index"
-    }
+    return {render = "pages.index"}
 end
 
 local function trending(app)
@@ -79,41 +73,26 @@ local function trending(app)
     ctx.tags_in_body = {json_tag(faked_trending), js_tag("trending")}
     ctx.data = faked_trending
 
-    return {
-        render = "pages.trending"
-    }
+    return {render = "pages.trending"}
 end
 
 local function article(app)
     local ctx = app.ctx
-
     local article_id = tonumber(app.params.article_id)
+    local article = Article:find_by_id(article_id)
 
-    ctx.page_title = ""
+    if not article then return {render = "pages.404"} end
+
+    article.created_at = date(article.created_at):fmt("%m/%d %H:%M")
+    article.updated_at = date(article.updated_at):fmt("%m/%d %H:%M")
+    article.blocks = from_json(article.content).blocks
+
+    ctx.page_title = article.title .. " | 一刻阅读"
     ctx.tags_in_head = {css_tag("article")}
-    ctx.tags_in_body = {json_tag({}), js_tag("article")}
-    ctx.data = {
-        lang = "zh-cn",
-        theme = "light",
-        id = 10001,
-        cover = "https://cdn.pixabay.com/photo/2016/02/09/19/57/aurora-1190254__480.jpg",
-        title = "This is a test title, This is a test title, This is a test title",
-        updated_at = "5/01",
-        created_by = 10007,
-        profile = "https://cdn.pixabay.com/photo/2019/10/19/11/35/wolf-4561204__480.png",
-        nickname = "Thomas Peng Li",
-        desc = "This is a testing desc, this is a testing desc, blublublu",
-        rating = 4.3,
-        ratings_count = 25,
-        pageview = 101,
-        comments_count = 18,
-        tags = {"Linux", "OpenResty", "木兰", "Security"},
-        content = "<p>This is a testing paragraph blublublu...</p>"
-    }
+    ctx.tags_in_body = {json_tag({article = article}), js_tag("article")}
+    ctx.data = {article = article}
 
-    return {
-        render = "pages.article"
-    }
+    return {render = "pages.article"}
 end
 
 local function messages(app)
@@ -123,9 +102,7 @@ local function messages(app)
     ctx.tags_in_body = {json_tag(faked_messages), js_tag("messages")}
     ctx.data = faked_messages
 
-    return {
-        render = "pages.messages"
-    }
+    return {render = "pages.messages"}
 end
 
 local function me(app)
@@ -135,9 +112,7 @@ local function me(app)
     ctx.tags_in_body = {json_tag(faked_messages), js_tag("me")}
     ctx.data = faked_me
 
-    return {
-        render = "pages.me"
-    }
+    return {render = "pages.me"}
 end
 
 local function sign_in(app)
@@ -147,9 +122,7 @@ local function sign_in(app)
     ctx.tags_in_body = {json_tag({}), js_tag("signIn")}
     ctx.data = {}
 
-    return {
-        render = "pages.sign_in"
-    }
+    return {render = "pages.sign_in"}
 end
 
 local function sign_up(app)
@@ -159,9 +132,7 @@ local function sign_up(app)
     ctx.tags_in_body = {json_tag({}), js_tag("signUp")}
     ctx.data = {}
 
-    return {
-        render = "pages.sign_up"
-    }
+    return {render = "pages.sign_up"}
 end
 
 local function editor(app)
@@ -170,16 +141,16 @@ local function editor(app)
 
     ctx.page_title = "一刻阅读 | 编辑"
     ctx.tags_in_head = {css_tag("editor")}
-    ctx.tags_in_body = {json_tag({
-        user_id = ctx.uid,
-        oss_policy = policy,
-        oss_signature = signature
-    }), js_tag("editor")}
+    ctx.tags_in_body = {
+        json_tag({
+            user_id = ctx.uid,
+            oss_policy = policy,
+            oss_signature = signature
+        }), js_tag("editor")
+    }
     ctx.data = {}
 
-    return {
-        render = "pages.editor"
-    }
+    return {render = "pages.editor"}
 end
 
 local function page_controller(app)
@@ -187,16 +158,11 @@ local function page_controller(app)
     app:get("/articles/:article_id", article)
     app:get("/trending", trending)
     app:get("/messages", messages)
-    app:match("/me", respond_to({
-        before = sign_in_required,
-        GET = me
-    }))
+    app:match("/me", respond_to({before = sign_in_required, GET = me}))
     app:get("/sign-in", sign_in)
     app:get("/sign-up", sign_up)
-    app:get("/editor", respond_to({
-        before = sign_in_required,
-        GET = editor
-    }))
+    app:get("/editor", respond_to({before = sign_in_required, GET = editor}))
+    app:get("/articles/:article_id", article)
 end
 
 -- page_ctrl.css_path = ""

@@ -7,7 +7,7 @@ local fmt = string.format
 
 -- Local modules
 local Model = require "models/Model"
-local Redis_client = require "models/Redis_client"
+local redis_client = require "models/redis_client"
 
 local Article = Model:new("article")
 
@@ -19,7 +19,7 @@ local Article = Model:new("article")
 -- end
 
 -- function article:get_recommended_topics()
---     local client = Redis_client:new()
+--     local client = redis_client:new()
 --     return client:run("zrevrangebyscore", "recommended_topics", "+inf", 0, "limit", 0, 10)
 -- end
 
@@ -28,22 +28,22 @@ local Article = Model:new("article")
 -- end
 
 -- function article:add_comment_advocator(comment_id, uid)
---     local client = Redis_client:new()
+--     local client = redis_client:new()
 --     return client:run("zadd", fmt("comment(%d):advocators", comment_id), util.timestamp(), uid)
 -- end
 
 -- function article:remove_comment_advocator(comment_id, uid)
---     local client = Redis_client:new()
+--     local client = redis_client:new()
 --     return client:run("zrem", fmt("comment(%d):advocators", comment_id), uid)
 -- end
 
 -- function article:add_comment_opposer(comment_id, uid)
---     local client = Redis_client:new()
+--     local client = redis_client:new()
 --     return client:run("zadd", fmt("comment(%d):opposers", comment_id), util.timestamp(), uid)
 -- end
 
 -- function article:remove_comment_opposer(comment_id, uid)
---     local client = Redis_client:new()
+--     local client = redis_client:new()
 --     return client:run("zrem", fmt("comment(%d):opposers", comment_id), uid)
 -- end
 
@@ -54,23 +54,23 @@ local Article = Model:new("article")
 -- end
 
 -- function article:add_rater(article_id, rater_id, rating)
---     local client = Redis_client:new()
+--     local client = redis_client:new()
 --     return client:run("zadd", fmt("article(%d):raters", article_id), rating, rater_id)
 -- end
 
 -- function article:get_rating_by_uid(article_id, uid)
---     local client = Redis_client:new()
+--     local client = redis_client:new()
 --     local score = client:run("zscore", fmt("article(%d):raters", article_id), uid or 0)
 --     return tonumber(score)
 -- end
 
 -- function article:set_hot_comment(article_id, comment_id, advocators_count)
---     local client = Redis_client:new()
+--     local client = redis_client:new()
 --     return client:run("zadd", fmt("article(%d):hot_comments", article_id), advocators_count, comment_id)
 -- end
 
 -- function article:remove_hot_comment(article_id, comment_id)
---     local client = Redis_client:new()
+--     local client = redis_client:new()
 --     return client:run("zrem", fmt("article(%d):hot_comments", article_id), comment_id)
 -- end
 

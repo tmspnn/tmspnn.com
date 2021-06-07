@@ -6,10 +6,8 @@ export default class Ws {
     // Local connection
     conn = null;
 
-    // Global state: offline | online | connecting | syncing
-    state = null;
-
-    lastMessage = null;
+    // Global state: offline | online | connecting | syncing | closed
+    globalState = null;
 
     timeoutId = null;
 
@@ -22,38 +20,47 @@ export default class Ws {
     triedTimes = 0;
 
     constructor() {
-        window.addEventListener("storage", () => {
-            if (document.hasFocus()) return;
+        // Process messages from other tabs.
+        window.addEventListener(
+            "storage",
+            _.debounce(() => {
+                if (document.hasFocus()) return;
 
-            const state = localStorage.getItem("ws.state");
-            const msg = parseJSON(localStorage.getItem("ws.message"));
+                const state = localStorage.getItem("ws.state");
+                const msg = localStorage.getItem("ws.message");
 
-            if (state != this.state) {
-                this.onStateChange(state);
-            }
+                if (state != this.globalState) {
+                    this.onStateChange(state);
+                }
 
-            if (
-                msg != this.lastMessage &&
-                typeof this.onMessage == "function"
-            ) {
-                this.onMessage(parseJSON(msg));
-            }
-        });
+                if (typeof this.onMessage == "function") {
+                    this.onMessage(parseJSON(msg));
+                }
+            }, 500)
+        );
 
         localStorage.setItem("ws.state", "syncing");
 
-        this.timeoutId = setTimeout(this.onClose, 1000);
+        // If there's no active connection, create one.
+        this.timeoutId = setTimeout(this.connect, 1000);
 
+        // Synchronize every minute
         setInterval(() => {
-            localStorage.setItem("ws.state", "syncing");
+            if (!this.conn || this.conn.readyState != 1) {
+                this.timeoutId = setTimeout(this.connect, 1000);
+                localStorage.setItem("ws.state", "syncing");
+            }
         }, 60000);
     }
+
+    isOnline = () => {
+        return this.conn && this.conn.readyState == 1;
+    };
 
     onStateChange = (state) => {
         switch (state) {
             case "syncing":
-                if (this.conn) {
-                    this.state = "online";
+                if (this.isOnline()) {
                     localStorage.setItem("ws.state", "online");
                 }
                 break;
@@ -64,11 +71,11 @@ export default class Ws {
                 );
                 break;
             case "connecting":
-                this.state = "connecting";
+                this.globalState = "connecting";
                 clearTimeout(this.timeoutId);
                 break;
             case "online":
-                this.state = "online";
+                this.globalState = "online";
                 clearTimeout(this.timeoutId);
                 break;
             default:
@@ -77,53 +84,53 @@ export default class Ws {
     };
 
     connect = () => {
-        this.state = "connecting";
+        this.globalState = "connecting";
         localStorage.setItem("ws.state", "connecting");
 
+        if (this.conn) this.conn.close();
+        clearInterval(this.intervalId);
+        clearTimeout(this.timeoutId);
+
         this.conn = new WebSocket(this.url);
+
         this.conn.onopen = () => {
-            this.send({ type: "ping" });
+            this.conn.send(JSON.stringify({ type: "ping" }));
+
+            // Timeout is one minute, keep connection alive with
+            // a interval ping every 55 seconds
             this.intervalId = setInterval(() => {
-                this.send({ type: "ping" });
-            }, 50000);
-            this.state = "online";
+                if (this.isOnline()) {
+                    this.conn.send(JSON.stringify({ type: "ping" }));
+                }
+            }, 55000);
+
+            this.globalState = "online";
             localStorage.setItem("ws.state", "online");
         };
+
         this.conn.onmessage = (e) => {
             const msg = e.data;
-            this.lastMessage = msg;
+
             if (typeof this.onMessage == "function") {
-                this.onMessage(parseJSON(e.data));
+                this.onMessage(parseJSON(msg));
             }
-            localStorage.setItem("ws.message", e.data);
+
+            this.globalState = "online";
+            localStorage.setItem("ws.state", "online");
+            localStorage.setItem("ws.message", msg);
         };
-        this.conn.onerror = this.conn.onclose = this.onClose;
-    };
 
-    disconnect = () => {
-        if (this.conn) {
-            this.conn.onclose = null;
-            this.conn.close();
-        }
-        clearTimeout(this.timeoutId);
-        clearInterval(this.intervalId);
-    };
+        this.conn.onerror = (e) => {
+            if (++this.triedTimes < this.retryTimes) {
+                this.connect(onSuccess, onFail);
+            } else {
+                this.triedTimes = 0;
+            }
+        };
 
-    send = (msg) => {
-        if (this.conn) {
-            this.conn.send(msg instanceof Object ? JSON.stringify(msg) : msg);
-        }
+        this.conn.onclose = () => {
+            this.globalState = "closed";
+            localStorage.setItem("ws.state", "closed");
+        };
     };
-
-    onClose = _.debounce(() => {
-        if (this.triedTimes < this.retryTimes) {
-            ++this.triedTimes;
-            this.conn = null;
-            this.state = "offline";
-            this.onStateChange("offline");
-            localStorage.setItem("ws.state", "offline");
-        } else {
-            this.triedTimes = 0;
-        }
-    }, 2000);
 }

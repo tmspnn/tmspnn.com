@@ -1,13 +1,24 @@
+// External
 import kxhr from "k-xhr";
+
+// Local
+import Ws from "@components/Ws";
 
 export default class PageController extends Controller {
     blocked = false;
+
+    ws = new Ws();
 
     constructor(namespace) {
         const dataTag = $('script[type="application/json"');
         const data = parseJSON(at(dataTag, "textContent")) || {};
         super(namespace);
         this.data = data;
+        this.ws.onMessage = (msg) => {
+            if (typeof this.onWsMessage == "function") {
+                this.onWsMessage(msg);
+            }
+        };
     }
 
     toast = (texts) => {

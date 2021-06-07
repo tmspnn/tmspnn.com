@@ -4,23 +4,19 @@ import PageController from "@components/PageController";
 import navbar from "@components/navbar/navbar";
 import tabbar from "@components/tabbar/tabbar";
 import "@components/feed.scss";
-import Ws from "@components/Ws";
 
 const namespace = "index";
 
-/**
- * @property {Number} root._data.scrollTop
- */
 const root = new Page(namespace);
 root.prefetch = ["/trending", "/messages", "/me"];
+
+// Components
 root.$navbar = navbar(namespace, $(".-navbar"), {});
 root.$tabbar = tabbar(namespace, $(".-tabbar"), { activeTab: namespace });
 
+// Controller
 const ctrl = new PageController(namespace);
 
-ctrl.ws = new Ws();
-ctrl.ws.onMessage = (json) => {
-    console.log("onMessage: ", json);
+ctrl.onWsMessage = (json) => {
+    console.log("index onWsMessage: ", json);
 };
-
-window.ws = ctrl.ws;

@@ -11,23 +11,20 @@ local redis_client = require("models/redis_client")
 -- Static variables
 local article_not_exists = {
     status = 400,
-    json = { err = errors["article.not.exists"] }
+    json = {err = errors["article.not.exists"]}
 }
 
 local stars_count_invalid = {
     status = 400,
-    json = { err = errors["stars_count.invalid"] }
+    json = {err = errors["stars_count.invalid"]}
 }
 
 local duplicate_rating = {
     status = 400,
-    json = { err = errors["duplicate.rating"] }
+    json = {err = errors["duplicate.rating"]}
 }
 
-local default_error = {
-    status = 500,
-    json = { err = errors.default }
-}
+local default_error = {status = 500, json = {err = errors.default}}
 
 -- Module
 local function rate_article(app)
@@ -37,7 +34,7 @@ local function rate_article(app)
     -- Authentication
     if not uid then
         local from_url = ctx.escape("/articles/" .. app.params.article_id)
-        return { redirect_to = "/sign-in?from=" .. from_url }
+        return {redirect_to = "/sign-in?from=" .. from_url}
     end
 
     -- Validate params
@@ -47,7 +44,9 @@ local function rate_article(app)
 
     local stars_count = tonumber(app.params.starsCount) -- one to five
 
-    if not (stars_count > 0 and stars_count <= 5) then return stars_count_invalid end
+    if not (stars_count > 0 and stars_count <= 5) then
+        return stars_count_invalid
+    end
 
     -- Check article existance
     local article = Article:find_by_id(article_id)
@@ -88,14 +87,15 @@ local function rate_article(app)
         where id = %d;
 
         commit;
-        ]], article_id, stars_count, article_id, uid, stars_count, article_id, uid, stars_count, uid, author_id))
+        ]], article_id, stars_count, article_id, uid, stars_count, article_id,
+                                               uid, stars_count, uid, author_id))
 
     if not pg_res then return default_error end
-    
+
     User:add_rated_article(uid, article_id, stars_count)
     Article:add_rater(article_id, uid, stars_count)
-   
-    app:write({ status = 204 })
+
+    app:write({status = 204})
 end
 
 return rate_article

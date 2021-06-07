@@ -1,43 +1,52 @@
 <%
--- Locale
-local data = ctx.data
-local lang = data.lang or "zh-cn"
-local locales = {
-    ["zh-cn"] = {
-        anonymous = "匿名"
-    },
-    ["en-us"] = {
-        anonymous = "Anonymous"
-    }
-}
-local locale = locales[lang]
-
--- Data
-local id = data.id or nil
-local created_by = data.created_by or nil
-local updated_at = data.updated_at or "5/03"
-local profile = data.profile or "default profile"
-local nickname = data.nickname or locale.anonymous
-local cover = data.cover or nil
-local title = data.title or ""
-local desc = data.desc or ""
-local rating = data.rating or 0
-local ratings_count = data.ratings_count or 0
-local pageview = data.pageview or 0
-local comments_count = data.comments_count or 0
-local tags = data.tags or {}
-local content = data.content or ""
+local a = ctx.data.article
+local created_by = a.created_by
+local created_at = a.created_at
+local updated_at = a.updated_at
+local profile = a.obj.author_profile == ""
+    and "https://cdn.pixabay.com/photo/2019/10/19/11/35/wolf-4561204__480.png"
+    or a.obj.author_profile
+local author = a.author
+local cover = a.cover
+local title = a.title
+local rating = a.rating
+local ratings_count = a.obj.ratings_count
+local pageview = a.obj.pageview
+local comments_count = a.obj.comments_count
+local tags = a.obj.tags
+local content = a.content
 %>
 <div class="page-container">
-    <div class="head">
+    <div class="header">
         <a href="/users/<%= created_by %>" class="profile" style="background-image: url(<%= profile %>)"></a>
-        <a href="/users/<%= created_by %>" class="author nickname _h5"><b><%= nickname %></b></a>
-        <div class="date _h5"><%= updated_at %></div>
+        <a href="/users/<%= created_by %>" class="author"><b><%= author %></b></a>
+        <div class="date"><%= updated_at %></div>
     </div>
-    <h1><%= title %></h1>
-    <p class="desc"><%= desc %></p>
-    <img src="<%= cover %>" class="cover">
-    <div class="content _richtext">
-        <%- content %>
+    <div class="content">
+        <% for _, b in ipairs(a.blocks) do %>
+        <% if b.type == "header" then %>
+        <h<%= b.data.level %>><%= b.data.text %></h<%= b.data.level %>>
+        <% elseif b.type == "paragraph" then %>
+        <p><%= b.data.text %></p>
+        <% elseif b.type == "list" then %>
+        <<%= b.data.style == "ordered" and "ol" or "ul" %>>
+        <% for _, item in ipairs(b.data.items) do %>
+        <li><%= item %></li>
+        <% end %>
+        </<%= b.data.style == "ordered" and "ol" or "ul" %>>
+        <% elseif b.type == "image" then %>
+        <img src="<%= b.data.file.url %>">
+        <p class="caption"><%= b.data.caption %></p>
+        <% elseif b.type == "video" then %>
+        <video src="<%= b.data.file.url %>"></video>
+        <p class="caption"><%= b.data.caption %></p>
+        <% elseif b.type == "code" then %>
+        <pre><code><%= b.data.code %></code></pre>
+        <% elseif b.type == "quote" then %>
+        <blockquote><%= b.data.text %></blockquote>
+        <% elseif b.type == "delimiter" then %>
+        <div class="delimiter">***</div>
+        <% end %>
+        <% end %>
     </div>
 </div>
