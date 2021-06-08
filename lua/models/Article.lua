@@ -1,4 +1,5 @@
 -- External modules
+local cjson = require "cjson"
 local date = require "date"
 local db = require "lapis.db"
 
@@ -10,6 +11,64 @@ local Model = require "models/Model"
 local redis_client = require "models/redis_client"
 
 local Article = Model:new("article")
+
+function Article:get_related(article_id)
+    return self:find([[
+        id, title, cover, author, obj, created_by, created_at, updated_at
+        from "article"
+        where id < ? limit 3
+    ]], article_id)
+end
+
+function Article:get_rating(uid, article_id)
+    local rating = self:query([[
+        select * from "rating" where created_by = ? and article_id = ?
+    ]], uid, article_id)[1]
+    return rating and rating.rating
+end
+
+--
+function Article:create_rating(article_id, uid, rating)
+    local user = self:query([[
+        select nickname, profile, fame from "user" where id = ?
+    ]], uid)[1]
+
+    local article = self:query([[
+        select title, created_by from "article" where id = ?
+    ]], article_id)[1]
+
+    local rating_obj_str = cjson.encode({
+        author = user.nickname,
+        author_profile = user.profile,
+        title = article.title
+    })
+
+    assert(self:query([[
+        begin;
+        set local lock_timeout = '1s';
+
+        select pg_advisory_xact_lock(0);
+
+        insert into rating (created_by, article_id, rating, weight, obj)
+        values (?, ?, ?, ?, ?);
+
+        update "article"
+        set
+            rating = (rating * weight + ? * ?) / (weight + ?),
+            weight = weight + ?
+        where id = ?;
+
+        update "user"
+        set
+            fame = fame + (? - 3) * least(greatest(1, ? / fame), 50)
+        where id = ?;
+
+        commit;
+    ]], uid, article_id, rating, user.fame,
+                      db.raw(fmt("'%s'::jsonb", rating_obj_str)), rating,
+                      user.fame, user.fame, user.fame, article_id, rating,
+                      user.fame, article.created_by))
+end
 
 -- function article:get_latest(start_id)
 --     local condition = start_id and "where id < ?" or ""

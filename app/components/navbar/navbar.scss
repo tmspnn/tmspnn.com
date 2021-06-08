@@ -40,8 +40,8 @@
 
     .btn {
         @extend ._flex;
-        @extend ._full-size;
-        @extend ._content-center;
+        height: 3.5rem;
+        justify-content: center;
         color: var(--black);
         svg {
             margin: 0;

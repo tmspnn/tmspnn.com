@@ -11,8 +11,6 @@ const namespace = "signIn";
  * @property {Number} root._data.scrollTop
  */
 const root = new Page(namespace);
-root.toast = toast(namespace);
-root.customSpinner = customSpinner(namespace);
 
 // DOM references
 const { mobileInput, passInput, signInBtn } = root._refs;

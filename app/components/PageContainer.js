@@ -1,5 +1,6 @@
 import isSameOrigin from "@helpers/isSameOrigin";
 import createDocument from "@helpers/createDocument";
+import { replaceNode } from "k-dom";
 
 export default class PageContainer extends View {
     cache = {};
@@ -26,20 +27,19 @@ export default class PageContainer extends View {
     captureLinks = () => {
         const container = window._pageContainer;
         $$("a").forEach((link) => {
-            link.on("click", (e) => container.onLinkClick(e), {
-                passive: false
-            });
+            link.setAttribute("data-href", link.href);
+            link.removeAttribute("href");
+            link.on("click", (e) => container.onLinkClick(e));
         });
     };
 
     onLinkClick = (e) => {
         const link = e.currentTarget;
-        const url = link.href.replace(/#.*/, "");
+        const url = link.getAttribute("data-href");
 
-        if (!isSameOrigin(url)) return;
-
-        e.preventDefault();
-        e.stopPropagation();
+        if (!isSameOrigin(url)) {
+            return (location.href = link.href);
+        }
 
         if (this.currentUrl == url || this.destUrl == url) return;
 
@@ -73,18 +73,17 @@ export default class PageContainer extends View {
         }
     };
 
-    loadPage = (url, onLoad, force = false) => {
+    loadPage = (url, onLoad) => {
         const parsedUrl = this.toAbsolutePath(url);
 
-        if (!isSameOrigin(url)) return;
-
-        if (parsedUrl in this.cache && !force) return;
+        if (parsedUrl in this.cache || !isSameOrigin(parsedUrl)) return;
 
         const xhr = new XMLHttpRequest();
         xhr.open("GET", parsedUrl, true);
         xhr.onload = () => {
             if (xhr.status >= 200 && xhr.status < 400) {
                 this.cache[xhr.responseURL] = createDocument(xhr.responseText);
+                this.preloadStyles(this.cache[xhr.responseURL]);
                 if (typeof onLoad == "function") {
                     onLoad(xhr);
                 }
@@ -110,6 +109,24 @@ export default class PageContainer extends View {
         this.dispatch("onPageLoadingProgress", { progress });
     };
 
+    preloadStyles = (doc) => {
+        $$('link[rel="stylesheet"]', doc.documentElement).forEach((link) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", link.href, true);
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    const styleTag = document.createElement("style");
+                    styleTag.textContent = xhr.responseText;
+                    replaceNode(styleTag, link);
+                } else {
+                    this.onXHRError(xhr);
+                }
+            };
+            xhr.onerror = () => this.onXHRError(xhr);
+            xhr.send();
+        });
+    };
+
     showDestPage = () => {
         const doc = this.cache[this.destUrl];
 
@@ -123,6 +140,7 @@ export default class PageContainer extends View {
 
             docToHide.dispatchEvent(eBeforePageHide);
             docToShow.dispatchEvent(eBeforePageShow);
+
             document.replaceChild(docToShow, docToHide);
 
             history[this.pushState ? "pushState" : "replaceState"](
@@ -131,11 +149,7 @@ export default class PageContainer extends View {
                 this.destUrl
             );
 
-            docToHide.dispatchEvent(ePageHide);
-
-            if (doc.loaded) {
-                docToShow.dispatchEvent(ePageShow);
-            } else {
+            if (!doc.loaded) {
                 for (let i = 0; i < doc.scriptsInHead.length; ++i) {
                     document.head.appendChild(doc.scriptsInHead[i]);
                 }
@@ -145,11 +159,10 @@ export default class PageContainer extends View {
                 }
 
                 doc.loaded = true;
-
-                setTimeout(() => {
-                    docToShow.dispatchEvent(ePageShow);
-                }, 52); // Three frames, 17 * 3 = 51
             }
+
+            docToHide.dispatchEvent(ePageHide);
+            docToShow.dispatchEvent(ePageShow);
         }
 
         this.cleanUp();

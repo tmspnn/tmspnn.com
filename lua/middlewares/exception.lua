@@ -1,19 +1,13 @@
--- External modules
--- Nginx interface provided by OpenResty
+-- External
 local ngx = require "ngx"
 
--- Local modules
+-- Local
 local error_messages = require "models/error_messages"
 
 -- Implementation
 local exception = {}
 
-function exception.handle_404()
-    return {
-        status = 404,
-        render = "pages.404"
-    }
-end
+function exception.handle_404() return {status = 404, render = "pages.404"} end
 
 function exception.handle_error(app, err, trace)
     -- app: lapis.Application
@@ -26,12 +20,7 @@ function exception.handle_error(app, err, trace)
         msg = error_messages["default"]
     end
 
-    return {
-        status = msg.status,
-        json = {
-            err = msg.message
-        }
-    }
+    return {status = msg.status, json = {err = msg.message}}
 end
 
 return exception

@@ -10,7 +10,7 @@ const namespace = "me";
  * @property {Number} root._data.scrollTop
  */
 const root = new Page(namespace);
-root.prefetch = ["/", "trending", "/messages"];
+root.prefetch = ["/", "/trending", "/messages", "/me"];
 root.$navbar = navbar(namespace, $(".-navbar"), {});
 root.$tabbar = tabbar(namespace, $(".-tabbar"), { activeTab: namespace });
 

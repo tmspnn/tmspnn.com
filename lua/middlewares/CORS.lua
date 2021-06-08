@@ -10,21 +10,18 @@ local function CORS(app)
     local origin = app.req.headers.origin
     local http_method = app.req.cmd_mth
 
-    if not origin then
-        return
-    end
+    if not origin then return end
 
-    for i, pattern in ipairs(trusted_origins) do
+    for _, pattern in ipairs(trusted_origins) do
         if string.match(origin, pattern) then
             app.res.headers["access-control-allow-origin"] = origin
             app.res.headers["access-control-allow-credentials"] = true
             if http_method == ngx.HTTP_OPTIONS then
                 app.res.headers["access-control-allow-methods"] = "GET,POST,PUT"
-                app.res.headers["access-control-allow-headers"] = "x-requested-with,content-type"
+                app.res.headers["access-control-allow-headers"] =
+                    "x-requested-with,content-type"
                 app.res.headers["access-control-max-age"] = max_age
-                app:write({
-                    status = 204
-                })
+                app:write({status = 204})
             end
             break
         end

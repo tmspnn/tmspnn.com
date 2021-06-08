@@ -83,14 +83,21 @@ local function article(app)
 
     if not article then return {render = "pages.404"} end
 
-    article.created_at = date(article.created_at):fmt("%m/%d %H:%M")
-    article.updated_at = date(article.updated_at):fmt("%m/%d %H:%M")
     article.blocks = from_json(article.content).blocks
 
+    local related_articles = Article:get_related(article_id)
+    local my_rating
+
+    if ctx.uid then my_rating = Article:get_rating(ctx.uid, article_id) end
+
     ctx.page_title = article.title .. " | 一刻阅读"
+    ctx.data = {
+        article = article,
+        related_articles = related_articles,
+        my_rating = my_rating
+    }
     ctx.tags_in_head = {css_tag("article")}
-    ctx.tags_in_body = {json_tag({article = article}), js_tag("article")}
-    ctx.data = {article = article}
+    ctx.tags_in_body = {json_tag(ctx.data), js_tag("article")}
 
     return {render = "pages.article"}
 end

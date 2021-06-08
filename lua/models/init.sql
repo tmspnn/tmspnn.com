@@ -52,3 +52,17 @@ create index article_fame_idx on "article" (fame);
 create index article_create_by_idx on "article" (created_by);
 create index article_obj_gin on "article" using gin (obj jsonb_path_ops);
 create index article_search_idx on "article" using gin (ts_vector);
+
+-- Rating
+create table "rating" (
+    id serial primary key,
+    created_by integer not null,
+    article_id integer not null,
+    rating numeric not null default 0.0,
+    weight numeric not null default 1.0,
+    obj jsonb not null default '{}'::jsonb,
+    created_at timestamp with time zone not null default now()
+);
+
+create index rating_created_by_idx on "rating" (created_by);
+create index rating_article_id_idx on "rating" (article_id);

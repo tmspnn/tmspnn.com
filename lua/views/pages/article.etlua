@@ -1,8 +1,14 @@
 <%
+-- External
+local date = require "date"
+
+-- Local
+local my_rating = ctx.data.my_rating or 0
+local related_articles = ctx.data.related_articles
 local a = ctx.data.article
 local created_by = a.created_by
-local created_at = a.created_at
-local updated_at = a.updated_at
+local created_at = date(a.created_at):fmt("%m/%d %H:%M")
+local updated_at = date(a.updated_at):fmt("%m/%d %H:%M")
 local profile = a.obj.author_profile == ""
     and "https://cdn.pixabay.com/photo/2019/10/19/11/35/wolf-4561204__480.png"
     or a.obj.author_profile
@@ -48,5 +54,29 @@ local content = a.content
         <div class="delimiter">***</div>
         <% end %>
         <% end %>
+    </div>
+    <div class="related-articles">
+    <h2>
+        <% render("views/icons/document_text") %>
+        <span>推荐阅读</span>
+    </h2>
+    <% for _, t in ipairs(related_articles) do %>
+    <h3><a href="/articles/<%= t.id %>"><%= t.title %></a></h3>
+    <% end %>
+    </div>
+    <div class="comments"></div>
+    <% render("views/components/navbar", { title = title }) %>
+    <div class="rating-bar">
+    <h3 <% if my_rating == 0 then %>hidden<% end %>>我的评价</h3>
+    <% for i = 1, my_rating do %>
+    <div class="active">
+        <% render("views/icons/star") %>
+    </div>
+    <% end %>
+    <% for i = 1, 5 - my_rating do %>
+    <div><% render("views/icons/star") %></div>
+    <% end %>
+    <span <% if my_rating > 0 then %>hidden<% end %>></span>
+    <button <% if my_rating > 0 then %>hidden<% end %>>评价</button>
     </div>
 </div>

@@ -177,7 +177,6 @@ ul {
 }
 
 ._horizontal-scrolling {
-    @extend ._full-width;
     white-space: nowrap;
     overflow: auto hidden;
     scrollbar-width: none;

@@ -1,5 +1,7 @@
 import immediatelyScrollTo from "@helpers/immediatelyScrollTo";
 import PageContainer from "@components/PageContainer";
+import toast from "@components/toast/toast";
+import customSpinner from "@components/customSpinner";
 
 export default class Page extends View {
     prefetch = [];
@@ -9,22 +11,21 @@ export default class Page extends View {
         const data = parseJSON(at(dataTag, "textContent")) || {};
         super(namespace, document.body, data);
         this._name = "root";
+        this.toast = toast(namespace);
+        this.customSpinner = customSpinner(namespace);
         this.pageContainer = window._pageContainer || new PageContainer();
         this.pageContainer.captureLinks();
 
         setTimeout(() => {
+            this.pageContainer.preloadStyles(document);
+
             // Prefetch related pages
             each(this.prefetch, (p) => this.pageContainer.loadPage(p));
 
             // Event listeners
             const container = $(".page-container");
 
-            document.documentElement.on("beforepageshow", (e) => {
-                $("body", e.currentTarget).style.visibility = "hidden";
-            });
-
             document.documentElement.on("pageshow", (e) => {
-                document.body.style.visibility = "visible";
                 if (data.scrollTop > 0) {
                     immediatelyScrollTo(container, data.scrollTop | 0);
                 }

@@ -29,6 +29,9 @@ export default function navbar(namespace, element, data) {
     };
 
     // Event listeners
+    _refs.backBtn.on("click", () => view.dispatch("clickBackBtn"));
+
+    _refs.shareBtn.on("click", () => view.dispatch("clickShareBtn"));
 
     return view;
 }

@@ -101,9 +101,29 @@ local function create_article(app)
     return {json = article}
 end
 
+local function rate_article(app)
+    local uid = app.ctx.uid
+    local rating = tonumber(app.params.rating)
+    local referrer = app.req.headers["referer"]
+    local _, _, article_id_str = string.find(referrer, "/articles/(%d+)")
+    local article_id = tonumber(article_id_str)
+
+    if not rating or rating <= 0 or rating > 5 then
+        error("rating.invalid", 0)
+    end
+
+    if not article_id or article_id <= 0 then error("article.not.exists", 0) end
+
+    Article:create_rating(article_id, uid, rating)
+
+    return {status = 204}
+end
+
 local function article_controller(app)
     app:post("/api/articles", respond_to(
                  {before = sign_in_required, POST = json_params(create_article)}))
+    app:post("/api/ratings", respond_to(
+                 {before = sign_in_required, POST = json_params(rate_article)}))
 end
 
 return article_controller
