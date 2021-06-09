@@ -66,3 +66,19 @@ create table "rating" (
 
 create index rating_created_by_idx on "rating" (created_by);
 create index rating_article_id_idx on "rating" (article_id);
+
+-- Comment
+create table "comment" (
+    id serial primary key,
+    created_by integer not null,
+    article_id integer not null,
+    refer_to integer not null default 0,
+    advocators_count integer not null default 0,
+    obj jsonb not null default '{}'::jsonb,
+    state varchar(64) not null default '',
+    created_at timestamp with time zone not null default now(),
+    updated_at timestamp with time zone not null default now()
+);
+
+create index comment_created_by_idx on "comment" (created_by);
+create index comment_article_id_idx on "comment" (article_id);

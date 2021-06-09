@@ -1,0 +1,12 @@
+<div class="page-container">
+    <div id="editorjs" spellcheck="false"></div>
+</div>
+<div class="header">
+    <div class="close-btn">
+        <% render("views/icons/x") %>
+    </div>
+    <div class="publish-btn">
+        <% render("views/icons/upload") %>
+        <span>发布</span>
+    </div>
+</div>

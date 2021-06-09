@@ -2,6 +2,7 @@
 -- The Nginx interface provided by OpenResty
 local ngx = require "ngx"
 local basexx = require "basexx"
+local cjson = require "cjson"
 local date = require "date"
 local db = require "lapis.db"
 local encode_base64 = require("lapis.util.encoding").encode_base64
@@ -75,6 +76,12 @@ function User:generate_oss_upload_token(uid)
     local signature = basexx.to_base64(sha1.hmac_binary(ngx.var.oss_secret_key,
                                                         string_to_sign))
     return string_to_sign, signature
+end
+
+function User:get_advocated_comments(uid)
+    return self:find([[
+        obj->'advocated_comments' from "user" where id = ?
+    ]], uid)[1]
 end
 
 -- function user:get_recommended()

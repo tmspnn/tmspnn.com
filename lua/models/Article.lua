@@ -45,6 +45,7 @@ function Article:create_rating(article_id, uid, rating)
 
     assert(self:query([[
         begin;
+
         set local lock_timeout = '1s';
 
         select pg_advisory_xact_lock(0);
@@ -68,6 +69,20 @@ function Article:create_rating(article_id, uid, rating)
                       db.raw(fmt("'%s'::jsonb", rating_obj_str)), rating,
                       user.fame, user.fame, user.fame, article_id, rating,
                       user.fame, article.created_by))
+end
+
+function Article:find_comment_by_id(comment_id)
+    return self:query([[
+        select * from "comment" where id = ?
+    ]], comment_id)[1]
+end
+
+function Article:create_comment(data) return db.insert("comment", data) end
+
+function Article:get_comments_by_article_id(article_id, offset)
+    return self:query([[
+        select * from "comment" where article_id = ? offset ? limit 20
+    ]], article_id, offset or 0)
 end
 
 -- function article:get_latest(start_id)

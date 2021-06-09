@@ -1,4 +1,5 @@
 -- External modules
+local cjson = require "cjson"
 local date = require "date"
 local respond_to = require("lapis.application").respond_to
 local from_json = require("lapis.util").from_json
@@ -11,6 +12,7 @@ local fmt = string.format
 -- local render_component = require "controllers/page/render_component"
 local Article = require "models/Article"
 local User = require "models/User"
+local has_value = require "util.has_value"
 
 -- Faked data for testing
 local faked_index = require "faked_data/faked_index"
@@ -85,14 +87,28 @@ local function article(app)
 
     article.blocks = from_json(article.content).blocks
 
+    local comments = Article:get_comments_by_article_id(article_id)
+
+    local advocated_comments
+    if ctx.uid then advocated_comments = User:get_advocated_comments(ctx.uid) end
+
+    if #advocated_comments then
+        for _, comment in ipairs(comments) do
+            if has_value(advocated_comments, comment.id) then
+                comment.advocated = true
+            end
+        end
+    end
+
     local related_articles = Article:get_related(article_id)
     local my_rating
 
     if ctx.uid then my_rating = Article:get_rating(ctx.uid, article_id) end
 
-    ctx.page_title = article.title .. " | 一刻阅读"
+    ctx.page_title = article.title
     ctx.data = {
         article = article,
+        comments = comments,
         related_articles = related_articles,
         my_rating = my_rating
     }
@@ -160,6 +176,24 @@ local function editor(app)
     return {render = "pages.editor"}
 end
 
+local function comment_editor(app)
+    local ctx = app.ctx
+    local policy, signature = User:generate_oss_upload_token(ctx.uid)
+
+    ctx.data = {
+        user_id = ctx.uid,
+        article_id = app.params.article_id,
+        refer_to = app.params.refer_to,
+        oss_policy = policy,
+        oss_signature = signature
+    }
+    ctx.page_title = "一刻阅读 | 发表评论"
+    ctx.tags_in_head = {css_tag("commentEditor")}
+    ctx.tags_in_body = {json_tag(ctx.data), js_tag("commentEditor")}
+
+    return {render = "pages.comment_editor"}
+end
+
 local function page_controller(app)
     app:get("/", index)
     app:get("/articles/:article_id", article)
@@ -169,139 +203,8 @@ local function page_controller(app)
     app:get("/sign-in", sign_in)
     app:get("/sign-up", sign_up)
     app:get("/editor", respond_to({before = sign_in_required, GET = editor}))
-    app:get("/articles/:article_id", article)
+    app:get("/comment-editor",
+            respond_to({before = sign_in_required, GET = comment_editor}))
 end
-
--- page_ctrl.css_path = ""
--- page_ctrl.js_path = ""
--- page_ctrl.version = "1.0.0"
-
--- local function get_meta_data(app, data_source)
---     local data = data_source(app)
-
---     if data.redirect_to or data.status then
---         return data
---     end
-
---     local css_url = page_ctrl.css_path .. "/" .. util.camel_case(data.page_name) .. "-" .. page_ctrl.version .. ".css"
---     local css_tag = {
---         tag = "link",
---         attributes = {
---             type = "text/css",
---             rel = "stylesheet",
---             href = css_url
---         }
---     }
-
---     if not data.tags_in_head then
---         data.tags_in_head = {css_tag}
---     else
---         util.push_back(data.tags_in_head, css_tag)
---     end
-
---     local js_url = page_ctrl.js_path .. "/" .. util.camel_case(data.page_name) .. "-" .. page_ctrl.version .. ".js"
---     local js_tag = {
---         tag = "script",
---         attributes = {
---             src = js_url
---         }
---     }
-
---     if not data.tags_in_body then
---         data.tags_in_body = {js_tag}
---     else
---         util.push_back(data.tags_in_body, js_tag)
---     end
-
---     util.assign(app.ctx, {
---         page_name = data.page_name,
---         page_title = data.page_title,
---         tags_in_head = data.tags_in_head,
---         tags_in_body = data.tags_in_body,
---         data = data,
---         data_json = to_json(data)
---     })
-
---     return {
---         render = "pages." .. data.page_name
---     }
--- end
-
--- util.push_back(page_ctrl.routes, {
---     method = "get",
---     path = "/",
---     handler = function(app)
---         return {
---             json = {
---                 testing = true
---             }
---         }
---         -- return get_meta_data(app, index_data)
---     end
--- }, {
---     method = "get",
---     path = "/editor",
---     handler = function(app)
---         return get_meta_data(app, editor_data)
---     end
--- }, {
---     method = "get",
---     path = "/sign-in",
---     handler = function(app)
---         return get_meta_data(app, sign_in_data)
---     end
--- }, {
---     method = "get",
---     path = "/sign-up",
---     handler = function(app)
---         return get_meta_data(app, sign_up_data)
---     end
--- }, {
---     method = "get",
---     path = "/forgot-password",
---     handler = function(app)
---         return get_meta_data(app, forgot_password_data)
---     end
--- }, {
---     method = "get",
---     path = "/reset-password",
---     handler = function(app)
---         return get_meta_data(app, reset_password_data)
---     end
--- }, {
---     method = "get",
---     path = "/articles/:article_id",
---     handler = function(app)
---         return get_meta_data(app, article_data)
---     end
--- }, {
---     method = "post",
---     path = "/components/:component_name",
---     handler = json_params(render_component)
--- }, {
---     method = "get",
---     path = "/followings",
---     handler = function(app)
---         return get_meta_data(app, followings_data)
---     end
--- }, {
---     method = "get",
---     path = "/followers",
---     handler = function(app)
---         return get_meta_data(app, followers_data)
---     end
--- }, {
---     method = "get",
---     path = "/messages",
---     handler = function(app)
---         return get_meta_data(app, messages_data)
---     end
--- }, {
---     method = "get",
---     path = "/users/:user_id",
---     handler = function(app)
---         return get_meta_data(app, user_data)
---     end
--- })
 
 return page_controller

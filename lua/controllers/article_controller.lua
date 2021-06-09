@@ -1,9 +1,9 @@
 -- External modules
+local cjson = require "cjson"
 local db = require "lapis.db"
 local json_params = require("lapis.application").json_params
 local ngx = require "ngx"
 local respond_to = require("lapis.application").respond_to
--- local Sanitizer = require("web_sanitize.html").Sanitizer
 local utf8 = require "utf8"
 
 -- Local modules
@@ -119,11 +119,59 @@ local function rate_article(app)
     return {status = 204}
 end
 
+local function create_comment(app)
+    local ctx = app.ctx
+    local uid = ctx.uid
+    local article_id = tonumber(app.params.article_id)
+    local refer_to = tonumber(app.params.refer_to)
+
+    local user = User:find_by_id(uid)
+
+    if not user then error("user.not.exists", 0) end
+
+    if not article_id then error("article.not.exists", 0) end
+
+    local article = Article:find_by_id(article_id)
+
+    if not article then error("article.not.exists", 0) end
+
+    local reference = {}
+    local reference_obj = {}
+
+    if refer_to then
+        reference = Article:find_comment_by_id(refer_to)
+        reference_obj = cjson.decode(reference.obj)
+    end
+
+    local comment_obj_str = cjson.encode({
+        reference_id = reference.id,
+        reference_author = reference_obj.author,
+        reference_profile = reference_obj.profile,
+        reference_content = reference_obj.content,
+        author = user.nickname,
+        profile = user.profile,
+        content = ngx.req.get_body_data()
+    })
+
+    local comment = {
+        created_by = uid,
+        article_id = article_id,
+        refer_to = refer_to or 0,
+        obj = db.raw(fmt("'%s'::jsonb", comment_obj_str))
+    }
+
+    assert(Article:create_comment(comment))
+
+    return {status = 204}
+end
+
 local function article_controller(app)
     app:post("/api/articles", respond_to(
                  {before = sign_in_required, POST = json_params(create_article)}))
     app:post("/api/ratings", respond_to(
                  {before = sign_in_required, POST = json_params(rate_article)}))
+    app:post("/api/articles/:article_id/comments", respond_to(
+                 {before = sign_in_required, POST = json_params(create_comment)}))
 end
 
 return article_controller

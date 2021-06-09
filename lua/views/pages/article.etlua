@@ -3,6 +3,7 @@
 local date = require "date"
 
 -- Local
+local comments = ctx.data.comments
 local my_rating = ctx.data.my_rating or 0
 local related_articles = ctx.data.related_articles
 local a = ctx.data.article
@@ -29,31 +30,7 @@ local content = a.content
         <div class="date"><%= updated_at %></div>
     </div>
     <div class="content">
-        <% for _, b in ipairs(a.blocks) do %>
-        <% if b.type == "header" then %>
-        <h<%= b.data.level %>><%= b.data.text %></h<%= b.data.level %>>
-        <% elseif b.type == "paragraph" then %>
-        <p><%= b.data.text %></p>
-        <% elseif b.type == "list" then %>
-        <<%= b.data.style == "ordered" and "ol" or "ul" %>>
-        <% for _, item in ipairs(b.data.items) do %>
-        <li><%= item %></li>
-        <% end %>
-        </<%= b.data.style == "ordered" and "ol" or "ul" %>>
-        <% elseif b.type == "image" then %>
-        <img src="<%= b.data.file.url %>">
-        <p class="caption"><%= b.data.caption %></p>
-        <% elseif b.type == "video" then %>
-        <video src="<%= b.data.file.url %>"></video>
-        <p class="caption"><%= b.data.caption %></p>
-        <% elseif b.type == "code" then %>
-        <pre><code><%= b.data.code %></code></pre>
-        <% elseif b.type == "quote" then %>
-        <blockquote><%= b.data.text %></blockquote>
-        <% elseif b.type == "delimiter" then %>
-        <div class="delimiter">***</div>
-        <% end %>
-        <% end %>
+        <% render("views/components/editor_content", {blocks=a.blocks}) %>
     </div>
     <div class="related-articles">
     <h2>
@@ -64,7 +41,17 @@ local content = a.content
     <h3><a href="/articles/<%= t.id %>"><%= t.title %></a></h3>
     <% end %>
     </div>
-    <div class="comments"></div>
+    <div class="comments">
+        <button class="comment">
+            <% render("views/icons/chat") %>
+            <span>发表评论</span>
+        </button>
+        <ul>
+        <% for _, t in ipairs(comments) do %>
+        <% render("views/components/comment", t) %>
+        <% end %>
+        </ul>
+    </div>
     <% render("views/components/navbar", { title = title }) %>
     <div class="rating-bar">
     <h3 <% if my_rating == 0 then %>hidden<% end %>>我的评价</h3>

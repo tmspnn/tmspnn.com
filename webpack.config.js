@@ -16,10 +16,8 @@ const pages = [
     "me",
     "signIn",
     "signUp",
-    "editor"
-    // "forgotPassword",
-    // "resetPassword",
-    // "user"
+    "editor",
+    "commentEditor"
 ];
 
 module.exports = {

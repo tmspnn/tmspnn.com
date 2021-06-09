@@ -9,6 +9,7 @@ import Page from "@components/Page";
 import PageController from "@components/PageController";
 import navbar from "@components/navbar/navbar";
 import ratingBar from "./ratingBar";
+import comment from "./comment";
 
 const namespace = "article";
 
@@ -25,6 +26,14 @@ function article() {
         $(".rating-bar"),
         root._data.my_rating
     );
+    root.$comments = $$(".-comment").map((el, idx) => {
+        return comment(namespace, el, root._data.comments[idx]);
+    });
+
+    // Event listeners
+    $("button.comment").on("click", () => {
+        location.href = "/comment-editor?article_id=" + root._data.article.id;
+    });
 
     // Behaviors
     const ctrl = new PageController(namespace);
