@@ -12,6 +12,24 @@ local redis_client = require "models/redis_client"
 
 local Article = Model:new("article")
 
+function Article:get_search_placeholder()
+    local client = redis_client:new()
+    return client:run("get", "search_placeholder")
+end
+
+function Article:get_latest(start_id)
+    local condition = start_id and "id < ?" or "true"
+    return self:find(fmt([[
+        %s order by id desc limit 20
+    ]], condition), start_id)
+end
+
+function Article:get_recommended_tags()
+    local client = redis_client:new()
+    return client:run("zrevrangebyscore", "recommended_tags", "+inf", 0,
+                      "limit", 0, 10)
+end
+
 function Article:get_related(article_id)
     return self:find([[
         id, title, cover, author, obj, created_by, created_at, updated_at
@@ -84,18 +102,6 @@ function Article:get_comments_by_article_id(article_id, offset)
         select * from "comment" where article_id = ? offset ? limit 20
     ]], article_id, offset or 0)
 end
-
--- function article:get_latest(start_id)
---     local condition = start_id and "where id < ?" or ""
---     local params = start_id and {start_id} or {}
---     local sql = fmt([[ * from "article" %s order by id desc limit 20 ]], condition)
---     return self:find(sql, unpack(params))
--- end
-
--- function article:get_recommended_topics()
---     local client = redis_client:new()
---     return client:run("zrevrangebyscore", "recommended_topics", "+inf", 0, "limit", 0, 10)
--- end
 
 -- function article:create_comment(init_data)
 --     return db.insert("comment", init_data, db.raw("*"))

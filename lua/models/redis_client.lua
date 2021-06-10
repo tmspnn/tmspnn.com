@@ -18,7 +18,7 @@ function redis_client:new(conf)
     local resty_redis = require "resty.redis"
 
     if not conf then conf = {} end
-    local timeout = conf.timeout or 1000
+    local timeout = conf.timeout or 10000
     local host = conf.host or "127.0.0.1"
     local port = conf.port or 6379
 

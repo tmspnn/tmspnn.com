@@ -1,46 +1,42 @@
 -- External modules
 local cjson = require "cjson"
-local date = require "date"
 local respond_to = require("lapis.application").respond_to
-local from_json = require("lapis.util").from_json
-local to_json = require("lapis.util").to_json
 
 -- Aliases
 local fmt = string.format
 
 -- Local modules
 -- local render_component = require "controllers/page/render_component"
-local Article = require "models/Article"
-local User = require "models/User"
+local Article = require "models.Article"
 local has_value = require "util.has_value"
+local User = require "models.User"
 
 -- Faked data for testing
-local faked_index = require "faked_data/faked_index"
-local faked_trending = require "faked_data/faked_trending"
-local faked_messages = require "faked_data/faked_messages"
-local faked_me = require "faked_data/faked_me"
+local faked_trending = require "faked_data.faked_trending"
+local faked_messages = require "faked_data.faked_messages"
+local faked_me = require "faked_data.faked_me"
 
 -- Implementation
 local assets_prefix = ""
 local version = "1.0.0"
 
-local function css_tag(page_name)
+local function css_tag(filename)
     return {
         tag = "link",
         attributes = {
             type = "text/css",
             rel = "stylesheet",
-            href = fmt("%s/%s-%s.css", assets_prefix, page_name, version)
+            href = fmt("%s/%s-%s.css", assets_prefix, filename, version)
         }
     }
 end
 
-local function js_tag(page_name)
+local function js_tag(filename)
     return {
         tag = "script",
         attributes = {
             type = "text/javascript",
-            src = fmt("%s/%s-%s.js", assets_prefix, page_name, version)
+            src = fmt("%s/%s-%s.js", assets_prefix, filename, version)
         }
     }
 end
@@ -49,7 +45,7 @@ local function json_tag(data)
     return {
         tag = "script",
         attributes = {type = "application/json"},
-        inner_html = to_json(data)
+        inner_html = cjson.encode(data)
     }
 end
 
@@ -58,13 +54,19 @@ local function sign_in_required(app)
 end
 
 local function index(app)
-    -- TODO: 搜索框 + 热搜tags + Recommended Feeds + Followings' Feeds
     local ctx = app.ctx
+    local search_placeholder = Article:get_search_placeholder()
+    local recommended_tags = Article:get_recommended_tags()
+    local latest_articles = Article:get_latest()
+    ctx.data = {
+        uid = ctx.uid,
+        search_placeholder = search_placeholder,
+        recommended_tags = recommended_tags,
+        latest_articles = latest_articles
+    }
     ctx.page_title = "一刻阅读 | 首页"
     ctx.tags_in_head = {css_tag("index")}
-    ctx.tags_in_body = {json_tag(faked_index), js_tag("index")}
-    ctx.data = faked_index
-
+    ctx.tags_in_body = {json_tag(ctx.data), js_tag("index")}
     return {render = "pages.index"}
 end
 
@@ -85,7 +87,7 @@ local function article(app)
 
     if not article then return {render = "pages.404"} end
 
-    article.blocks = from_json(article.content).blocks
+    article.blocks = cjson.decode(article.content).blocks
 
     local comments = Article:get_comments_by_article_id(article_id)
 
