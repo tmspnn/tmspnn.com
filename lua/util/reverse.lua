@@ -1,8 +1,6 @@
 -- @param {string|itable} t
 local function reverse(t)
-    if type(t) == "string" then
-        return string.reverse(t)
-    end
+    if type(t) == "string" then return string.reverse(t) end
 
     local tmp;
 

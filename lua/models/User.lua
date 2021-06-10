@@ -1,70 +1,78 @@
 -- External modules
--- The Nginx interface provided by OpenResty
 local ngx = require "ngx"
 local basexx = require "basexx"
 local cjson = require "cjson"
 local date = require "date"
-local db = require "lapis.db"
-local encode_base64 = require("lapis.util.encoding").encode_base64
 local sha1 = require "sha1"
-local to_json = require("lapis.util").to_json
 
 -- Aliases
 local fmt = string.format
 
 -- Local modules
-local Model = require "models/Model"
-local redis_client = require "models/redis_client"
+local Model = require "models.Model"
+local redis_client = require "models.redis_client"
 
 -- Implementation
 local User = Model:new("user")
 
 local token_ttl = 60 * 60 * 24 * 14 -- two weeks
-local vcode_ttl = 60 * 10 -- ten minutes˝
+local vcode_ttl = 60 * 10 -- ten minutes
 -- local password_sequence_ttl = 60 * 60 * 24 -- one day
 
+-- @param {string} user_token
+-- @returns {double}
 function User:get_id_by_token(user_token)
     local client = redis_client:new()
     local uid = client:run("get", fmt("user_token(%s):uid", user_token))
     return tonumber(uid)
 end
 
+-- @param {double} uid
+-- @returns {string}
 function User:generate_user_token(uid)
     local timestamp = os.time()
     local random_number = string.sub(math.random(), -4)
-    return encode_base64(uid .. ":" .. timestamp .. ":" .. random_number)
+    return basexx.to_base64(uid .. ":" .. timestamp .. ":" .. random_number)
 end
 
+-- @param {string} token
+-- @param {double} uid
 function User:set_token(token, uid)
     local client = redis_client:new()
     client:run("setex", fmt("user_token(%s):uid", token), token_ttl, uid)
 end
 
+-- @param {string} token
 function User:remove_token(token)
     local client = redis_client:new()
     client:run("del", fmt("user_token(%s):uid", token))
 end
 
+-- @param {string} mobile
 function User:get_vcode(mobile)
     local client = redis_client:new()
     return client:run("get", fmt("mobile(%s):vcode", mobile))
 end
 
+-- @param {string} vcode
+-- @param {string} mobile
 function User:set_vcode(vcode, mobile)
     local client = redis_client:new()
     client:run("setex", fmt("mobile(%s):vcode", mobile), vcode_ttl, vcode)
 end
 
+-- @param {string} mobile
 function User:remove_vcode(mobile)
     local client = redis_client:new()
     client:run("del", fmt("mobile(%s):vcode", mobile))
 end
 
+-- https://support.huaweicloud.com/api-obs/obs_04_0012.html
+-- @param {double} uid
 function User:generate_oss_upload_token(uid)
-    -- https://support.huaweicloud.com/api-obs/obs_04_0012.html
     local current_date = date()
     local expiration_date = current_date:adddays(1)
-    local oss_policy = to_json({
+    local oss_policy = cjson.encode({
         expiration = expiration_date:fmt("${iso}Z"),
         conditions = {
             {["x-obs-acl"] = "public-read"}, {["bucket"] = "tmspnn"},
@@ -78,6 +86,7 @@ function User:generate_oss_upload_token(uid)
     return string_to_sign, signature
 end
 
+-- @param {double} uid
 function User:get_advocated_comments(uid)
     return self:find([[
         obj->'advocated_comments' from "user" where id = ?

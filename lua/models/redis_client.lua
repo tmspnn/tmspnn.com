@@ -1,5 +1,9 @@
--- Nginx interface provided by OpenResty
+-- External modules
 local ngx = require "ngx"
+
+-- Local modules
+local push = require "util.push"
+local remove = require "util.remove"
 
 -- Implementation
 local redis_client = {}
@@ -7,10 +11,12 @@ local redis_client = {}
 -- As a base class, __index points to self
 redis_client.__index = redis_client
 
+-- @param {string} conf.host
+-- @param {double} conf.timeout
+-- @param {double} conf.port
 function redis_client:new(conf)
     local resty_redis = require "resty.redis"
 
-    -- configuration
     if not conf then conf = {} end
     local timeout = conf.timeout or 1000
     local host = conf.host or "127.0.0.1"
@@ -38,10 +44,7 @@ function redis_client:run(command, ...)
 
     local res, err = self.redis[command](self.redis, ...)
 
-    if not res then
-        self:on_error(command, err)
-        return nil
-    end
+    if not res then return self:on_error(command, err) end
 
     self:post_run(command, ...)
 
@@ -51,14 +54,12 @@ function redis_client:run(command, ...)
 end
 
 function redis_client:connect()
-    local res, err = self.redis:connect(self.host, self.port)
-
-    if not res then error(err) end
-
+    assert(self.redis:connect(self.host, self.port))
     self.connected = true
 end
 
 function redis_client:on_error(command, err)
+    -- In case of temporarily idle channel
     if command == "read_reply" and err == "timeout" then return end
 
     self:release()
@@ -66,8 +67,6 @@ function redis_client:on_error(command, err)
 end
 
 function redis_client:post_run(command, ...)
-    local params = {...}
-
     if command == "init_pipeline" then
         self.piping = true
     elseif command == "commit_pipeline" or command == "cancel_pipeline" then
@@ -77,25 +76,13 @@ function redis_client:post_run(command, ...)
     elseif command == "exec" or command == "discard" then
         self.transactioning = false
     elseif command == "subscribe" then
-        local channels_count = #self.subscribed_channels
-        for i = 1, #params do
-            channels_count = channels_count + 1
-            self.subscribed_channels[channels_count] = params[i]
-        end
+        push(self.subscribed_channels, ...)
     elseif command == "unsubscribe" then
-        for i = 1, #params do
-            table.remove(self.subscribed_channels, params[i])
-        end
+        remove(self.subscribed_channels, ...)
     elseif command == "psubscribe" then
-        local patterns_count = #self.subscribed_patterns
-        for i = 1, #params do
-            patterns_count = patterns_count + 1
-            self.subscribed_patterns[patterns_count] = params[i]
-        end
+        remove(self.subscribed_patterns, ...)
     elseif command == "punsubscribe" then
-        for i = 1, #params do
-            table.remove(self.subscribed_patterns, params[i])
-        end
+        push(self.subscribed_patterns, ...)
     end
 
     if self.piping or self.transactioning or #self.subscribed_channels > 0 or
@@ -115,15 +102,11 @@ function redis_client:release()
         self.transactioning = false
     end
 
-    local res, err
-
     if #self.subscribed_channels > 0 or #self.subscribed_patterns > 0 then
-        res, err = self.redis:close()
+        assert(self.redis:close())
     else
-        res, err = self.redis:set_keepalive(10000, 100)
+        assert(self.redis:set_keepalive(10000, 100))
     end
-
-    if not res then error(err) end
 
     self.connected = false
 end

@@ -2,23 +2,16 @@
 const isProduction = process.env.NODE_ENV == "production";
 const version = require("./package.json").version;
 
+// Internal modules
+const fs = require("fs");
+
 // External modules
 const _ = require("lodash");
 const webpack = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-// Pages
-const pages = [
-    "index",
-    "article",
-    "trending",
-    "messages",
-    "me",
-    "signIn",
-    "signUp",
-    "editor",
-    "commentEditor"
-];
+// Entries
+const pages = fs.readdirSync("./app/pages");
 
 module.exports = {
     context: __dirname + "/app",
@@ -105,7 +98,6 @@ module.exports = {
             clearNode: ["k-dom", "clearNode"],
             removeNode: ["k-dom", "removeNode"],
             html2DOM: ["k-dom", "html2DOM"],
-            isInt: ["k-util", "isInt"],
             isJSON: ["k-util", "isJSON"],
             parseJSON: ["k-util", "parseJSON"],
             toArray: ["k-util", "toArray"],

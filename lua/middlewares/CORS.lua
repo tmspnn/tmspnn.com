@@ -1,5 +1,4 @@
 -- External modules
--- > The Nginx interface provided by OpenResty
 local ngx = require "ngx"
 
 -- Implementation

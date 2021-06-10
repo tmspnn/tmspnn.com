@@ -1,18 +1,18 @@
--- External
+-- External modules
 local ngx = require "ngx"
 
--- Local
-local error_messages = require "models/error_messages"
+-- Local modules
+local error_messages = require "models.error_messages"
 
 -- Implementation
 local exception = {}
 
 function exception.handle_404() return {status = 404, render = "pages.404"} end
 
+-- @param {lapis.Application} app
+-- @param {string} err
+-- @param {string} trace
 function exception.handle_error(app, err, trace)
-    -- app: lapis.Application
-    -- err: string
-    -- trace: string
     local msg = error_messages[err]
 
     if not msg then

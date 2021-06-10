@@ -1,7 +1,9 @@
 -- External modules
--- > The Nginx interface provided by OpenResty
-local ngx = require "ngx"
+-- https://leafo.net/lapis/reference/database.html
 local db = require "lapis.db"
+
+-- Aliases
+local fmt = string.format
 
 -- Implementation
 local Model = {}
@@ -9,49 +11,45 @@ local Model = {}
 -- As a base class, __index points to self
 Model.__index = Model
 
+-- @param {string} table_name
 function Model:new(table_name)
     local m = {table_name = table_name}
     return setmetatable(m, self)
 end
 
+-- @param {int} id
 function Model:find_by_id(id)
-    local res, err = db.select(string.format([[
+    return assert(db.select(fmt([[
         * from "%s" where id = ?
-    ]], self.table_name), id)
-    if not res then error(err) end
-    return res[1]
+    ]], self.table_name), id))[1]
 end
 
+-- @param {string} sql
+-- @param {any} ...
 function Model:find(sql, ...)
-    local res, err = db.select(sql, ...)
-    if not res then error(err) end
-    return res
+    return assert(db.select(fmt([[
+        * from "%s" where
+    ]], self.table_name) .. sql, ...))
 end
 
+-- @param {table} data
+-- @returns {1 = table, affected_rows = int}
 function Model:create(data)
-    local res, err = db.insert(self.table_name, data, db.raw("*"))
-    if not res then error(err) end
-    -- { 1 = record, affected_rows = 1 }
-    return res[1]
+    return assert(db.insert(self.table_name, data, db.raw("*")))
 end
 
-function Model:update(data, conditions, ...) -- conditions is a string
-    local res, err = db.update(self.table_name, data, conditions, ...)
-    if not res then error(err) end
-    return res
+-- @param {table} data
+-- @param {table|string} conditions
+function Model:update(data, conditions, ...)
+    return assert(db.update(self.table_name, data, conditions, ...))
 end
 
--- @param {string} conditions
+-- @param {table|string} conditions
 function Model:delete(conditions, ...)
-    local res, err = db.delete(self.table_name, conditions, ...)
-    if not res then error(err) end
-    return res
+    return assert(db.delete(self.table_name, conditions, ...))
 end
 
-function Model:query(sql, ...)
-    local res, err = db.query(sql, ...)
-    if not res then error(err) end
-    return res
-end
+-- @param {string} sql
+function Model:query(sql, ...) return assert(db.query(sql, ...)) end
 
 return Model

@@ -1,11 +1,5 @@
-local function extend(o, ...)
-    for _, v in ipairs({...}) do
-        if type(v) == "table" then
-            for k, u in pairs(v) do
-                o[k] = u
-            end
-        end
-    end
-end
+-- @param {table} o
+-- @param {table} t
+local function extend(o, t) for k, v in pairs(t) do o[k] = v end end
 
 return extend
