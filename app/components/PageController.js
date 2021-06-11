@@ -1,28 +1,41 @@
-// External
+// External modules
 import kxhr from "k-xhr";
 
-// Local
+// Local modules
 import Ws from "@components/Ws";
 
+/**
+ * @property {boolean} blocked
+ * @property {object} data
+ * @property {Ws} ws
+ * @method {(string) => void} toast
+ * @method {() => void} block
+ * @method {() => void} unblock
+ * @method {(string) => Promise<object>} getJson
+ * @method {(string, object, object) => Promise<object>} postJson
+ * @method {(string, object, object) => Promise<object>} putJson
+ * @method {(string) => Promise<object>} del
+ * @method {(Error) => void} handleException
+ */
 export default class PageController extends Controller {
     blocked = false;
 
-    // ws = new Ws();
+    data = null;
 
-    constructor(namespace) {
-        const dataTag = $('script[type="application/json"');
-        const data = parseJSON(at(dataTag, "textContent")) || {};
-        super(namespace);
+    ws = new Ws();
+
+    constructor(name, data) {
+        super(name);
         this.data = data;
-        // this.ws.onMessage = (msg) => {
-        //     if (typeof this.onWsMessage == "function") {
-        //         this.onWsMessage(msg);
-        //     }
-        // };
+        this.ws.onMessage = (msg) => {
+            if (typeof this.onWsMessage == "function") {
+                this.onWsMessage(msg);
+            }
+        };
     }
 
-    toast = (texts) => {
-        this.ui("toast::show", texts);
+    toast = (text) => {
+        this.ui("toast::show", text);
     };
 
     block = () => {
@@ -37,7 +50,6 @@ export default class PageController extends Controller {
 
     getJson = (url) => {
         if (this.blocked) return;
-
         this.block();
         return kxhr(url)
             .then((res) => parseJSON(res))
@@ -46,7 +58,6 @@ export default class PageController extends Controller {
 
     postJson = (url, data, options = {}) => {
         if (this.blocked) return;
-
         this.block();
         return kxhr(url, "post", JSON.stringify(data), {
             contentType: "application/json",
@@ -58,7 +69,6 @@ export default class PageController extends Controller {
 
     putJson = (url, data, options = {}) => {
         if (this.blocked) return;
-
         this.block();
         return kxhr(url, "put", JSON.stringify(data), {
             contentType: "application/json",
@@ -70,7 +80,6 @@ export default class PageController extends Controller {
 
     del = (url) => {
         if (this.blocked) return;
-
         this.block();
         return kxhr(url, "delete")
             .then((res) => parseJSON(res))

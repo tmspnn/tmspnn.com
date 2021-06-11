@@ -1,14 +1,28 @@
 import ee from "@helpers/ee";
+
+/**
+ * @property {string} _namespace
+ * @property {string} _type
+ * @method {(string, ...any) => void} _eventHandler
+ */
 class Listener {
     _namespace = "";
     _type = "";
 
+    /**
+     * @param {string} namespace
+     * @param {string} type
+     */
     constructor(namespace = "", type = "") {
         this._namespace = namespace;
         this._type = type;
         ee.on(this._namespace + "::" + this._type, this._eventHandler);
     }
 
+    /**
+     * @param {string} method
+     * @param  {...any} args
+     */
     _eventHandler = (method, ...args) => {
         if (typeof this[method] == "function") {
             this[method](...args);
@@ -16,6 +30,17 @@ class Listener {
     };
 }
 
+/**
+ * @property {string} _name
+ * @property {null|HTMLElement} _element
+ * @property {[k: string]: HTMLElement} _refs
+ * @property {any} _data
+ * @property {RegExp} _classReg
+ * @method {(HTMLElement) => void} getRefs
+ * @method {(string, ...any) => void} ui
+ * @method {(string, ...any) => void} dispatch
+ * @method {() => void} destroy
+ */
 export class View extends Listener {
     _name = "";
     _element = null;
@@ -23,6 +48,11 @@ export class View extends Listener {
     _data = null;
     _classReg = /(^-\w)|(\s+-\w)/i;
 
+    /**
+     * @param {string} namespace
+     * @param {HTMLElement} element
+     * @param {any} data
+     */
     constructor(namespace, element, data) {
         super(namespace, "view");
         this._element = element;
@@ -87,7 +117,14 @@ export class View extends Listener {
     };
 }
 
+/**
+ * @method {(string, ...any) => void} ui
+ * @method {(string, ...any) => void} notify
+ */
 export class Controller extends Listener {
+    /**
+     * @param {string} namespace
+     */
     constructor(namespace) {
         super(namespace, "controller");
     }

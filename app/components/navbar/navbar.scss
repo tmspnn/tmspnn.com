@@ -2,19 +2,27 @@
 
 .-navbar {
     @extend ._flex;
-    user-select: none;
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     height: 3.5rem;
     padding: 0;
-    background-image: linear-gradient(
-        hsla(0, 0%, 100%, 1) 70%,
-        hsla(0, 0%, 100%, 0.9)
-    );
+    background-color: var(--white);
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
     color: var(--black);
-    box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.02);
+    user-select: none;
+
+    &:before {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        transform: scaleY(0.5);
+        content: "";
+        background-color: var(--light-white);
+    }
 
     > * {
         @extend ._with-icon;
@@ -29,7 +37,6 @@
 
     > .center {
         flex: 1;
-        padding: 0 1rem;
         text-align: center;
         line-height: 3.5rem;
         font-size: 1.3rem;
@@ -40,12 +47,9 @@
 
     .btn {
         @extend ._flex;
-        height: 3.5rem;
         justify-content: center;
+        height: 3.5rem;
         color: var(--black);
-        svg {
-            margin: 0;
-        }
 
         &.back {
             svg {

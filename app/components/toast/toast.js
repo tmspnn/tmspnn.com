@@ -1,47 +1,47 @@
 import "./toast.scss";
 
-export default function toast(namespace) {
-    const view = new View(
-        namespace,
+export default function toast(name) {
+    const v = new View(
+        name,
         html2DOM(`
         <div class="-toast" hidden>
-            <div class="texts invisible"></div>
+            <div class="text invisible"></div>
         </div>`)
     );
-    view._name = "toast";
+    v._name = "toast";
 
-    const textsEl = $(".texts", view._element);
+    const textEl = $(".text", v._element);
     const timeout = 1500;
     let available = true;
 
-    view.show = (texts) => {
+    v.show = (texts) => {
         if (!available) return;
         available = false;
-        view._element.hidden = false;
+        v._element.hidden = false;
         setTimeout(() => {
-            textsEl.on("transitionend", view.onTextsShow);
-            textsEl.textContent = texts;
-            removeClass(textsEl, "invisible");
+            textEl.on("transitionend", v.onTextsShow);
+            textEl.textContent = texts;
+            removeClass(textEl, "invisible");
         }, 52);
     };
 
-    view.hide = () => {
-        textsEl.on("transitionend", view.onTextsHide);
-        addClass(textsEl, "invisible");
+    v.hide = () => {
+        textEl.on("transitionend", v.onTextsHide);
+        addClass(textEl, "invisible");
     };
 
-    view.onTextsShow = () => {
-        textsEl.off("transitionend", view.onTextsShow);
-        setTimeout(view.hide, timeout);
+    v.onTextsShow = () => {
+        textEl.off("transitionend", v.onTextsShow);
+        setTimeout(v.hide, timeout);
     };
 
-    view.onTextsHide = () => {
-        textsEl.off("transitionend", view.onTextsHide);
-        view._element.hidden = true;
+    v.onTextsHide = () => {
+        textEl.off("transitionend", v.onTextsHide);
+        v._element.hidden = true;
         available = true;
     };
 
-    document.body.appendChild(view._element);
+    document.body.appendChild(v._element);
 
-    return view;
+    return v;
 }

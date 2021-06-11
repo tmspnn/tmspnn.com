@@ -7,7 +7,7 @@
     --grey: hsl(0, 0%, 50%);
     --grey-white: hsl(0, 0%, 70%);
     --light-white: hsl(0, 0%, 90%);
-    --bg-white: hsl(0, 0%, 96%);
+    --bg-white: hsl(0, 0%, 97%);
     --white: hsl(0, 0%, 100%);
     --light-blue: #9cecfb;
     --blue: #65c7f7;
@@ -39,9 +39,8 @@ body {
     max-width: 1024px;
     margin: 0 auto;
     overflow: hidden;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-        "Helvetica Neue", sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
+        "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
     background-color: var(--bg-white);
 }
 
@@ -53,25 +52,23 @@ a {
 button {
     @extend ._flex;
     justify-content: center;
-    padding: 0.5rem 1.2em;
-    border: none;
-    border-radius: 0.2rem;
+    padding: 0.5rem 1em;
+    border: 1px solid var(--green);
+    border-radius: 1.5rem;
+    box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+    background-image: linear-gradient(150deg, var(--green), var(--blue));
     color: var(--white);
-    background-image: radial-gradient(at left top, var(--green), var(--blue));
+    font-size: 1.3rem;
     transition: all 200ms;
-    font-size: 1.2rem;
 
-    &:hover {
-        transform: scale(0.98);
-    }
-
+    &:hover,
     &:active {
         transform: scale(0.96);
     }
 
     svg {
-        width: 1.2rem;
-        height: 1.2rem;
+        width: 1.4rem;
+        height: 1.4rem;
     }
 }
 
@@ -80,10 +77,15 @@ img {
 }
 
 input {
-    @extend ._no-outline;
+    outline: none;
     cursor: pointer;
     padding: 0.4rem 1.5rem;
     border: none;
+    &:hover,
+    &:focus,
+    &:active {
+        outline: none;
+    }
 }
 
 /* Remove autocomplete styles in Chrome */
@@ -160,19 +162,9 @@ ul {
 
 ._with-icon {
     svg {
-        @extend ._inline;
         margin-right: 0.2em;
         width: 1.3em;
         height: 1.3em;
-    }
-}
-
-._no-outline {
-    outline: none;
-    &:hover,
-    &:focus,
-    &:active {
-        outline: none;
     }
 }
 
@@ -187,42 +179,6 @@ ul {
 
     > * {
         display: inline-block;
-    }
-}
-
-/* Custom elements */
-.switch {
-    cursor: pointer;
-    width: 3.2rem;
-    height: 1.6rem;
-    background-color: var(--grey);
-    border-radius: 2rem;
-    box-shadow: 0 0 0.2rem rgba(0, 0, 0, 0.02);
-    transition: background-color 200ms;
-
-    &.active {
-        background-color: var(--blue);
-
-        .inner {
-            transform: translate3d(1.6rem, 0, 0);
-        }
-    }
-
-    .btn {
-        width: 1.6rem;
-        height: 1.6rem;
-        border-radius: 50%;
-        background-color: var(--white);
-        box-shadow: 0 0 0.2rem rgba(0, 0, 0, 0.02);
-        transition: transform 300ms;
-    }
-}
-
-.richtext {
-    div,
-    p {
-        margin: 0;
-        padding: 0.4rem 0.8rem;
     }
 }
 

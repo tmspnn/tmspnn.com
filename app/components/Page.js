@@ -1,39 +1,58 @@
 import immediatelyScrollTo from "@helpers/immediatelyScrollTo";
 import PageContainer from "@components/PageContainer";
+import PageController from "@components/PageController";
 import toast from "@components/toast/toast";
 import customSpinner from "@components/customSpinner";
 
+/**
+ * @property {string[]} prefetch
+ * @property {object} data
+ * @property {number} data.scrollTop
+ * @property {PageController} ctrl
+ */
 export default class Page extends View {
     prefetch = [];
 
-    constructor(namespace) {
-        const dataTag = $('script[type="application/json"');
-        const data = parseJSON(at(dataTag, "textContent")) || {};
-        super(namespace, document.body, data);
-        this._name = "root";
-        this.toast = toast(namespace);
-        this.customSpinner = customSpinner(namespace);
-        this.pageContainer = window._pageContainer || new PageContainer();
-        this.pageContainer.captureLinks();
+    data =
+        parseJSON(at($('script[type="application/json"'), "textContent")) || {};
 
+    ctrl = null;
+
+    constructor(name) {
+        super(name, document.body);
+        this._name = "root";
+
+        // Child components
+        this.$toast = toast(name);
+        this.$customSpinner = customSpinner(name);
+        this.$pageContainer = window._pageContainer || new PageContainer();
+        this.$pageContainer.captureLinks();
+
+        // UI logic
         setTimeout(() => {
-            this.pageContainer.preloadStyles(document);
+            // Fetch styles of the current page
+            this.$pageContainer.preloadStyles(document);
 
             // Prefetch related pages
-            each(this.prefetch, (p) => this.pageContainer.loadPage(p));
+            each(this.prefetch, (p) => this.$pageContainer.loadPage(p));
 
             // Event listeners
             const container = $(".page-container");
 
-            document.documentElement.on("pageshow", (e) => {
-                if (data.scrollTop > 0) {
-                    immediatelyScrollTo(container, data.scrollTop | 0);
+            document.documentElement.on("pageshow", () => {
+                if (this.data.scrollTop > 0) {
+                    immediatelyScrollTo(container, this.data.scrollTop | 0);
                 }
             });
 
             container.on("scroll", () => {
-                data.scrollTop = container.scrollTop;
+                this.data.scrollTop = container.scrollTop;
             });
         });
+
+        // Business logic
+        this.ctrl = new PageController(name, this.data);
+
+        this.ctrl.onWsMessage = console.log;
     }
 }

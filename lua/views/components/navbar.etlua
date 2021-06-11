@@ -4,7 +4,7 @@
             <% render("views/icons/chevron_left") %>
         </div>
     </div>
-    <div class="center" data-ref="center"><%= ctx.page_title %></div>
+    <div class="center"><%= ctx.page_title %></div>
     <div class="right">
         <div class="btn share" data-ref="shareBtn" hidden>
             <% render("views/icons/share") %>

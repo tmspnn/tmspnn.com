@@ -1,19 +1,19 @@
 import { Spinner } from "spin.js";
 import "spin.js/spin.css";
 
-export default function customSpinner(namespace) {
-    const view = new View(namespace);
-    view._name = "customSpinner";
+export default function customSpinner(name) {
+    const v = new View(name);
+    v._name = "customSpinner";
 
     const spinner = new Spinner({ color: "rgba(0, 0, 0, 0.4)", lines: 10 });
 
-    view.show = () => {
+    v.show = () => {
         spinner.spin(document.body);
     };
 
-    view.hide = () => {
+    v.hide = () => {
         spinner.stop();
     };
 
-    return view;
+    return v;
 }

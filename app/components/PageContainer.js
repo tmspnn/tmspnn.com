@@ -1,6 +1,6 @@
-import isSameOrigin from "@helpers/isSameOrigin";
-import createDocument from "@helpers/createDocument";
 import { replaceNode } from "k-dom";
+import createDocument from "@helpers/createDocument";
+import isSameOrigin from "@helpers/isSameOrigin";
 
 export default class PageContainer extends View {
     cache = {};

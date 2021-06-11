@@ -1,13 +1,25 @@
+/**
+ * @property {string} origin
+ * @property {string} url
+ * @property {WebSocket} conn
+ * @property {string} state -- syncing | online | connecting | offline
+ * @property {string} message
+ * @property {number} timeoutId
+ * @property {number} intervalId
+ * @property {number} createdAt
+ * @property {number} retryTimes
+ * @property {number} triedTimes
+ */
 export default class Ws {
     origin = "https://tmspnn.com";
 
     url = "wss://tmspnn.com/ws/";
 
-    // Local connection
     conn = null;
 
-    // Global state: offline | online | connecting | syncing | closed
-    globalState = null;
+    state = null;
+
+    message = null;
 
     timeoutId = null;
 
@@ -29,12 +41,16 @@ export default class Ws {
                 const state = localStorage.getItem("ws.state");
                 const msg = localStorage.getItem("ws.message");
 
-                if (state != this.globalState) {
+                if (this.state != state) {
                     this.onStateChange(state);
                 }
 
-                if (typeof this.onMessage == "function") {
+                if (
+                    this.message != msg &&
+                    typeof this.onMessage == "function"
+                ) {
                     this.onMessage(parseJSON(msg));
+                    this.message = msg;
                 }
             }, 500)
         );
@@ -46,7 +62,8 @@ export default class Ws {
 
         // Synchronize every minute
         setInterval(() => {
-            if (!this.conn || this.conn.readyState != 1) {
+            if (!this.isOnline()) {
+                this.state = "syncing";
                 this.timeoutId = setTimeout(this.connect, 1000);
                 localStorage.setItem("ws.state", "syncing");
             }
@@ -61,21 +78,25 @@ export default class Ws {
         switch (state) {
             case "syncing":
                 if (this.isOnline()) {
+                    this.state = "online";
                     localStorage.setItem("ws.state", "online");
+                } else {
+                    this.state = "syncing";
                 }
                 break;
             case "offline":
+                this.state = "offline";
                 this.timeoutId = setTimeout(
                     this.connect,
                     this.createdAt % 1000 // In case of race condition
                 );
                 break;
             case "connecting":
-                this.globalState = "connecting";
+                this.state = "connecting";
                 clearTimeout(this.timeoutId);
                 break;
             case "online":
-                this.globalState = "online";
+                this.state = "online";
                 clearTimeout(this.timeoutId);
                 break;
             default:
@@ -84,7 +105,9 @@ export default class Ws {
     };
 
     connect = () => {
-        this.globalState = "connecting";
+        if (this.isOnline()) return;
+
+        this.state = "connecting";
         localStorage.setItem("ws.state", "connecting");
 
         if (this.conn) this.conn.close();
@@ -104,7 +127,7 @@ export default class Ws {
                 }
             }, 55000);
 
-            this.globalState = "online";
+            this.state = "online";
             localStorage.setItem("ws.state", "online");
         };
 
@@ -115,22 +138,27 @@ export default class Ws {
                 this.onMessage(parseJSON(msg));
             }
 
-            this.globalState = "online";
+            this.state = "online";
             localStorage.setItem("ws.state", "online");
             localStorage.setItem("ws.message", msg);
         };
 
         this.conn.onerror = (e) => {
+            if (typeof this.onError == "function") {
+                this.onError(e);
+            }
+
+            // Retry 3 times to get connected
             if (++this.triedTimes < this.retryTimes) {
-                this.connect(onSuccess, onFail);
+                this.connect();
             } else {
                 this.triedTimes = 0;
+                localStorage.setItem("ws.state", "offline");
             }
         };
 
         this.conn.onclose = () => {
-            this.globalState = "closed";
-            localStorage.setItem("ws.state", "closed");
+            this.conn = null;
         };
     };
 }
