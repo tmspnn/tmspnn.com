@@ -1,16 +1,20 @@
 <%
-local search_placeholder = ctx.data.search_placeholder
+local search_placeholder = ctx.data.search_placeholder or "搜索"
 local recommended_tags = ctx.data.recommended_tags
 local latest_articles = ctx.data.latest_articles
 %>
 <div class="page-container">
     <section class="search">
-        <div>
+        <div class="container">
             <% render("views/icons/search") %>
             <input type="text" placeholder="<%= search_placeholder %>" data-ref="input" />
             <% render("views/icons/x") %>
         </div>
-        <ul data-ref="results"></ul>
+        <div class="tips-empty" data-ref="tipsEmpty" hidden>
+            <% render("views/icons/emoji_sad") %>
+            <b>搜不到任何东西...</b>
+        </div>
+        <ul data-ref="result"></ul>
     </section>
     <section class="recommended-tags">
         <% for i, t in ipairs(recommended_tags) do %>

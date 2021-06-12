@@ -4,7 +4,7 @@
     @extend ._with-icon;
     padding: 1.5rem 1rem;
 
-    > div {
+    .container {
         position: relative;
 
         input {
@@ -36,10 +36,22 @@
             }
 
             &:last-child {
+                display: none;
                 right: 0.8rem;
                 color: var(--black-grey);
+
+                &.visible {
+                    display: initial;
+                }
             }
         }
+    }
+
+    .tips-empty {
+    }
+
+    .result {
+        min-height: 100vh;
     }
 }
 

@@ -103,6 +103,22 @@ function Article:get_comments_by_article_id(article_id, offset)
     ]], article_id, offset or 0)
 end
 
+-- @param {string[]} tokens
+-- @param {unsigned int} offset
+function Article:search(tokens, offset)
+    local q = table.concat(tokens, " & ")
+    return self:query([[
+        select
+            id, created_by, author, title, "desc", cover, rating, created_at,
+            obj->>'wordcount' as wordcount, obj->>'pageview' as pageview,
+            obj->>'author_profile' as author_profile
+        from "article"
+        where
+            ts_vector @@ to_tsquery(?)
+        order by id desc offset ? limit 10
+    ]], q, offset or 0)
+end
+
 -- function article:create_comment(init_data)
 --     return db.insert("comment", init_data, db.raw("*"))
 -- end

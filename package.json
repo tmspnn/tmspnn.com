@@ -23,7 +23,7 @@
         "big.js": "^6.1.1",
         "dayjs": "^1.10.5",
         "events": "^3.3.0",
-        "highlight.js": "^11.0.0",
+        "highlight.js": "^11.0.1",
         "js-base64": "^3.6.1",
         "k-dom": "^0.3.0",
         "k-util": "^0.3.2",
@@ -32,26 +32,27 @@
         "normalize.css": "^8.0.1",
         "qs": "^6.10.1",
         "spin.js": "^4.1.0",
-        "validator": "^13.6.0"
+        "validator": "^13.6.0",
+        "video.js": "^7.12.3"
     },
     "devDependencies": {
-        "@babel/core": "^7.14.3",
-        "@babel/plugin-proposal-class-properties": "^7.13.0",
-        "@babel/preset-env": "^7.14.4",
+        "@babel/core": "^7.14.5",
+        "@babel/plugin-proposal-class-properties": "^7.14.5",
+        "@babel/preset-env": "^7.14.5",
         "autoprefixer": "^10.2.6",
         "ava": "^3.15.0",
         "babel-loader": "^8.2.2",
         "css-loader": "^5.2.6",
         "mini-css-extract-plugin": "^1.6.0",
-        "postcss": "^8.3.0",
+        "postcss": "^8.3.2",
         "postcss-import": "^14.0.2",
-        "postcss-loader": "^5.3.0",
+        "postcss-loader": "^6.1.0",
         "postcss-scss": "^3.0.5",
         "precss": "^3.1.2",
-        "prettier": "^2.3.0",
+        "prettier": "^2.3.1",
         "style-loader": "^2.0.0",
         "webpack": "^5.38.1",
-        "webpack-cli": "^4.7.0"
+        "webpack-cli": "^4.7.2"
     },
     "ava": {
         "files": [
