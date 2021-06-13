@@ -10,18 +10,26 @@ local fmt = string.format
 local Model = require "models/Model"
 local redis_client = require "models/redis_client"
 
+-- Implementation
 local Article = Model:new("article")
+local MAX_INT = 2147483647
 
 function Article:get_search_placeholder()
     local client = redis_client:new()
     return client:run("get", "search_placeholder")
 end
 
+-- @param {unsigned int} start_id
 function Article:get_latest(start_id)
-    local condition = start_id and "id < ?" or "true"
-    return self:find(fmt([[
-        %s order by id desc limit 20
-    ]], condition), start_id)
+    return self:query([[
+        select
+            id, created_by, author, title, "desc", cover, rating, created_at,
+            obj->>'wordcount' as wordcount, obj->>'pageview' as pageview,
+            obj->>'author_profile' as author_profile
+        from "article"
+        where id < ?
+        order by id desc limit 20
+    ]], start_id or MAX_INT)
 end
 
 function Article:get_recommended_tags()
@@ -104,8 +112,8 @@ function Article:get_comments_by_article_id(article_id, offset)
 end
 
 -- @param {string[]} tokens
--- @param {unsigned int} offset
-function Article:search(tokens, offset)
+-- @param {unsigned int} start_id
+function Article:search(tokens, start_id)
     local q = table.concat(tokens, " & ")
     return self:query([[
         select
@@ -114,9 +122,10 @@ function Article:search(tokens, offset)
             obj->>'author_profile' as author_profile
         from "article"
         where
-            ts_vector @@ to_tsquery(?)
-        order by id desc offset ? limit 10
-    ]], q, offset or 0)
+            id < ?
+            and ts_vector @@ to_tsquery(?)
+        order by id desc limit 10
+    ]], start_id or 2147483647, q)
 end
 
 -- function article:create_comment(init_data)

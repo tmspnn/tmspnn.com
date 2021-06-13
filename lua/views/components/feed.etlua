@@ -1,59 +1,58 @@
 <%
--- Locale
-local lang = lang or "zh-cn"
-local locales = {
-    ["zh-cn"] = {
-        anonymous = "匿名"
-    },
-    ["en-us"] = {
-        anonymous = "Anonymous"
-    }
-}
-local locale = locales[lang]
+-- External modules
+local date = require "date"
+local utf8 = require "utf8"
+
+-- Aliases
+local fmt = string.format
 
 -- Data
-local id = id or nil
-local created_by = created_by or nil
-local updated_at = updated_at or "5/01"
-local profile = profile or "default profile"
-local nickname = nickname or locale.anonymous
-local cover = cover or nil
-local title = title or ""
-local desc = desc or ""
-local rating = rating or 0
-local ratings_count = ratings_count or 0
-local pageview = pageview or 0
-local comments_count = comments_count or 0
-local tags = tags or {}
+local id = id
+local created_by = created_by
+local article_link = "/articles/" .. id
+local author_link = "/users/" .. created_by
+local author = author
+local title = title
+local desc = desc
+local cover = cover
+local hide_cover = not cover or #cover == 0
+local rating = fmt("%.1f", rating)
+local created_at = date(created_at):fmt("%m/%d %H:%M")
+local wordcount = wordcount
+local pageview = pageview
+local has_profile = author_profile and #author_profile > 0
+local profile_bg = has_profile
+    and fmt("url(%s)", author_profile)
+    or "linear-gradient(135deg, var(--grey), var(--black))"
+local profile_text = has_profile and "" or utf8.sub(author, 1, 1)
 %>
-<div class="-feed">
-    <a href="/articles/<%= id %>" class="cover" style="background-image: url(<%= cover %>)"></a>
+<section class="-feed">
+    <a href="<%= article_link %>" class="cover"
+        style="background-image: url(<%= cover %>)"
+        <% if hide_cover then %>hidden<% end %>>
+    </a>
     <div class="content">
         <div class="head">
-            <a href="/users/<%= created_by %>">
-                <div class="profile" style="background-image: url(<%= profile %>)"></div>
+            <a href="<%= author_link %>">
+                <div class="profile"
+                    style="background-image: <%= profile_bg %>">
+                    <%= profile_text %>
+                </div>
             </a>
-            <a href="/users/<%= created_by %>" class="author ">
-                <div class="nickname _h5"><b><%= nickname %></b></div>
+            <a href="<%= author_link %>" class="author">
+                <%= author %>
             </a>
-            <div class="date"><%= updated_at %></div>
+            <div class="date"><%= created_at %></div>
         </div>
         <h1>
-            <a href="/articles/<%= id %>"><%= title %></a>
+            <a href="<%= article_link %>"><%= title %></a>
         </h1>
-        <div class="desc"><a href="/articles/<%= id %>"><%= desc %></a></div>
+        <div class="desc"><a href="<%= article_link %>"><%= desc %></a></div>
         <div class="meta">
-            <div class="rating">
-                <b><% render("views/icons/star") %><%= rating %></b>
-            </div>
-            <div class="pageview">
-                <% render("views/icons/eye") %>
-                <span><%= pageview %></span>
-            </div>
-            <div class="comments_count">
-                <% render("views/icons/chat") %>
-                <span><%= comments_count %></span>
-            </div>
+            <% render("views/icons/star") %>
+            <span><%= rating %></span>
+            <% render("views/icons/eye") %>
+            <span><%= pageview %></span>
         </div>
     </div>
-</div>
+</section>

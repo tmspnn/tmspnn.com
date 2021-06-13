@@ -148,6 +148,8 @@ export default class Ws {
                 this.onError(e);
             }
 
+            if (this.isOnline()) return;
+
             // Retry 3 times to get connected
             if (++this.triedTimes < this.retryTimes) {
                 this.connect();

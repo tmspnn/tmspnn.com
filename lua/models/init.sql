@@ -40,7 +40,6 @@ create table "article" (
     cover varchar(256) not null default '',
     "desc" varchar(256) not null default '',
     content text not null,
-    -- tags varchar(64)[] not null default '{}', moved into .obj
     obj jsonb not null default '{}'::jsonb,
     ts_vector tsvector not null default to_tsvector(''),
     created_at timestamp with time zone not null default now(),

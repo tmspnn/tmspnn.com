@@ -24,14 +24,6 @@ function Model:find_by_id(id)
     ]], self.table_name), id))[1]
 end
 
--- @param {string} sql
--- @param {any} ...
-function Model:find(sql, ...)
-    return assert(db.select(fmt([[
-        * from "%s" where
-    ]], self.table_name) .. sql, ...))
-end
-
 -- @param {table} data
 -- @returns {1 = table, affected_rows = int}
 function Model:create(data)

@@ -47,23 +47,42 @@
         }
     }
 
-    .tips-empty {
+    .tips-empty,
+    .tips-all-loaded {
+        min-height: 100vh;
+        padding-top: 10vh;
+        font-size: 1.3rem;
+        text-align: center;
+
+        svg {
+            position: relative;
+            top: -0.2rem;
+            vertical-align: middle;
+        }
     }
 
-    .result {
-        min-height: 100vh;
+    ul {
+        padding: 1rem 0;
+    }
+
+    .tips-all-loaded {
+        padding: 1rem 0;
+    }
+
+    .more {
+        margin: 0 auto 100vh;
     }
 }
 
 .recommended-tags {
     @extend ._horizontal-scrolling;
-    padding: 0 1rem 2rem;
+    padding: 0 1rem 1.5rem;
 
     .-tag {
         padding: 0.3rem 0.8rem;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         background-color: var(--white);
         border-radius: 2rem;
-        box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.02);
+        box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.05);
     }
 }

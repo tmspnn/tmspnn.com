@@ -41,7 +41,7 @@ local function create_article(app)
             comments_count = 0
         }
     }
-    local sentences = {}
+    local sentences = {user.nickname}
 
     for _, b in ipairs(blocks) do
         if b.type == "header" then

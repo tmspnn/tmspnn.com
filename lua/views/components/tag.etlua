@@ -1,6 +1,6 @@
 <%
-local tag_name = tag_name or "??"
+local name = name or "??"
 %>
-<a href="/tags/<%= tag_name %>" class="-tag">
-    <%= tag_name %>
+<a href="/tags/<%= name %>" class="-tag">
+    <%= name %>
 </a>

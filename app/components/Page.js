@@ -9,6 +9,7 @@ import customSpinner from "@components/customSpinner";
  * @property {object} data
  * @property {number} data.scrollTop
  * @property {PageController} ctrl
+ * @method {(string|int) => void} go
  */
 export default class Page extends View {
     prefetch = [];
@@ -55,4 +56,12 @@ export default class Page extends View {
 
         this.ctrl.onWsMessage = console.log;
     }
+
+    go = (urlOrStep) => {
+        if (typeof urlOrStep == "string") {
+            this.$pageContainer.toPage(urlOrStep);
+        } else if (typeof urlOrStep == "number") {
+            history.go(urlOrStep);
+        }
+    };
 }

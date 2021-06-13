@@ -1,42 +1,42 @@
 @import "base.scss";
-@import "tag.scss";
 
 .-feed {
     position: relative;
     background: var(--white);
-    border-radius: 0;
     margin-bottom: 1rem;
     padding: 0;
-
-    b {
-        color: var(--black);
-    }
+    box-shadow: 0 0.1rem 0.1rem 0 rgba(0, 0, 0, 3%);
 
     .cover {
         display: block;
         width: 100%;
-        padding-bottom: 60%;
+        padding-bottom: 56.25%; /* 16:9 */
         background-size: cover;
     }
 
     .content {
-        padding: 0 0.8rem 0.5rem;
+        padding: 0 1rem;
 
         .head {
             @extend ._flex;
-            padding: 0.4rem 0;
+            padding: 0.5rem 0;
 
             .profile {
-                width: 1.4rem;
-                height: 1.4rem;
+                width: 1.8rem;
+                height: 1.8rem;
                 border-radius: 50%;
                 margin-right: 0.5rem;
-                box-shadow: 0 0.2rem 0.4rem rgba(0, 0, 0, 0.02);
+                text-align: center;
+                color: var(--white);
+                font-size: 1.8rem;
+                line-height: 1.6rem;
+                box-shadow: 0.1rem 0.1rem 0.1rem 0 rgba(0, 0, 0, 5%);
             }
 
-            .nickname {
+            .author {
                 @extend ._truncated;
                 max-width: 13rem;
+                font-weight: bold;
             }
 
             .date {
@@ -47,84 +47,42 @@
         h1 {
             @extend ._line-clamp;
             margin: 0;
-            padding: 0 0 0.3rem;
-            font-size: 1.8rem;
-            line-height: 1.2;
+            padding: 0;
+            font-size: 2.2rem;
+            line-height: 1.4;
             word-break: break-all;
             color: var(--black);
         }
 
-        .meta {
-            @extend ._flex;
-            @extend ._with-icon;
-            padding-top: 0.2rem;
-
-            > div {
-                @extend ._flex;
-            }
-
-            svg {
-                margin-right: 0;
-            }
-
-            .rating {
-                margin-right: 1rem;
-                svg {
-                    width: 1.4rem;
-                    height: 1.4rem;
-                }
-            }
-
-            .pageview {
-                margin: 0 1rem 0 auto;
-            }
-        }
-
         .desc {
+            padding: 0.5rem 0;
             @extend ._line-clamp;
             -webkit-line-clamp: 2;
             line-height: 1.3;
             color: var(--black-grey);
         }
-    }
-}
-
-.-feed:not(:first-child) {
-    @extend ._flex;
-    flex-direction: row-reverse;
-    align-items: flex-start;
-    justify-content: space-between;
-
-    .cover {
-        width: 35%;
-        min-width: 35%;
-        padding-bottom: 35%;
-    }
-
-    .content {
-        flex: 1;
-        padding: 0 0.8rem 0.4rem;
-
-        .head {
-            line-height: 1;
-
-            .nickname {
-                font-size: 0.9rem;
-                max-width: 8rem;
-            }
-        }
-
-        h1 {
-            padding: 0;
-            font-size: 1.1rem;
-        }
-
-        .desc {
-            font-size: 0.9rem;
-        }
 
         .meta {
-            display: none;
+            @extend ._flex;
+            @extend ._with-icon;
+            font-size: 1.2rem;
+            padding-bottom: 0.5rem;
+
+            svg:first-child {
+                width: 1.6rem;
+                height: 1.6rem;
+            }
+
+            svg:not(:first-child) {
+                margin-left: auto;
+                width: 1.3rem;
+                height: 1.3rem;
+            }
+
+            span:last-child {
+                padding-left: 0.4rem;
+                text-align: right;
+            }
         }
     }
 }
