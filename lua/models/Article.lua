@@ -128,6 +128,29 @@ function Article:search(tokens, start_id)
     ]], start_id or 2147483647, q)
 end
 
+function Article:get_hot_articles_24h()
+    return self:query([[
+        select
+            id, created_by, author, title, "desc", cover, rating, created_at,
+            obj->>'pageview' as pageview,
+            obj->>'author_profile' as author_profile
+        from  "article"
+        where created_at > now() - interval '1 day'
+        order by fame desc limit 20
+    ]])
+end
+
+function Article:get_hot_articles_overall()
+    return self:query([[
+        select
+            id, created_by, author, title, "desc", cover, rating, created_at,
+            obj->>'pageview' as pageview,
+            obj->>'author_profile' as author_profile
+        from  "article"
+        order by fame desc limit 20
+    ]])
+end
+
 -- function article:create_comment(init_data)
 --     return db.insert("comment", init_data, db.raw("*"))
 -- end

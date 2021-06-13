@@ -53,7 +53,7 @@ _refs.input.on("input", () => {
         root.dispatch("search", text);
     } else {
         removeClass(clearInputBtn, "visible");
-        _refs.tipsEmpty.hidden = false;
+        _refs.tipsEmpty.hidden = true;
         _refs.result.hidden = true;
         _refs.tipsAllLoaded.hidden = true;
         _refs.moreResultBtn.hidden = true;

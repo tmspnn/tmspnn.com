@@ -63,6 +63,13 @@
 
     ul {
         padding: 1rem 0;
+
+        .-feed {
+            .cover,
+            .meta {
+                display: none;
+            }
+        }
     }
 
     .tips-all-loaded {

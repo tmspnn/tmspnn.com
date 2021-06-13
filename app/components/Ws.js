@@ -2,7 +2,7 @@
  * @property {string} origin
  * @property {string} url
  * @property {WebSocket} conn
- * @property {string} state -- syncing | online | connecting | offline
+ * @property {string} state -- syncing | connecting | online | offline
  * @property {string} message
  * @property {number} timeoutId
  * @property {number} intervalId
@@ -10,12 +10,12 @@
  * @property {number} retryTimes
  * @property {number} triedTimes
  */
+
+const { CONNECTING, OPEN } = WebSocket;
 export default class Ws {
     origin = "https://tmspnn.com";
 
     url = "wss://tmspnn.com/ws/";
-
-    conn = null;
 
     state = null;
 
@@ -26,10 +26,6 @@ export default class Ws {
     intervalId = null;
 
     createdAt = Date.now();
-
-    retryTimes = 3;
-
-    triedTimes = 0;
 
     constructor() {
         // Process messages from other tabs.
@@ -52,26 +48,32 @@ export default class Ws {
                     this.onMessage(parseJSON(msg));
                     this.message = msg;
                 }
-            }, 500)
+            }, 100)
         );
 
-        localStorage.setItem("ws.state", "syncing");
-
-        // If there's no active connection, create one.
-        this.timeoutId = setTimeout(this.connect, 1000);
+        this.sync();
 
         // Synchronize every minute
-        setInterval(() => {
-            if (!this.isOnline()) {
-                this.state = "syncing";
-                this.timeoutId = setTimeout(this.connect, 1000);
-                localStorage.setItem("ws.state", "syncing");
-            }
-        }, 60000);
+        setInterval(this.sync, 60000);
     }
 
+    sync = () => {
+        /**
+         * If there's no active connection, create one.
+         * Could be cancelled if there is any active connection in other tabs.
+         */
+        if (!this.isOnline() && navigator.onLine) {
+            this.timeoutId = setTimeout(this.connect, 500);
+            localStorage.setItem("ws.state", "syncing");
+        }
+    };
+
     isOnline = () => {
-        return this.conn && this.conn.readyState == 1;
+        return (
+            window._ws &&
+            (window._ws.readyState == CONNECTING ||
+                window._ws.readyState == OPEN)
+        );
     };
 
     onStateChange = (state) => {
@@ -84,13 +86,6 @@ export default class Ws {
                     this.state = "syncing";
                 }
                 break;
-            case "offline":
-                this.state = "offline";
-                this.timeoutId = setTimeout(
-                    this.connect,
-                    this.createdAt % 1000 // In case of race condition
-                );
-                break;
             case "connecting":
                 this.state = "connecting";
                 clearTimeout(this.timeoutId);
@@ -99,31 +94,35 @@ export default class Ws {
                 this.state = "online";
                 clearTimeout(this.timeoutId);
                 break;
+            case "offline":
+                this.state = "offline";
+                break;
             default:
                 break;
         }
     };
 
     connect = () => {
-        if (this.isOnline()) return;
-
         this.state = "connecting";
         localStorage.setItem("ws.state", "connecting");
 
-        if (this.conn) this.conn.close();
-        clearInterval(this.intervalId);
-        clearTimeout(this.timeoutId);
+        if (window._ws) {
+            window._ws.close();
+            clearInterval(this.intervalId);
+        }
 
-        this.conn = new WebSocket(this.url);
+        window._ws = new WebSocket(this.url);
 
-        this.conn.onopen = () => {
-            this.conn.send(JSON.stringify({ type: "ping" }));
+        window._ws.onopen = () => {
+            window._ws.send(JSON.stringify({ type: "ping" }));
 
-            // Timeout is one minute, keep connection alive with
-            // a interval ping every 55 seconds
+            /**
+             * Timeout is one minute, keep then connection alive with
+             * a interval ping every 55 seconds
+             */
             this.intervalId = setInterval(() => {
                 if (this.isOnline()) {
-                    this.conn.send(JSON.stringify({ type: "ping" }));
+                    window._ws.send(JSON.stringify({ type: "ping" }));
                 }
             }, 55000);
 
@@ -131,7 +130,7 @@ export default class Ws {
             localStorage.setItem("ws.state", "online");
         };
 
-        this.conn.onmessage = (e) => {
+        window._ws.onmessage = (e) => {
             const msg = e.data;
 
             if (typeof this.onMessage == "function") {
@@ -143,24 +142,16 @@ export default class Ws {
             localStorage.setItem("ws.message", msg);
         };
 
-        this.conn.onerror = (e) => {
+        window._ws.onerror = (e) => {
             if (typeof this.onError == "function") {
                 this.onError(e);
             }
-
-            if (this.isOnline()) return;
-
-            // Retry 3 times to get connected
-            if (++this.triedTimes < this.retryTimes) {
-                this.connect();
-            } else {
-                this.triedTimes = 0;
-                localStorage.setItem("ws.state", "offline");
-            }
+            this.sync();
         };
 
-        this.conn.onclose = () => {
-            this.conn = null;
+        window._ws.onclose = () => {
+            this.state = "offline";
+            window._ws = null;
         };
     };
 }

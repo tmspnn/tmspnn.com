@@ -12,7 +12,6 @@ local has_value = require "util.has_value"
 local User = require "models.User"
 
 -- Faked data for testing
-local faked_trending = require "faked_data.faked_trending"
 local faked_messages = require "faked_data.faked_messages"
 local faked_me = require "faked_data.faked_me"
 
@@ -72,11 +71,19 @@ end
 
 local function trending(app)
     local ctx = app.ctx
+    local articles_24h = Article:get_hot_articles_24h()
+    local articles_overall = Article:get_hot_articles_overall()
+    local authors_24h = User:get_hot_authors_24h()
+    local authors_overall = User:get_hot_authors_overall()
+    ctx.data = {
+        articles_24h = articles_24h,
+        articles_overall = articles_overall,
+        authors_24h = authors_24h,
+        authors_overall = authors_overall
+    }
     ctx.page_title = "一刻阅读 | 排行"
     ctx.tags_in_head = {css_tag("trending")}
-    ctx.tags_in_body = {json_tag(faked_trending), js_tag("trending")}
-    ctx.data = faked_trending
-
+    ctx.tags_in_body = {json_tag(ctx.data), js_tag("trending")}
     return {render = "pages.trending"}
 end
 

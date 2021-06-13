@@ -93,6 +93,27 @@ function User:get_advocated_comments(uid)
     ]], uid)[1]
 end
 
+function User:get_hot_authors_24h()
+    return self:query([[
+        select
+            id, nickname, profile, fame, gender, location, articles_count,
+            followings_count, followers_count
+        from  "user"
+        where created_at > now() - interval '1 day'
+        order by fame desc limit 20
+    ]])
+end
+
+function User:get_hot_authors_overall()
+    return self:query([[
+        select
+            id, nickname, profile, fame, gender, location, articles_count,
+            followings_count, followers_count
+        from  "user"
+        order by fame desc limit 20
+    ]])
+end
+
 -- function user:get_recommended()
 --     return self:find([[ * from "user" order by id desc limit 5 ]])
 -- end
