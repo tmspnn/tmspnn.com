@@ -89,8 +89,8 @@ end
 
 -- @param {double} uid
 function User:get_advocated_comments(uid)
-    return self:find([[
-        obj->'advocated_comments' from "user" where id = ?
+    return self:query([[
+        select obj->'advocated_comments' from "user" where id = ?
     ]], uid)[1]
 end
 

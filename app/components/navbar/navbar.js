@@ -5,7 +5,7 @@ export default function navbar(namespace, element, data) {
     const view = new View(namespace, element, data);
     view._name = "navbar";
 
-    const { _element, _data, _refs } = view;
+    const { _refs } = view;
 
     // UI reactions
     view.setTitle = (title) => {

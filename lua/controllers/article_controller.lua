@@ -8,6 +8,7 @@ local utf8 = require "utf8"
 
 -- Local modules
 local Article = require "models/Article"
+local push = require "util.push"
 local User = require "models/User"
 
 -- Aliases
@@ -19,14 +20,15 @@ end
 
 local function create_article(app)
     local ctx = app.ctx
-    ctx.trim_all(app.params)
+    local user = User:find_by_id(ctx.uid)
+
+    if not user then error("user.not.exists", 0) end
 
     local blocks = app.params.blocks
-    local user_id = ctx.uid
-    local user = User:find_by_id(user_id)
+
     local d = {
         title = "",
-        created_by = user_id,
+        created_by = ctx.uid,
         author = user.nickname,
         cover = "",
         desc = "",
@@ -47,21 +49,21 @@ local function create_article(app)
         if b.type == "header" then
             if #d.title == 0 then d.title = b.data.text end
             d.obj.wordcount = d.obj.wordcount + utf8.len(b.data.text)
-            table.insert(sentences, b.data.text)
+            push(sentences, b.data.text)
         elseif b.type == "paragraph" or b.type == "quote" then
             if #d.desc == 0 then d.desc = b.data.text end
             d.obj.wordcount = d.obj.wordcount + utf8.len(b.data.text)
-            table.insert(sentences, b.data.text)
+            push(sentences, b.data.text)
         elseif b.type == "list" then
             for _, item in ipairs(b.data.items) do
                 d.obj.wordcount = d.obj.wordcount + utf8.len(item)
-                table.insert(sentences, item)
+                push(sentences, item)
             end
         elseif b.type == "image" then
             if #d.cover == 0 then d.cover = b.data.file.url end
         elseif b.type == "code" then
             d.obj.wordcount = d.obj.wordcount + utf8.len(b.data.code)
-            table.insert(sentences, b.data.code)
+            push(sentences, b.data.code)
         end
     end
 
@@ -77,12 +79,12 @@ local function create_article(app)
     -- Tokenization
     local tok_res = ngx.location.capture("/internal/nlp/tokenization", {
         method = ngx.HTTP_POST,
-        body = ctx.to_json({texts = sentences})
+        body = cjson.encode({text = sentences})
     })
 
     if not tok_res.status == 200 then error("nlp.tok." .. tok_res.status, 0) end
 
-    local tok_fine = ctx.from_json(tok_res.body)["tok/fine"]
+    local tok_fine = cjson.decode(tok_res.body)["tok/fine"]
     local tokens_hash = {}
     local tokens = {}
 
@@ -93,10 +95,10 @@ local function create_article(app)
 
     for t, _ in pairs(tokens_hash) do tokens[#tokens + 1] = t end
 
-    d.obj = db.raw(fmt("'%s'::jsonb", ctx.to_json(d.obj)))
+    d.obj = db.raw(fmt("'%s'::jsonb", cjson.encode(d.obj)))
     d.ts_vector = db.raw(fmt("to_tsvector('%s')", table.concat(tokens, " ")))
 
-    local article = Article:create(d)
+    local article = Article:create(d)[1]
 
     return {json = article}
 end

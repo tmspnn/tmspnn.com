@@ -39,8 +39,9 @@ function Article:get_recommended_tags()
 end
 
 function Article:get_related(article_id)
-    return self:find([[
-        id, title, cover, author, obj, created_by, created_at, updated_at
+    return self:query([[
+        select
+            id, title, cover, author, obj, created_by, created_at, updated_at
         from "article"
         where id < ? limit 3
     ]], article_id)
@@ -105,10 +106,12 @@ end
 
 function Article:create_comment(data) return db.insert("comment", data) end
 
-function Article:get_comments_by_article_id(article_id, offset)
+function Article:get_comments_by_article_id(article_id, start_id)
     return self:query([[
-        select * from "comment" where article_id = ? offset ? limit 20
-    ]], article_id, offset or 0)
+        select * from "comment"
+        where article_id = ? and id < ?
+        order by advocators_count desc limit 20
+    ]], article_id, start_id or MAX_INT)
 end
 
 -- @param {string[]} tokens

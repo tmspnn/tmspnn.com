@@ -2,6 +2,7 @@
 
 .page-container {
     padding: 3.5rem 0;
+    overflow: hidden auto;
 }
 
 .header {
@@ -27,7 +28,7 @@
 }
 
 .content {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
 
     h1,
     h2:first-child {
@@ -40,6 +41,7 @@
 
     p {
         padding: 0 1rem;
+        line-height: 1.7;
         &.caption {
             text-align: center;
             margin-top: 0;
@@ -87,12 +89,35 @@
             margin-right: 0;
         }
     }
+
+    > a {
+        @extend ._flex;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        background-color: var(--white);
+        border: 1px solid var(--light-white);
+        border-radius: 0.5rem;
+        overflow: hidden;
+
+        h3 {
+            @extend ._line-clamp;
+            flex: 1;
+            margin: 0.5rem 0.8rem;
+            font-size: 1.3rem;
+        }
+
+        .cover {
+            width: 30%;
+            padding-bottom: 30%;
+            background-size: cover;
+            background-position: center center;
+        }
+    }
 }
 
 .comments {
     button.comment {
-        width: 90%;
-        margin: 2rem 5%;
+        margin: 0 auto 3rem;
 
         svg {
             position: relative;
@@ -120,10 +145,13 @@
     h3 {
         padding-right: 0.5rem;
         font-size: 1.3rem;
+        font-weight: normal;
         color: var(--grey);
     }
 
     > div {
+        position: relative;
+        height: 3.5rem;
         color: var(--grey);
 
         &.active {
@@ -131,6 +159,8 @@
         }
 
         svg {
+            position: relative;
+            top: 0.5rem;
             width: 2.4rem;
             height: 2.4rem;
         }
@@ -140,11 +170,12 @@
         width: 3rem;
         min-width: 3rem;
         font-size: 1.1rem;
-        color: var(black-grey);
+        color: var(--grey);
     }
 }
 
 .-comment {
+    margin-bottom: 1rem;
     padding: 1rem 0;
     background-color: var(--white);
     box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.1);
@@ -156,11 +187,15 @@
         padding: 0 1rem;
 
         .profile {
-            width: 2rem;
-            height: 2rem;
+            width: 1.8rem;
+            height: 1.8rem;
             border-radius: 50%;
-            background-color: var(--grey-white);
-            box-shadow: 0.2rem 0.2rem 0.4rem rgba(0, 0, 0, 0.1);
+            margin-right: 0.5rem;
+            text-align: center;
+            color: var(--white);
+            font-size: 1.8rem;
+            line-height: 1.6rem;
+            box-shadow: 0.1rem 0.1rem 0.1rem 0 rgba(0, 0, 0, 5%);
         }
 
         .author {

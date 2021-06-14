@@ -14,29 +14,29 @@ export default function toast(name) {
     const timeout = 1500;
     let available = true;
 
-    v.show = (texts) => {
+    v.show = (text) => {
         if (!available) return;
         available = false;
         v._element.hidden = false;
         setTimeout(() => {
-            textEl.on("transitionend", v.onTextsShow);
-            textEl.textContent = texts;
+            textEl.on("transitionend", v.ontextShow);
+            textEl.textContent = text;
             removeClass(textEl, "invisible");
         }, 52);
     };
 
     v.hide = () => {
-        textEl.on("transitionend", v.onTextsHide);
+        textEl.on("transitionend", v.ontextHide);
         addClass(textEl, "invisible");
     };
 
-    v.onTextsShow = () => {
-        textEl.off("transitionend", v.onTextsShow);
+    v.ontextShow = () => {
+        textEl.off("transitionend", v.ontextShow);
         setTimeout(v.hide, timeout);
     };
 
-    v.onTextsHide = () => {
-        textEl.off("transitionend", v.onTextsHide);
+    v.ontextHide = () => {
+        textEl.off("transitionend", v.ontextHide);
         v._element.hidden = true;
         available = true;
     };

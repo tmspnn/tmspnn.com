@@ -132,9 +132,6 @@ $(".publish-btn").on("click", () => {
     });
 });
 
-/**
- * @property {Boolean} ctrl.data.blocked
- */
 const { ctrl } = root;
 ctrl.data.ossEntry = "https://tmspnn.obs.cn-east-2.myhuaweicloud.com";
 ctrl.data.accessKey = "Q5VTYEW1FGZCSAQYEPAX";
@@ -167,7 +164,7 @@ ctrl.publishArticle = (d) => {
             ctrl.toast("发布成功");
             localStorage.removeItem("editor.localData");
             setTimeout(() => {
-                location.href = "/articles/" + res.id;
+                location.replace("/articles/" + res.id);
             }, 1800);
         })
         .catch(ctrl.handleException);

@@ -27,33 +27,25 @@ local function sign_in(app)
         error("mobile.invalid", 0)
     end
 
-    if #password < 6 then
-        error("password.invalid", 0)
-    end
+    if #password < 6 then error("password.invalid", 0) end
 
-    local user_in_db = User:find([[
-        id, mobile, password from "user" where mobile = ?
+    local user_in_db = User:query([[
+        select id, mobile, password from "user" where mobile = ?
     ]], mobile)[1]
 
-    if not user_in_db then
-        error("mobile.not.registered", 0)
-    end
+    if not user_in_db then error("mobile.not.registered", 0) end
 
     if not bcrypt.verify(password, user_in_db.password) then
         error("password.not.match", 0)
     end
 
-    if app.cookies.user_token then
-        User:remove_token(app.cookies.user_token)
-    end
+    if app.cookies.user_token then User:remove_token(app.cookies.user_token) end
 
     local user_token = User:generate_user_token(user_in_db.id)
     User:set_token(user_token, user_in_db.id)
     app.cookies.user_token = user_token
 
-    return {
-        status = 204
-    }
+    return {status = 204}
 end
 
 local function sign_up(app)
@@ -64,25 +56,17 @@ local function sign_up(app)
     local vcode = app.params.vcode
     local password = app.params.password
 
-    if not is_mobile(mobile) then
-        error("mobile.invalid", 0)
-    end
+    if not is_mobile(mobile) then error("mobile.invalid", 0) end
 
-    if #vcode ~= 4 or tonumber(vcode) == nil then
-        error("vcode.invalid", 0)
-    end
+    if #vcode ~= 4 or tonumber(vcode) == nil then error("vcode.invalid", 0) end
 
-    if #password < 6 then
-        error("password.invalid", 0)
-    end
+    if #password < 6 then error("password.invalid", 0) end
 
-    local duplicated = User:find([[
-        id from "user" where mobile = ?
+    local duplicated = User:query([[
+        select id from "user" where mobile = ?
     ]], mobile)
 
-    if #duplicated > 0 then
-        error("mobile.already.exists", 0)
-    end
+    if #duplicated > 0 then error("mobile.already.exists", 0) end
 
     local existed_vcode = User:get_vcode(mobile)
 
@@ -92,9 +76,7 @@ local function sign_up(app)
 
     local uid = uuid()
     local digested_password = bcrypt.digest(password, log_rounds)
-    local json = ctx.to_json({
-        uuid = uid
-    })
+    local json = ctx.to_json({uuid = uid})
 
     local user = User:create({
         password = digested_password,
@@ -105,9 +87,7 @@ local function sign_up(app)
         obj = db.raw(fmt("'%s'::jsonb", json))
     })
 
-    if app.cookies.user_token then
-        User:remove_token(app.cookies.user_token)
-    end
+    if app.cookies.user_token then User:remove_token(app.cookies.user_token) end
 
     local user_token = User:generate_user_token(user.id)
     User:set_token(user_token, user.id)
@@ -115,9 +95,7 @@ local function sign_up(app)
 
     User:remove_vcode(mobile)
 
-    return {
-        json = user
-    }
+    return {json = user}
 end
 
 local function send_vcode(app)
@@ -126,26 +104,17 @@ local function send_vcode(app)
 
     local mobile = app.params.mobile
 
-    if not is_mobile(mobile) then
-        error("mobile.invalid", 0)
-    end
+    if not is_mobile(mobile) then error("mobile.invalid", 0) end
 
     local existed_vcode = User:get_vcode(mobile)
 
-    if existed_vcode then
-        error("vcode.not.available", 0)
-    end
+    if existed_vcode then error("vcode.not.available", 0) end
 
     local vcode = string.sub(math.random(), -4)
 
     User:set_vcode(vcode, mobile)
 
-    return {
-        json = {
-            mobile = mobile,
-            vcode = vcode
-        }
-    }
+    return {json = {mobile = mobile, vcode = vcode}}
 end
 
 local function user_controller(app)

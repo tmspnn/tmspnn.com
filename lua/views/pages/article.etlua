@@ -22,48 +22,58 @@ local pageview = a.obj.pageview
 local comments_count = a.obj.comments_count
 local tags = a.obj.tags
 local content = a.content
+local author_url = "/users/" .. created_by
 %>
 <div class="page-container">
     <div class="header">
-        <a href="/users/<%= created_by %>" class="profile" style="background-image: url(<%= profile %>)"></a>
-        <a href="/users/<%= created_by %>" class="author"><b><%= author %></b></a>
+        <a href="<%= author_url %>" class="profile"
+            style="background-image: url(<%= profile %>)"></a>
+        <a href="<%= author_url %>" class="author">
+            <b><%= author %></b>
+        </a>
         <div class="date"><%= updated_at %></div>
     </div>
     <div class="content">
-        <% render("views/components/editor_content", {blocks=a.blocks}) %>
+        <% render("views.components.editor_content", {blocks=a.blocks}) %>
     </div>
     <div class="related-articles">
-    <h2>
-        <% render("views/icons/document_text") %>
-        <span>推荐阅读</span>
-    </h2>
-    <% for _, t in ipairs(related_articles) do %>
-    <h3><a href="/articles/<%= t.id %>"><%= t.title %></a></h3>
-    <% end %>
+        <h2>
+            <% render("views.icons.document_text") %>
+            <span>推荐阅读</span>
+        </h2>
+        <% for _, t in ipairs(related_articles) do %>
+        <a href="/articles/<%= t.id %>">
+            <h3><%= t.title %></h3>
+            <div class="cover"
+                <% if not t.cover or #t.cover == 0 then %>hidden<% end %>
+                style="background-image: url(<%= t.cover %>)">
+            </div>
+        </a>
+        <% end %>
     </div>
     <div class="comments">
         <button class="comment">
-            <% render("views/icons/chat") %>
-            <span>发表评论</span>
+            <% render("views.icons.chat") %>
+            <span>有话要说</span>
         </button>
         <ul>
         <% for _, t in ipairs(comments) do %>
-        <% render("views/components/comment", t) %>
+        <% render("views.components.comment", t) %>
         <% end %>
         </ul>
     </div>
-    <% render("views/components/navbar", { title = title }) %>
-    <div class="rating-bar">
+</div>
+<% render("views.components.navbar", { title = title }) %>
+<div class="rating-bar" <% if my_rating > 0 then %>hidden<% end %>>
     <h3 <% if my_rating == 0 then %>hidden<% end %>>我的评价</h3>
     <% for i = 1, my_rating do %>
     <div class="active">
-        <% render("views/icons/star") %>
+        <% render("views.icons.star") %>
     </div>
     <% end %>
     <% for i = 1, 5 - my_rating do %>
-    <div><% render("views/icons/star") %></div>
+    <div><% render("views.icons.star") %></div>
     <% end %>
     <span <% if my_rating > 0 then %>hidden<% end %>></span>
     <button <% if my_rating > 0 then %>hidden<% end %>>评价</button>
-    </div>
 </div>

@@ -1,17 +1,14 @@
+const { CONNECTING, OPEN } = WebSocket;
+
 /**
  * @property {string} origin
  * @property {string} url
- * @property {WebSocket} conn
  * @property {string} state -- syncing | connecting | online | offline
  * @property {string} message
  * @property {number} timeoutId
  * @property {number} intervalId
  * @property {number} createdAt
- * @property {number} retryTimes
- * @property {number} triedTimes
  */
-
-const { CONNECTING, OPEN } = WebSocket;
 export default class Ws {
     origin = "https://tmspnn.com";
 
@@ -151,7 +148,6 @@ export default class Ws {
 
         window._ws.onclose = () => {
             this.state = "offline";
-            window._ws = null;
         };
     };
 }

@@ -6,6 +6,7 @@ import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import ImageTool from "@editorjs/image";
 import InlineCode from "@editorjs/inline-code";
+import kxhr from "k-xhr";
 import List from "@editorjs/list";
 import LinkTool from "@editorjs/link";
 import Quote from "@editorjs/quote";
@@ -13,15 +14,10 @@ import Quote from "@editorjs/quote";
 // Local modules
 import "./commentEditor.scss";
 import Page from "@components/Page";
-import PageController from "@components/PageController";
 
-const namespace = "commentEditor";
+const pageName = "commentEditor";
 
-/**
- * @property {HTMLBodyElement} root._element
- * @property {Object} root._data
- */
-const root = new Page(namespace);
+const root = new Page(pageName);
 root.editor = new EditorJS({
     holder: "editorjs",
     placeholder: "请输入评论...",
@@ -98,7 +94,7 @@ root.editor = new EditorJS({
         }
     },
     data:
-        root._data.data ||
+        root.data.data ||
         parseJSON(localStorage.getItem("commentEditor.localData")) ||
         {}
 });
@@ -127,9 +123,10 @@ $(".publish-btn").on("click", () => {
 /**
  * @property {Boolean} ctrl.data.blocked
  */
-const ctrl = new PageController(namespace);
+const { ctrl } = root;
 ctrl.data.ossEntry = "https://tmspnn.obs.cn-east-2.myhuaweicloud.com";
 ctrl.data.accessKey = "Q5VTYEW1FGZCSAQYEPAX";
+ctrl.data.ossOrigin = "https://oss.tmspnn.com";
 
 ctrl.upload = (file) => {
     const userId = ctrl.data.user_id;
@@ -147,7 +144,7 @@ ctrl.upload = (file) => {
     fd.append("file", file, file.name);
 
     return kxhr(ctrl.data.ossEntry, "post", fd).then(
-        () => `${ctrl.data.ossEntry}/${key}`
+        () => `${ctrl.data.ossOrigin}/${key}`
     );
 };
 
@@ -157,7 +154,15 @@ ctrl.publishComment = (d) => {
             ctrl.toast("发布成功");
             localStorage.removeItem("commentEditor.localData");
             setTimeout(() => {
-                location.replace("/articles/" + ctrl.data.article_id);
+                if (
+                    at(history, "state.from") ==
+                    "https://tmspnn.com/articles/" + ctrl.data.article_id
+                ) {
+                    history.back();
+                    setTimeout(() => location.reload());
+                } else {
+                    location.replace("/articles/" + ctrl.data.article_id);
+                }
             }, 1800);
         })
         .catch(ctrl.handleException);

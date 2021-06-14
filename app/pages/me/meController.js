@@ -108,7 +108,7 @@ export default class MeController extends Controller {
         });
     };
 
-    toast = (texts) => {
-        this.ui("toast::show", { texts });
+    toast = (text) => {
+        this.ui("toast::show", { text });
     };
 }

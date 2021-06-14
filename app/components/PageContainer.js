@@ -83,10 +83,11 @@ export default class PageContainer extends View {
         xhr.onload = () => {
             if (xhr.status >= 200 && xhr.status < 400) {
                 this.cache[xhr.responseURL] = createDocument(xhr.responseText);
-                this.preloadStyles(this.cache[xhr.responseURL]);
-                if (typeof onLoad == "function") {
-                    onLoad(xhr);
-                }
+                this.preloadStyles(this.cache[xhr.responseURL], () => {
+                    if (typeof onLoad == "function") {
+                        onLoad(xhr);
+                    }
+                });
             } else {
                 this.onXHRError(xhr);
             }
@@ -97,6 +98,7 @@ export default class PageContainer extends View {
     };
 
     onXHRError = (xhr) => {
+        this.destUrl = null;
         const err = isJSON(xhr.responseText)
             ? JSON.parse(xhr.responseText).err
             : xhr.status;
@@ -109,8 +111,10 @@ export default class PageContainer extends View {
         this.dispatch("onPageLoadingProgress", { progress });
     };
 
-    preloadStyles = (doc) => {
-        $$('link[rel="stylesheet"]', doc.documentElement).forEach((link) => {
+    preloadStyles = (doc, onLoad) => {
+        const stylesToLoad = $$('link[rel="stylesheet"]', doc.documentElement);
+        let completed = 0;
+        stylesToLoad.forEach((link) => {
             const xhr = new XMLHttpRequest();
             xhr.open("GET", link.href, true);
             xhr.onload = () => {
@@ -118,6 +122,12 @@ export default class PageContainer extends View {
                     const styleTag = document.createElement("style");
                     styleTag.textContent = xhr.responseText;
                     replaceNode(styleTag, link);
+                    if (
+                        ++completed == stylesToLoad.length &&
+                        typeof onLoad == "function"
+                    ) {
+                        onLoad();
+                    }
                 } else {
                     this.onXHRError(xhr);
                 }

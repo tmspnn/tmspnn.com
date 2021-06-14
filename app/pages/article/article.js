@@ -1,42 +1,44 @@
-// External
+// External modules
 import "highlight.js/styles/github.css";
 import hljs from "highlight.js";
 
-// Local
+// Local modules
 import "@components/feed.scss";
 import "./article.scss";
 import Page from "@components/Page";
-import PageController from "@components/PageController";
 import navbar from "@components/navbar/navbar";
 import ratingBar from "./ratingBar";
 import comment from "./comment";
 
-const namespace = "article";
-
 function article() {
-    // Initialization
-    const root = new Page(namespace);
+    const pageName = "article";
+
+    const root = new Page(pageName);
+    root.prefetch = ["/", "/comment-editor?article_id=" + root.data.article.id];
+
     hljs.highlightAll();
 
     // Child components
-    root.$navbar = navbar(namespace, $(".-navbar"), {});
+    root.$navbar = navbar(pageName, $(".-navbar"), {});
     root.$navbar.showBackBtn();
+
     root.$ratingBar = ratingBar(
-        namespace,
+        pageName,
         $(".rating-bar"),
-        root._data.my_rating
+        root.data.my_rating
     );
+
     root.$comments = $$(".-comment").map((el, idx) => {
-        return comment(namespace, el, root._data.comments[idx]);
+        return comment(pageName, el, root.data.comments[idx]);
     });
 
     // Event listeners
     $("button.comment").on("click", () => {
-        location.href = "/comment-editor?article_id=" + root._data.article.id;
+        root.go("/comment-editor?article_id=" + root.data.article.id);
     });
 
     // Behaviors
-    const ctrl = new PageController(namespace);
+    const { ctrl } = root;
 
     ctrl.onWsMessage = (msg) => {
         console.log("article onWsMessage: ", msg);

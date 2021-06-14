@@ -2,16 +2,28 @@
 -- External
 local cjson = require "cjson"
 local date = require "date"
+local utf8 = require "utf8"
 
 -- Local
-local obj = obj or {}
 local created_at = date(created_at):fmt("%m/%d %H:%M")
 local blocks = cjson.decode(obj.content).blocks
+local has_profile = obj.profile and #obj.profile > 0
+local profile_bg = has_profile
+    and fmt("url(%s)", obj.profile)
+    or "linear-gradient(135deg, var(--grey), var(--black))"
+local profile_text = has_profile and "" or utf8.sub(obj.author, 1, 1)
 %>
 <li class="-comment">
     <div class="head">
-        <div class="profile" style="background-image: url(<%= obj.profile %>)"></div>
-        <div class="author"><%= obj.author %></div>
+        <a href="<%= author_link %>">
+            <div class="profile"
+                style="background-image: <%= profile_bg %>">
+                <%= profile_text %>
+            </div>
+        </a>
+        <a href="<%= author_link %>" class="author">
+            <%= obj.author %>
+        </a>
         <div class="date"><%= created_at %></div>
     </div>
     <div class="body">
