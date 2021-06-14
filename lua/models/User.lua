@@ -77,7 +77,8 @@ function User:generate_oss_upload_token(uid)
         conditions = {
             {["x-obs-acl"] = "public-read"}, {["bucket"] = "tmspnn"},
             {"starts-with", "$key", "public/users/" .. uid},
-            {"starts-with", "$Content-Type", ""}
+            {"starts-with", "$Content-Type", ""},
+            {"starts-with", "$Cache-Control", ""}
         }
     })
     local string_to_sign = basexx.to_base64(oss_policy)

@@ -6,6 +6,7 @@ import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import ImageTool from "@editorjs/image";
 import InlineCode from "@editorjs/inline-code";
+import kxhr from "k-xhr";
 import List from "@editorjs/list";
 import LinkTool from "@editorjs/link";
 import Quote from "@editorjs/quote";
@@ -13,15 +14,10 @@ import Quote from "@editorjs/quote";
 // Local modules
 import "./editor.scss";
 import Page from "@components/Page";
-import PageController from "@components/PageController";
 
-const namespace = "editor";
+const pageName = "editor";
 
-/**
- * @property {HTMLBodyElement} root._element
- * @property {Object} root._data
- */
-const root = new Page(namespace);
+const root = new Page(pageName);
 root.editor = new EditorJS({
     holder: "editorjs",
     placeholder: "写点什么吧...",
@@ -46,7 +42,7 @@ root.editor = new EditorJS({
                 uploader: {
                     uploadByFile: (file) => {
                         return Promise.resolve(
-                            ctrl.upload(file).then((url) => {
+                            root.ctrl.upload(file).then((url) => {
                                 return {
                                     success: 1,
                                     file: { url }
@@ -97,7 +93,7 @@ root.editor = new EditorJS({
             }
         }
     },
-    data: root._data.data ||
+    data: root.data.data ||
         parseJSON(localStorage.getItem("editor.localData")) || {
             blocks: [
                 {
@@ -121,7 +117,7 @@ document.body.on(
 );
 
 $(".close-btn").on("click", () => {
-    if (ctrl.data.blocked) return;
+    if (root.ctrl.blocked) return;
     if (history.state.from) {
         history.back();
     } else {
@@ -130,7 +126,7 @@ $(".close-btn").on("click", () => {
 });
 
 $(".publish-btn").on("click", () => {
-    if (ctrl.data.blocked) return;
+    if (root.ctrl.blocked) return;
     root.editor.save().then((d) => {
         root.dispatch("publishArticle", d);
     });
@@ -139,9 +135,10 @@ $(".publish-btn").on("click", () => {
 /**
  * @property {Boolean} ctrl.data.blocked
  */
-const ctrl = new PageController(namespace);
+const { ctrl } = root;
 ctrl.data.ossEntry = "https://tmspnn.obs.cn-east-2.myhuaweicloud.com";
 ctrl.data.accessKey = "Q5VTYEW1FGZCSAQYEPAX";
+ctrl.data.ossOrigin = "https://oss.tmspnn.com";
 
 ctrl.upload = (file) => {
     const userId = ctrl.data.user_id;
@@ -156,10 +153,11 @@ ctrl.upload = (file) => {
     fd.append("AccessKeyId", ctrl.data.accessKey);
     fd.append("x-obs-acl", "public-read");
     fd.append("Content-Type", file.type);
+    fd.append("Cache-Control", "max-age=2592000");
     fd.append("file", file, file.name);
 
     return kxhr(ctrl.data.ossEntry, "post", fd).then(
-        () => `${ctrl.data.ossEntry}/${key}`
+        () => `${ctrl.data.ossOrigin}/${key}`
     );
 };
 
