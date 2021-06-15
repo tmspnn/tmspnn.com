@@ -8,6 +8,7 @@ local utf8 = require "utf8"
 
 -- Local modules
 local Article = require "models/Article"
+local empty = require "util.empty"
 local push = require "util.push"
 local User = require "models/User"
 
@@ -167,13 +168,41 @@ local function create_comment(app)
     return {status = 204}
 end
 
+local function advocate_comment(app)
+    local uid = app.ctx.uid
+    local comment_id = tonumber(app.params.comment_id)
+
+    if not comment_id then error("comment.not.exist", 0) end
+
+    local advocated = User:has_advocated(uid, comment_id)
+
+    if advocated then
+        User:undo_advocation(uid, comment_id)
+    else
+        User:advocate_comment(uid, comment_id)
+    end
+
+    return {json = {advocated = not advocated}}
+end
+
 local function article_controller(app)
-    app:post("/api/articles", respond_to(
-                 {before = sign_in_required, POST = json_params(create_article)}))
-    app:post("/api/ratings", respond_to(
-                 {before = sign_in_required, POST = json_params(rate_article)}))
-    app:post("/api/articles/:article_id/comments", respond_to(
-                 {before = sign_in_required, POST = json_params(create_comment)}))
+    app:match("/api/articles", respond_to(
+                  {
+            before = sign_in_required,
+            POST = json_params(create_article)
+        }))
+    app:match("/api/ratings", respond_to(
+                  {before = sign_in_required, POST = json_params(rate_article)}))
+    app:match("/api/articles/:article_id/comments", respond_to(
+                  {
+            before = sign_in_required,
+            POST = json_params(create_comment)
+        }))
+    app:match("/api/comments/:comment_id/advocators", respond_to(
+                  {
+            before = sign_in_required,
+            PUT = json_params(advocate_comment)
+        }))
 end
 
 return article_controller

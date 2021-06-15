@@ -27,10 +27,11 @@ export default class Page extends View {
         this.$toast = toast(name);
         this.$customSpinner = customSpinner(name);
         this.$pageContainer = window._pageContainer || new PageContainer();
-        this.$pageContainer.captureLinks();
 
         // UI logic
         setTimeout(() => {
+            this.$pageContainer.captureLinks();
+
             // Fetch styles of the current page
             this.$pageContainer.preloadStyles(document);
 

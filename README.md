@@ -23,6 +23,12 @@ Frontend & gateway of tmspnn.com
 | user_token(%s):uid | String     |
 | mobile(%s):vcode   | String     |
 
+## Postgres jsonb columns
+
+| Key                         | Desc                |
+| --------------------------- | ------------------- |
+| user.obj.advocated_comments | {comment_id?: true} |
+
 ## Postgres Advisory Locks
 
 | Number | Desc              |

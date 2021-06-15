@@ -59,6 +59,12 @@ function article() {
             location.replace("/");
         }
     };
+
+    ctrl.advocateComment = (commentId, advocated) => {
+        ctrl.putJson(`/api/comments/${commentId}/advocators`)
+            .then((res) => console.log(res))
+            .catch(ctrl.handleException);
+    };
 }
 
 article();

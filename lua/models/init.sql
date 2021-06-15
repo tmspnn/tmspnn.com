@@ -81,3 +81,16 @@ create table "comment" (
 
 create index comment_created_by_idx on "comment" (created_by);
 create index comment_article_id_idx on "comment" (article_id);
+
+-- Interaction
+create table "interaction" (
+    id serial primary key,
+    "type" varchar(64) not null, -- advocation | following
+    created_by integer not null,
+    refer_to integer not null,
+    obj jsonb not null default '{}'::jsonb,
+    created_at timestamp with time zone not null default now()
+);
+
+create index interaction_created_by_idx on "interaction" (created_by);
+create index interaction_refer_to_idx on "interaction" (refer_to);

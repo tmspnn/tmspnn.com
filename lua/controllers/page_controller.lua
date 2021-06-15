@@ -8,6 +8,7 @@ local fmt = string.format
 -- Local modules
 -- local render_component = require "controllers/page/render_component"
 local Article = require "models.Article"
+local empty = require "util.empty"
 local has_value = require "util.has_value"
 local User = require "models.User"
 
@@ -99,12 +100,16 @@ local function article(app)
     local comments = Article:get_comments_by_article_id(article_id)
 
     local advocated_comments
-    if ctx.uid then advocated_comments = User:get_advocated_comments(ctx.uid) end
+    if ctx.uid then
+        advocated_comments = User:get_advocated_comments(ctx.uid, article_id)
+    end
 
-    if #advocated_comments then
+    if not empty(advocated_comments) then
         for _, comment in ipairs(comments) do
-            if has_value(advocated_comments, comment.id) then
-                comment.advocated = true
+            for _, c in ipairs(advocated_comments) do
+                if c.comment_id == comment.id then
+                    comment.advocated = true
+                end
             end
         end
     end
@@ -211,9 +216,9 @@ local function page_controller(app)
     app:match("/me", respond_to({before = sign_in_required, GET = me}))
     app:get("/sign-in", sign_in)
     app:get("/sign-up", sign_up)
-    app:get("/editor", respond_to({before = sign_in_required, GET = editor}))
-    app:get("/comment-editor",
-            respond_to({before = sign_in_required, GET = comment_editor}))
+    app:match("/editor", respond_to({before = sign_in_required, GET = editor}))
+    app:match("/comment-editor",
+              respond_to({before = sign_in_required, GET = comment_editor}))
 end
 
 return page_controller

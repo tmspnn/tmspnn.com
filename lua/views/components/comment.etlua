@@ -44,10 +44,10 @@ local profile_text = has_profile and "" or utf8.sub(obj.author, 1, 1)
             <% render("views/icons/thumb_up") %>
             <span data-ref="advocatorsCountSpan"><%= advocators_count %></span>
         </div>
-        <div class="reply" data-ref="replyBtn">
+        <a href="/comment-editor?refer_to=<%= id %>" class="reply">
             <% render("views/icons/reply") %>
             <span>回复</span>
-        </div>
+        </a>
         <div class="report-abuse" data-ref="reportAbuseBtn">
             <% render("views/icons/exclamation") %>
             <span>举报</span>

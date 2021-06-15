@@ -3,6 +3,7 @@ local ngx = require "ngx"
 local basexx = require "basexx"
 local cjson = require "cjson"
 local date = require "date"
+local db = require "lapis.db"
 local sha1 = require "sha1"
 
 -- Aliases
@@ -87,11 +88,13 @@ function User:generate_oss_upload_token(uid)
     return string_to_sign, signature
 end
 
--- @param {double} uid
-function User:get_advocated_comments(uid)
+-- @param {unsigned int} uid
+-- @param {unsigned int} article_id
+function User:get_advocated_comments(uid, article_id)
     return self:query([[
-        select obj->'advocated_comments' from "user" where id = ?
-    ]], uid)[1]
+        select obj->'comment_id' as comment_id from "interaction"
+        where created_by = ? and refer_to = ?
+    ]], uid, article_id)
 end
 
 function User:get_hot_authors_24h()
@@ -115,9 +118,70 @@ function User:get_hot_authors_overall()
     ]])
 end
 
--- function user:get_recommended()
---     return self:find([[ * from "user" order by id desc limit 5 ]])
--- end
+-- @param {unsigned int} uid
+-- @param {unsigned int} comment_id
+function User:has_advocated(uid, comment_id)
+    local comment = self:query([[
+        select article_id from "comment" where id = ?
+    ]], comment_id)[1]
+
+    return self:query([[
+        select id
+        from "interaction"
+        where
+            created_by = ? and
+            refer_to = ? and
+            (obj->'comment_id')::integer = ?
+    ]], uid, comment.article_id, comment_id)[1]
+end
+
+-- @param {unsigned int} uid
+-- @param {unsigned int} comment_id
+function User:advocate_comment(uid, comment_id)
+    local comment = self:query([[
+        select article_id from "comment" where id = ?
+    ]], comment_id)[1]
+
+    local json = fmt("'%s'::jsonb", cjson.encode({comment_id = comment_id}))
+
+    return self:query([[
+        begin;
+
+        insert into "interaction"
+            ("type", created_by, refer_to, obj)
+        values
+            ('advocation', ?, ?, ?);
+
+        update "comment"
+        set advocators_count = advocators_count + 1
+        where id = ?;
+
+        commit;
+    ]], uid, comment.article_id, db.raw(json), comment_id)
+end
+
+function User:undo_advocation(uid, comment_id)
+    local comment = self:query([[
+        select article_id from "comment" where id = ?
+    ]], comment_id)[1]
+
+    return self:query([[
+        begin;
+
+        delete from "interaction"
+        where
+            created_by = ? and
+            refer_to = ? and
+            "type" = 'advocation' and
+            (obj->'comment_id')::integer = ?
+
+        update "comment"
+        set advocators_count = advocators_count - 1
+        where id = ?;
+
+        commit;
+    ]], uid, comment.article_id, comment_id, comment_id)
+end
 
 -- function user:get_password_sequence(email)
 --     local client = redis_client:new()
