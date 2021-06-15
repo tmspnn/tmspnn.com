@@ -9,12 +9,12 @@ import Page from "@components/Page";
 import navbar from "@components/navbar/navbar";
 import ratingBar from "./ratingBar";
 import comment from "./comment";
+import reportAbusePanel from "./reportAbusePanel";
 
 function article() {
     const pageName = "article";
 
     const root = new Page(pageName);
-    root.prefetch = ["/", "/comment-editor?article_id=" + root.data.article.id];
 
     hljs.highlightAll();
 
@@ -31,6 +31,8 @@ function article() {
     root.$comments = $$(".-comment").map((el, idx) => {
         return comment(pageName, el, root.data.comments[idx]);
     });
+
+    root.$reportAbusePanel = reportAbusePanel(pageName);
 
     // Event listeners
     $("button.comment").on("click", () => {
@@ -60,10 +62,30 @@ function article() {
         }
     };
 
-    ctrl.advocateComment = (commentId, advocated) => {
+    ctrl.advocateComment = (commentId) => {
         ctrl.putJson(`/api/comments/${commentId}/advocators`)
-            .then((res) => console.log(res))
+            .then((res) => {
+                ctrl.ui(
+                    `comment(${commentId})::onAdvocation`,
+                    res.advocated ? 1 : -1
+                );
+            })
             .catch(ctrl.handleException);
+    };
+
+    ctrl.reportAbuse = (reference) => {
+        const { commentId, reason } = reference;
+
+        if (reason.length < 5) {
+            return ctrl.toast("请选择或填写5个字以上的举报原因.");
+        }
+
+        ctrl.postJson("/api/abuse-reports", reference).then(() => {
+            ctrl.toast("举报已提交!");
+            ctrl.ui(`comment(${commentId})::destroy`).ui(
+                "reportAbusePanel::hide"
+            );
+        });
     };
 }
 

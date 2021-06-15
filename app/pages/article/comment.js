@@ -1,17 +1,25 @@
 export default function comment(namespace, element, data) {
     const v = new View(namespace, element, data);
+    v._name = `comment(${v._data.id})`;
 
-    v._refs.advocateBtn.on("click", () => {
-        v.dispatch("advocateComment", v._data.id, v._data.advocated);
+    const { _refs, _data } = v;
+
+    _refs.advocateBtn.on("click", () => {
+        v.dispatch("advocateComment", _data.id, _data.advocated);
     });
 
-    v._refs.reportAbuseBtn.on("click", () => {
-        v.ui("reportAbusePanel::show", v._data);
+    _refs.reportAbuseBtn.on("click", () => {
+        v.ui("reportAbusePanel::show", _data);
     });
 
     v.onAdvocation = (n) => {
-        v._data.advocators_count += n;
-        v._refs.advocatorsCountSpan = v._data.advocators_count;
+        _data.advocators_count += n;
+        _refs.advocatorsCountSpan.textContent = _data.advocators_count;
+        if (n > 0) {
+            addClass(_refs.advocateBtn, "active");
+        } else {
+            removeClass(_refs.advocateBtn, "active");
+        }
     };
 
     return v;

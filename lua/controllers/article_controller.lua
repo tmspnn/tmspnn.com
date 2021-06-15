@@ -185,6 +185,13 @@ local function advocate_comment(app)
     return {json = {advocated = not advocated}}
 end
 
+local function report_abuse(app)
+    local comment_id = tonumber(app.params.commentId)
+    local reason = app.params.reason
+    User:report_comment_abuse(app.ctx.uid, comment_id, reason)
+    return {status = 204}
+end
+
 local function article_controller(app)
     app:match("/api/articles", respond_to(
                   {
@@ -203,6 +210,8 @@ local function article_controller(app)
             before = sign_in_required,
             PUT = json_params(advocate_comment)
         }))
+    app:match("/api/abuse-reports", respond_to(
+                  {before = sign_in_required, POST = json_params(report_abuse)}))
 end
 
 return article_controller

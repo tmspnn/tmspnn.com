@@ -173,7 +173,7 @@ function User:undo_advocation(uid, comment_id)
             created_by = ? and
             refer_to = ? and
             "type" = 'advocation' and
-            (obj->'comment_id')::integer = ?
+            (obj->'comment_id')::integer = ?;
 
         update "comment"
         set advocators_count = advocators_count - 1
@@ -181,6 +181,16 @@ function User:undo_advocation(uid, comment_id)
 
         commit;
     ]], uid, comment.article_id, comment_id, comment_id)
+end
+
+function User:report_comment_abuse(uid, comment_id, reason)
+    local json = fmt("'%s'::jsonb", cjson.encode({reason = reason}))
+    return self:query([[
+        insert into "interaction"
+            ("type", created_by, refer_to, obj)
+        values
+            ('abuse_report', ?, ?, ?)
+    ]], uid, comment_id, db.raw(json))
 end
 
 -- function user:get_password_sequence(email)

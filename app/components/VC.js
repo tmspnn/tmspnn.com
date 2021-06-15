@@ -108,6 +108,7 @@ export class View extends Listener {
     destroy = () => {
         if (this._element) {
             removeNode(this._element);
+            this._element = null;
         }
         ee.off(
             [this._namespace, this._type, this._name].join("::"),
