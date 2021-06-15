@@ -12,7 +12,7 @@ import comment from "./comment";
 import reportAbusePanel from "./reportAbusePanel";
 
 function article() {
-    const pageName = "article";
+    const pageName = location.pathname;
 
     const root = new Page(pageName);
 

@@ -83,7 +83,8 @@ function Article:create_rating(article_id, uid, rating)
         update "article"
         set
             rating = (rating * weight + ? * ?) / (weight + ?),
-            weight = weight + ?
+            weight = weight + ?,
+            fame = rating * weight + (? - 3) * ?
         where id = ?;
 
         update "user"
@@ -94,8 +95,8 @@ function Article:create_rating(article_id, uid, rating)
         commit;
     ]], uid, article_id, rating, user.fame,
                       db.raw(fmt("'%s'::jsonb", rating_obj_str)), rating,
-                      user.fame, user.fame, user.fame, article_id, rating,
-                      user.fame, article.created_by))
+                      user.fame, user.fame, user.fame, rating, user.fame,
+                      article_id, rating, user.fame, article.created_by))
 end
 
 function Article:find_comment_by_id(comment_id)
