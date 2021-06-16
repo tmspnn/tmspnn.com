@@ -28,23 +28,15 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.s?css$/,
+                test: /\.s?[ac]ss$/,
                 use: [
                     MiniCssExtractPlugin.loader,
-                    { loader: "css-loader", options: { importLoaders: 1 } },
+                    "css-loader",
                     {
-                        loader: "postcss-loader",
+                        loader: "sass-loader",
                         options: {
-                            postcssOptions: {
-                                plugins: [
-                                    [
-                                        "postcss-import",
-                                        { path: ["app/styles"] }
-                                    ],
-                                    "autoprefixer",
-                                    "precss"
-                                ]
-                            }
+                            additionalData:
+                                '@import "app/components/base.scss";'
                         }
                     }
                 ]
@@ -83,7 +75,7 @@ module.exports = {
         },
         extensions: [".js", ".json"]
     },
-    devtool: "source-map",
+    devtool: false,
     plugins: [
         new webpack.ProvidePlugin({
             _: "lodash",
