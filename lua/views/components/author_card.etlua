@@ -1,32 +1,38 @@
 <%
+-- External modules
+local utf8 = require "utf8"
+
+-- Aliases
+local fmt = string.format
+
+-- Data
 local id = id
 local nickname = nickname
-local profile = profile
 local fame = fame
-local desc = desc
 local gender = gender
 local location = location
 local articles_count = articles_count
 local followings_count = followings_count
 local followers_count = followings_count
+local desc = (desc and #desc > 0)
+    and desc
+    or fmt([[%s篇文档, %s声望]], articles_count, math.floor(fame))
+
+-- Computed props
+local author_link = "/users/" .. id
+local has_profile = profile and #profile > 0
+local profile_bg = has_profile
+    and fmt("url(%s)", profile)
+    or "linear-gradient(135deg, var(--grey), var(--black))"
+local profile_text = has_profile and "" or utf8.sub(nickname, 1, 1)
 %>
-<a class="-author-card" href="/users/<%= id %>">
-    <% if #profile > 0 then %>
-    <div class="profile" style="background-image: url(<%= profile %>)"></div>
-    <% else %>
-    <div class="profile">匿</div>
-    <% end %>
+<a class="-author-card" href="<%= author_link %>">
+    <div class="profile"
+        style="background-image: <%= profile_bg %>">
+        <%= profile_text %>
+    </div>
     <div class="meta">
         <div class="nickname"><%= nickname %></div>
-        <div class="statistics">
-            <div class="articles-count">
-                <% render("views/icons/document_text") %>
-                <span><%= articles_count %></span>
-            </div>
-            <div class="fame">
-                <% render("views/icons/flag") %>
-                <span><%= fame %></span>
-            </div>
-        </div>
+        <div class="desc"><%= desc %></div>
     </div>
 </a>

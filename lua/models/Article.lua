@@ -24,8 +24,8 @@ function Article:get_latest(start_id)
     return self:query([[
         select
             id, created_by, author, title, "desc", cover, rating, created_at,
-            obj->>'wordcount' as wordcount, obj->>'pageview' as pageview,
-            obj->>'author_profile' as author_profile
+            obj->'wordcount' as wordcount, obj->'pageview' as pageview,
+            obj->'author_profile' as author_profile
         from "article"
         where id < ?
         order by id desc limit 20
@@ -67,7 +67,7 @@ function Article:create_rating(article_id, uid, rating)
     local rating_obj_str = cjson.encode({
         author = user.nickname,
         author_profile = user.profile,
-        title = article.title
+        article_title = article.title
     })
 
     assert(self:query([[
@@ -132,32 +132,31 @@ function Article:search(tokens, start_id)
     ]], start_id or 2147483647, q)
 end
 
-function Article:get_hot_articles_24h()
+function Article:get_hot_articles_7d()
     return self:query([[
         select
             id, created_by, author, title, "desc", cover, rating, created_at,
-            obj->>'pageview' as pageview,
-            obj->>'author_profile' as author_profile
+            obj->'pageview' as pageview,
+            obj->'author_profile' as author_profile
         from  "article"
-        where created_at > now() - interval '1 day'
-        order by fame desc limit 20
+        where created_at > now() - interval '7 days'
+        order by fame desc limit 50
     ]])
 end
 
-function Article:get_hot_articles_overall()
+-- @param {unsigned int} author_id
+-- @param {unsigned int} start_id
+function Article:get_by_author(author_id, start_id)
     return self:query([[
         select
             id, created_by, author, title, "desc", cover, rating, created_at,
-            obj->>'pageview' as pageview,
-            obj->>'author_profile' as author_profile
-        from  "article"
-        order by fame desc limit 20
-    ]])
+            obj->'wordcount' as wordcount, obj->'pageview' as pageview,
+            obj->'author_profile' as author_profile
+        from "article"
+        where created_by = ? and id < ?
+        order by id desc limit 20
+    ]], author_id, start_id or MAX_INT)
 end
-
--- function article:create_comment(init_data)
---     return db.insert("comment", init_data, db.raw("*"))
--- end
 
 -- function article:add_comment_advocator(comment_id, uid)
 --     local client = redis_client:new()

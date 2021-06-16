@@ -5,14 +5,15 @@ import tabbar from "@components/tabbar/tabbar";
 import "@components/feed.scss";
 import "@components/authorCard.scss";
 
-const namespace = "trending";
+function trending() {
+    const pageName = "trending";
 
-/**
- * @property {Number} root._data.scrollTop
- */
-const root = new Page(namespace);
-root.prefetch = ["/", "/trending", "/messages", "/me"];
-root.$navbar = navbar(namespace, $(".-navbar"), {});
-root.$tabbar = tabbar(namespace, $(".-tabbar"), { activeTab: namespace });
+    const root = new Page(pageName);
+    root.prefetch = ["/", "/trending", "/messages", "/me"];
 
-const ctrl = new Controller(namespace);
+    // Child components
+    root.$navbar = navbar(pageName, $(".-navbar"), {});
+    root.$tabbar = tabbar(pageName, $(".-tabbar"), { activeTab: pageName });
+}
+
+trending();

@@ -1,12 +1,10 @@
-@import "base.scss";
-
 h2 {
     @extend ._flex;
     @extend ._with-icon;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     margin: 0;
     padding: 1rem;
-    color: var(--black);
+    color: var(--grey);
 
     &:not(:first-child) {
         margin-top: 3rem;

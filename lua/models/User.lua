@@ -16,6 +16,7 @@ local redis_client = require "models.redis_client"
 -- Implementation
 local User = Model:new("user")
 
+local MAX_INT = 2147483647
 local token_ttl = 60 * 60 * 24 * 14 -- two weeks
 local vcode_ttl = 60 * 10 -- ten minutes
 -- local password_sequence_ttl = 60 * 60 * 24 -- one day
@@ -97,24 +98,15 @@ function User:get_advocated_comments(uid, article_id)
     ]], uid, article_id)
 end
 
-function User:get_hot_authors_24h()
+function User:get_hot_authors_7d()
     return self:query([[
         select
             id, nickname, profile, fame, gender, location, articles_count,
-            followings_count, followers_count
+            followings_count, followers_count,
+            obj->'desc' as "desc"
         from  "user"
-        where created_at > now() - interval '1 day'
-        order by fame desc limit 20
-    ]])
-end
-
-function User:get_hot_authors_overall()
-    return self:query([[
-        select
-            id, nickname, profile, fame, gender, location, articles_count,
-            followings_count, followers_count
-        from  "user"
-        order by fame desc limit 20
+        where created_at > now() - interval '7 days'
+        order by fame desc limit 50
     ]])
 end
 
@@ -193,10 +185,39 @@ function User:report_comment_abuse(uid, comment_id, reason)
     ]], uid, comment_id, db.raw(json))
 end
 
--- function user:get_password_sequence(email)
---     local client = redis_client:new()
---     return client:run("get", fmt("email(%s):password_sequence", email))
--- end
+-- @param {unsigned int} author_id
+-- @param {unsigned int} start_id
+function User:get_comments(author_id, start_id)
+    return self:query([[
+        select
+            id, created_at, updated_at,
+            obj->'article_title' as article_title,
+            obj->'content' as content
+        from "comment"
+        where created_by = ? and id < ?
+        order by id desc limit 20
+    ]], author_id, start_id or MAX_INT)
+end
+
+-- @param {unsigned int} author_id
+-- @param {unsigned int} start_id
+function User:get_ratings(author_id, start_id)
+    return self:query([[
+        select
+            id, article_id, rating, created_at,
+            obj->'article_title' as article_title
+        from "rating"
+        where created_by = ? and id < ?
+        order by id desc limit 20
+    ]], author_id, start_id or MAX_INT)
+end
+
+function User:get_ratings_count(uid)
+    return self:query([[
+        select count(*) as count from "rating"
+        where created_by = ?
+    ]], uid)[1].count
+end
 
 -- function user:set_password_sequence(sequence, email)
 --     local client = redis_client:new()

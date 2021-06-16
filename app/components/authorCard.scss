@@ -1,46 +1,42 @@
-@import "base.scss";
-
 .-author-card {
     @extend ._with-icon;
 
     display: inline-block;
-    height: 9.5rem;
+    width: 10rem;
+    height: 19rem;
+    border-radius: 0.4rem;
+    overflow: hidden;
     box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.05);
     background-color: var(--white);
-    margin-right: 0.5rem;
-    padding: 1rem 0.5rem;
-    text-decoration: none;
+    margin-right: 1rem;
     color: var(--black-grey);
 
     .profile {
-        border-radius: 50%;
         margin: auto;
-        width: 4rem;
-        height: 4rem;
+        width: 10rem;
+        height: 10rem;
+        font-size: 5rem;
+        line-height: 9rem;
+        text-align: center;
+        text-shadow: 0 0 0.5rem rgba(255, 255, 255, 0.8);
+        color: var(--white);
     }
 
     .nickname {
         @extend ._truncated;
-        font-size: 0.9rem;
-        padding: 0.5rem 0;
+        max-width: 100%;
+        text-align: center;
+        padding: 0.5rem;
+        font-size: 1.4rem;
+        color: var(--black);
     }
 
-    .statistics {
-        @extend ._flex;
-
-        svg {
-            margin: 0;
-        }
-    }
-
-    .articles-count {
-        @extend ._flex;
-        @extend ._truncated;
-        flex: 1;
-    }
-
-    .fame {
-        @extend ._flex;
-        @extend ._truncated;
+    .desc {
+        @extend ._line-clamp;
+        padding: 0 0.5rem;
+        min-height: 5rem;
+        font-size: 1.1rem;
+        color: var(--grey);
+        white-space: break-spaces;
     }
 }

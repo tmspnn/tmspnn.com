@@ -42,16 +42,19 @@ local profile_text = has_profile and "" or utf8.sub(author, 1, 1)
             <a href="<%= author_link %>" class="author">
                 <%= author %>
             </a>
-            <div class="date"><%= created_at %></div>
+            <div class="date">
+                <% render("views.icons.clock") %>
+                <%= created_at %>
+            </div>
         </div>
         <h1>
             <a href="<%= article_link %>"><%= title %></a>
         </h1>
         <div class="desc"><a href="<%= article_link %>"><%= desc %></a></div>
         <div class="meta">
-            <% render("views/icons/star") %>
+            <% render("views.icons.star") %>
             <span><%= rating %></span>
-            <% render("views/icons/eye") %>
+            <% render("views.icons.eye") %>
             <span><%= pageview %></span>
         </div>
     </div>

@@ -76,7 +76,7 @@ local function sign_up(app)
 
     local uid = uuid()
     local digested_password = bcrypt.digest(password, log_rounds)
-    local json = ctx.to_json({uuid = uid})
+    local json = ctx.to_json({uuid = uid, ratings_count = 0})
 
     local user = User:create({
         password = digested_password,

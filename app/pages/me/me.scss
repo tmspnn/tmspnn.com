@@ -1,5 +1,3 @@
-@import "base.scss";
-
 .bg {
     position: relative;
     overflow: hidden;
@@ -91,11 +89,7 @@
             width: 100%;
             margin: 2rem 1rem 1.2rem 0;
             padding: 0.6rem 1.2rem;
-            background-image: radial-gradient(
-                at left top,
-                var(--orange),
-                var(--red)
-            );
+            background-image: radial-gradient(at left top, var(--orange), var(--red));
 
             svg {
                 margin-right: 0;

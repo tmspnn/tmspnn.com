@@ -1,0 +1,68 @@
+<%
+-- External modules
+local cjson = require "cjson"
+
+-- Aliases
+local fmt = string.format
+
+-- Data
+local au = ctx.data.author
+local articles = ctx.data.articles
+
+-- Computed props
+local fame = math.floor(au.fame)
+
+local bg_image = au.bg_image
+    and fmt("url(%s)", au.bg_image)
+    or "linear-gradient(135deg, var(--grey), var(--black))"
+
+local profile_url = #au.profile > 0
+    and au.profile
+    or "linear-gradient(135deg, var(--grey), var(--black))"
+
+local desc = #au.desc > 0 and au.desc or "这个人很懒, 什么都没有写..."
+%>
+<div class="page-container">
+    <div class="bg" style="background-image: <%= bg_image %>"></div>
+    <div class="row">
+        <div class="profile" style="background-image: <%= profile_url %>"></div>
+        <div class="nickname"><%= au.nickname %></div>
+    </div>
+    <div class="row">
+        <button class="follow">
+            <% render("views.icons.heart") %>
+            关注
+        </button>
+        <div class="fame">
+            <% render("views.icons.flag") %>
+            <span>声望 <b><%= fame %></b></span>
+        </div>
+    </div>
+    <blockquote><%= desc %></blockquote>
+    <ul class="btns">
+        <li class="followers">
+            <a href="/users/<%= au.id %>/followers">
+                <% render("views.icons.users") %>
+                粉丝<b> <%= au.followers_count %></b>
+            </a>
+        </li>
+        <li class="followings">
+            <a href="/users/<%= au.id %>/followings">
+                <% render("views.icons.heart") %>
+                关注<b> <%= au.followings_count %></b>
+            </a>
+        </li>
+        <li class="ratings">
+            <a href="/users/<%= au.id %>/ratings">
+                <% render("views.icons.star") %>
+                评价<b> <%= au.ratings_count %></b>
+            </a>
+        </li>
+    </ul>
+    <section class="articles">
+        <% for _, fd in ipairs(articles) do %>
+        <% render("views.components.feed", fd) %>
+        <% end %>
+    </section>
+</div>
+<% render("views.components.navbar", {title = title}) %>

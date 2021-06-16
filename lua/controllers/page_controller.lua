@@ -9,7 +9,6 @@ local fmt = string.format
 -- local render_component = require "controllers/page/render_component"
 local Article = require "models.Article"
 local empty = require "util.empty"
-local has_value = require "util.has_value"
 local User = require "models.User"
 
 -- Faked data for testing
@@ -72,16 +71,9 @@ end
 
 local function trending(app)
     local ctx = app.ctx
-    local articles_24h = Article:get_hot_articles_24h()
-    local articles_overall = Article:get_hot_articles_overall()
-    local authors_24h = User:get_hot_authors_24h()
-    local authors_overall = User:get_hot_authors_overall()
-    ctx.data = {
-        articles_24h = articles_24h,
-        articles_overall = articles_overall,
-        authors_24h = authors_24h,
-        authors_overall = authors_overall
-    }
+    local articles_7d = Article:get_hot_articles_7d()
+    local authors_7d = User:get_hot_authors_7d()
+    ctx.data = {articles_7d = articles_7d, authors_7d = authors_7d}
     ctx.page_title = "一刻阅读 | 排行"
     ctx.tags_in_head = {css_tag("trending")}
     ctx.tags_in_body = {json_tag(ctx.data), js_tag("trending")}
@@ -138,7 +130,6 @@ local function messages(app)
     ctx.tags_in_head = {css_tag("messages")}
     ctx.tags_in_body = {json_tag(faked_messages), js_tag("messages")}
     ctx.data = faked_messages
-
     return {render = "pages.messages"}
 end
 
@@ -175,7 +166,6 @@ end
 local function editor(app)
     local ctx = app.ctx
     local policy, signature = User:generate_oss_upload_token(ctx.uid)
-
     ctx.page_title = "一刻阅读 | 编辑"
     ctx.tags_in_head = {css_tag("editor")}
     ctx.tags_in_body = {
@@ -186,14 +176,12 @@ local function editor(app)
         }), js_tag("editor")
     }
     ctx.data = {}
-
     return {render = "pages.editor"}
 end
 
 local function comment_editor(app)
     local ctx = app.ctx
     local policy, signature = User:generate_oss_upload_token(ctx.uid)
-
     ctx.data = {
         user_id = ctx.uid,
         article_id = app.params.article_id,
@@ -204,8 +192,22 @@ local function comment_editor(app)
     ctx.page_title = "一刻阅读 | 发表评论"
     ctx.tags_in_head = {css_tag("commentEditor")}
     ctx.tags_in_body = {json_tag(ctx.data), js_tag("commentEditor")}
-
     return {render = "pages.comment_editor"}
+end
+
+local function author(app)
+    local author_id = tonumber(app.params.author_id)
+    if not author_id then return {render = "pages.404"} end
+    local author = User:find_by_id(author_id)
+    local ratings_count = User:get_ratings_count(author_id)
+    author.ratings_count = ratings_count
+    local articles = Article:get_by_author(author_id)
+    local ctx = app.ctx
+    ctx.data = {author = author, articles = articles}
+    ctx.page_title = author.nickname .. " | 一刻阅读"
+    ctx.tags_in_head = {css_tag("author")}
+    ctx.tags_in_body = {json_tag(ctx.data), js_tag("author")}
+    return {render = "pages.author"}
 end
 
 local function page_controller(app)
@@ -219,6 +221,7 @@ local function page_controller(app)
     app:match("/editor", respond_to({before = sign_in_required, GET = editor}))
     app:match("/comment-editor",
               respond_to({before = sign_in_required, GET = comment_editor}))
+    app:get("/users/:author_id", author)
 end
 
 return page_controller

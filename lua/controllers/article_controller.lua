@@ -7,10 +7,10 @@ local respond_to = require("lapis.application").respond_to
 local utf8 = require "utf8"
 
 -- Local modules
-local Article = require "models/Article"
+local Article = require "models.Article"
 local empty = require "util.empty"
 local push = require "util.push"
-local User = require "models/User"
+local User = require "models.User"
 
 -- Aliases
 local fmt = string.format
@@ -151,6 +151,7 @@ local function create_comment(app)
         reference_author = reference_obj.author,
         reference_profile = reference_obj.profile,
         reference_content = reference_obj.content,
+        article_title = article.title,
         author = user.nickname,
         profile = user.profile,
         content = ngx.req.get_body_data()
