@@ -219,6 +219,54 @@ function User:get_ratings_count(uid)
     ]], uid)[1].count
 end
 
+-- @param {unsigned int} uid
+-- @param {unsigned int[]} user_ids
+function User:filter_followed(uid, user_ids)
+    return self:query([[
+        select created_by, refer_to from "interaction"
+        where created_by = ? and refer_to in ?
+    ]], uid, db.list(user_ids))
+end
+
+function User:has_followed(uid, author_id)
+    return self:query([[
+        select id from "interaction"
+        where created_by = ? and refer_to = ? and type = 'followship'
+    ]], uid, author_id)[1]
+end
+
+function User:follow(uid, author_id)
+    return self:query([[
+        insert into "interaction"
+            (type, created_by, refer_to)
+        values
+            ('followship', ?, ?)
+    ]], uid, author_id)
+end
+
+function User:unfollow(uid, author_id)
+    return self:query([[
+        delete from "interaction"
+        where created_by = ? and refer_to = ? and type = 'followship'
+    ]], uid, author_id)
+end
+
+-- @param {unsigned int} sender_id
+-- @param {unsigned int} recipient_id
+function User:new_conversation(sender_id, recipient_id)
+    local sender = self:find_by_id(sender_id)
+    local recipient = self:find_by_id(recipient_id)
+
+    return self:query([[
+        insert into "conversation"
+            (created_by, members, profiles)
+        values
+            (?, ?, ?)
+        returning *
+    ]], sender.id, db.array({sender.id, recipient.id}),
+                      db.array({sender.profile, recipient.profile}))[1]
+end
+
 -- function user:set_password_sequence(sequence, email)
 --     local client = redis_client:new()
 --     client:run("setex", fmt("email(%s):password_sequence", email), password_sequence_ttl, sequence)

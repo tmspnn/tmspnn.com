@@ -8,7 +8,6 @@ local utf8 = require "utf8"
 
 -- Local modules
 local Article = require "models.Article"
-local empty = require "util.empty"
 local push = require "util.push"
 local User = require "models.User"
 

@@ -199,11 +199,18 @@ local function author(app)
     local author_id = tonumber(app.params.author_id)
     if not author_id then return {render = "pages.404"} end
     local author = User:find_by_id(author_id)
+    local has_followed = not empty(
+                             User:filter_followed(app.ctx.uid, {author_id}))
     local ratings_count = User:get_ratings_count(author_id)
     author.ratings_count = ratings_count
     local articles = Article:get_by_author(author_id)
     local ctx = app.ctx
-    ctx.data = {author = author, articles = articles}
+    ctx.data = {
+        uid = ctx.uid,
+        author = author,
+        has_followed = has_followed,
+        articles = articles
+    }
     ctx.page_title = author.nickname .. " | 一刻阅读"
     ctx.tags_in_head = {css_tag("author")}
     ctx.tags_in_body = {json_tag(ctx.data), js_tag("author")}

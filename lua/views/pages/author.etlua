@@ -7,6 +7,7 @@ local fmt = string.format
 
 -- Data
 local au = ctx.data.author
+local has_followed = ctx.data.has_followed
 local articles = ctx.data.articles
 
 -- Computed props
@@ -29,9 +30,11 @@ local desc = #au.desc > 0 and au.desc or "这个人很懒, 什么都没有写...
         <div class="nickname"><%= au.nickname %></div>
     </div>
     <div class="row">
-        <button class="follow">
+        <button class="follow" data-ref="followBtn">
             <% render("views.icons.heart") %>
-            关注
+            <span data-ref="followingState">
+                <%= has_followed and "已关注" or "关注" %>
+            </span>
         </button>
         <div class="fame">
             <% render("views.icons.flag") %>
@@ -66,3 +69,7 @@ local desc = #au.desc > 0 and au.desc or "这个人很懒, 什么都没有写...
     </section>
 </div>
 <% render("views.components.navbar", {title = title}) %>
+<button class="send-message" data-ref="messageBtn">
+    <% render("views.icons.chat") %>
+    发消息
+</button>

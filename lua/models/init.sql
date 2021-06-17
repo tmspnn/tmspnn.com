@@ -85,7 +85,7 @@ create index comment_article_id_idx on "comment" (article_id);
 -- Interaction
 create table "interaction" (
     id serial primary key,
-    "type" varchar(64) not null, -- advocation | following
+    "type" varchar(64) not null, -- advocation | followship
     created_by integer not null,
     refer_to integer not null,
     obj jsonb not null default '{}'::jsonb,
@@ -94,3 +94,21 @@ create table "interaction" (
 
 create index interaction_created_by_idx on "interaction" (created_by);
 create index interaction_refer_to_idx on "interaction" (refer_to);
+
+-- Conversation
+create table "conversation" (
+    id serial primary key,
+    created_by integer not null,
+    members integer[] not null default '{}',
+    messages text[] not null default '{}',
+    title varchar(128) not null default '',
+    profiles varchar(256)[] not null default '{}',
+    muted_by integer[] not null default '{}',
+    obj jsonb not null default '{}'::jsonb,
+    created_at timestamp with time zone not null default now(),
+    updated_at timestamp with time zone not null default now()
+);
+
+create index conversation_created_by_idx on "conversation" (created_by);
+create index conversation_members_idx on "conversation" using gin (members);
+create index conversation_messages_idx on "conversation" using gin (messages);

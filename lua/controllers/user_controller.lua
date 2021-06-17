@@ -2,9 +2,8 @@
 local bcrypt = require "bcrypt"
 local db = require "lapis.db"
 local json_params = require("lapis.application").json_params
-local ngx = require "ngx"
+local respond_to = require("lapis.application").respond_to
 local uuid = require "resty.jit-uuid"
-local validation = require "resty.validation"
 
 uuid.seed()
 
@@ -15,6 +14,10 @@ local is_mobile = require "util/is_mobile"
 -- Constants and alias
 local log_rounds = 9
 local fmt = string.format
+
+local function sign_in_required(app)
+    if not app.ctx.uid then error("not.authorized", 0) end
+end
 
 local function sign_in(app)
     local ctx = app.ctx
@@ -117,10 +120,25 @@ local function send_vcode(app)
     return {json = {mobile = mobile, vcode = vcode}}
 end
 
+local function toggle_followship(app)
+    local author_id = tonumber(app.params.user_id)
+    if not author_id then error("user.not.exists", 0) end
+    local uid = app.ctx.uid
+    local has_followed = User:has_followed(uid, author_id)
+    if has_followed then
+        User:unfollow(uid, author_id)
+    else
+        User:follow(uid, author_id)
+    end
+    return {json = {followed = not has_followed}}
+end
+
 local function user_controller(app)
     app:post("/api/sign-in", json_params(sign_in))
     app:post("/api/sign-up", json_params(sign_up))
     app:post("/api/vcodes", json_params(send_vcode))
+    app:match("/api/users/:user_id/followers",
+              respond_to({before = sign_in_required, PUT = toggle_followship}))
 end
 
 return user_controller

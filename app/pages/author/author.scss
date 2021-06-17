@@ -38,6 +38,11 @@
 
 button.follow {
     width: 10rem;
+
+    svg {
+        position: relative;
+        top: -1px;
+    }
 }
 
 .fame {
@@ -86,5 +91,16 @@ ul.btns {
             padding-left: 0.5rem;
             color: var(--dark-green);
         }
+    }
+}
+
+.send-message {
+    position: fixed;
+    right: -1rem;
+    bottom: 1rem;
+
+    svg {
+        position: relative;
+        top: -1px;
     }
 }
