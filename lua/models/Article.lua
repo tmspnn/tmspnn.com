@@ -1,6 +1,5 @@
 -- External modules
 local cjson = require "cjson"
-local date = require "date"
 local db = require "lapis.db"
 
 -- Alias

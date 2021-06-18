@@ -1,0 +1,23 @@
+<%
+local conv = conversation
+local page_title = ctx.page_title
+%>
+<div class="page-container">
+
+</div>
+<% render("views.components.navbar", {title = page_title}) %>
+<div class="input-container">
+    <div class="btn shortcut" data-ref="shortcutBtn">
+        <% render("views.icons.emoji_happy") %>
+    </div>
+    <textarea data-ref="input"></textarea>
+    <div class="btn clip" data-ref="clipBtn">
+        <% render("views.icons.paper_clip") %>
+    </div>
+    <div class="btn audio" data-ref="audioBtn" hidden>
+        <% render("views.icons.microphone") %>
+    </div>
+    <div class="btn send" data-ref="sendBtn" hidden>
+        <% render("views.icons.arrow_circle_right") %>
+    </div>
+</div>

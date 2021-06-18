@@ -88,6 +88,11 @@ input {
     }
 }
 
+textarea {
+    border: none;
+    outline: none;
+}
+
 /* Remove autocomplete styles in Chrome */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,

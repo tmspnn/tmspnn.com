@@ -8,6 +8,7 @@ local fmt = string.format
 -- Local modules
 -- local render_component = require "controllers/page/render_component"
 local Article = require "models.Article"
+local Conversation = require "models.Conversation"
 local empty = require "util.empty"
 local User = require "models.User"
 
@@ -217,6 +218,19 @@ local function author(app)
     return {render = "pages.author"}
 end
 
+local function conversation(app)
+    local conversation_id = tonumber(app.params.conversation_id)
+    local conversation = Conversation:find_by_id(conversation_id)
+    conversation.messages = Conversation:get_messages(conversation_id)
+    conversation.members = User:get_by_ids(conversation.members)
+    local ctx = app.ctx
+    ctx.data = {uid = ctx.uid, conversation = conversation}
+    ctx.page_title = conversation.title .. " | 一刻阅读"
+    ctx.tags_in_head = {css_tag("conversation")}
+    ctx.tags_in_body = {json_tag(ctx.data), js_tag("conversation")}
+    return {render = "pages.conversation"}
+end
+
 local function page_controller(app)
     app:get("/", index)
     app:get("/articles/:article_id", article)
@@ -229,6 +243,8 @@ local function page_controller(app)
     app:match("/comment-editor",
               respond_to({before = sign_in_required, GET = comment_editor}))
     app:get("/users/:author_id", author)
+    app:match("/conversations/:conversation_id",
+              respond_to({before = sign_in_required, GET = conversation}))
 end
 
 return page_controller

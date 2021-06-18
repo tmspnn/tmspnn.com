@@ -43,6 +43,11 @@
                 @extend ._with-icon;
                 margin-left: auto;
                 color: var(--grey);
+
+                svg {
+                    position: relative;
+                    top: -1px;
+                }
             }
         }
 

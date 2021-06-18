@@ -87,7 +87,9 @@ local error_messages = {
         status = 400,
         message = "请输入一万字以内的内容."
     },
-    ["rating.invalid"] = {status = 400, message = "请输入1-5星的评价."}
+    ["rating.invalid"] = {status = 400, message = "请输入1-5星的评价."},
+    ["conversation.not.exists"] = {status = 404, message = "对话不存在."}
+
 }
 
 return error_messages

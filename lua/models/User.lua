@@ -21,6 +21,13 @@ local token_ttl = 60 * 60 * 24 * 14 -- two weeks
 local vcode_ttl = 60 * 10 -- ten minutes
 -- local password_sequence_ttl = 60 * 60 * 24 -- one day
 
+-- @param {unsigned int[]} ids
+function User:get_by_ids(ids)
+    return self:query([[
+        select id, nickname, profile from "user" where id in ?
+    ]], db.list(ids))
+end
+
 -- @param {string} user_token
 -- @returns {double}
 function User:get_id_by_token(user_token)
@@ -259,12 +266,21 @@ function User:new_conversation(sender_id, recipient_id)
 
     return self:query([[
         insert into "conversation"
-            (created_by, members, profiles)
+            (created_by, members, title)
         values
             (?, ?, ?)
         returning *
-    ]], sender.id, db.array({sender.id, recipient.id}),
-                      db.array({sender.profile, recipient.profile}))[1]
+    ]], sender.id, db.array({sender.id, recipient.id}), recipient.nickname)[1]
+end
+
+-- @param {unsigned int} uid
+-- @param {string} msg
+function User:offline_message(uid, msg)
+    return self:query([[
+        update "user"
+        set inbox = array_append(inbox, ?)
+        where id = ?
+    ]], msg, uid)
 end
 
 -- function user:set_password_sequence(sequence, email)

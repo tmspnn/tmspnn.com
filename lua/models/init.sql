@@ -100,9 +100,7 @@ create table "conversation" (
     id serial primary key,
     created_by integer not null,
     members integer[] not null default '{}',
-    messages text[] not null default '{}',
     title varchar(128) not null default '',
-    profiles varchar(256)[] not null default '{}',
     muted_by integer[] not null default '{}',
     obj jsonb not null default '{}'::jsonb,
     created_at timestamp with time zone not null default now(),
@@ -111,4 +109,18 @@ create table "conversation" (
 
 create index conversation_created_by_idx on "conversation" (created_by);
 create index conversation_members_idx on "conversation" using gin (members);
-create index conversation_messages_idx on "conversation" using gin (messages);
+
+-- Message
+create table "message" (
+    id serial primary key,
+    created_by integer not null,
+    conversation_id integer not null,
+    "type" varchar(64) not null default 'text',
+    "text" text not null default '',
+    obj jsonb not null default '{}'::jsonb,
+    created_at timestamp with time zone not null default now(),
+    updated_at timestamp with time zone not null default now()
+);
+
+create index message_created_by_idx on "message" (created_by);
+create index message_conversation_id_idx on "message" (conversation_id);
