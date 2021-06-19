@@ -23,7 +23,7 @@ app.layout = require "views.layout"
 
 -- TTL of Cookies
 app.cookie_attributes = function()
-    local expires = date():adddays(21):fmt("${http}")
+    local expires = date():adddays(14):fmt("${http}")
     return "Expires=" .. expires .. "; Path=/; HttpOnly"
 end
 

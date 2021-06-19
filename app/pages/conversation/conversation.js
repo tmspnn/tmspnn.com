@@ -49,7 +49,14 @@ function conversation() {
                 text
             }
         )
-            .then((res) => console.log(res))
+            .then(() => {
+                // Message sent
+            })
+            .catch((xhr) => {
+                if (xhr.status == 401) {
+                    location.href = "/sign-in";
+                }
+            })
             .catch(ctrl.handleException);
     };
 

@@ -6,6 +6,7 @@ local pgmoon = require "pgmoon"
 local server = require "resty.websocket.server"
 
 -- Local modules
+local each = require "util.each"
 local redis_client = require "models/redis_client"
 local unescape = require "util/unescape"
 
@@ -51,10 +52,12 @@ local function get_offline_messages(uid, page_no, page_size)
     })
 
     assert(pg:connect(), "PG: Connection Failed!")
+
     local messages = assert(pg:query(fmt([[
         select inbox[%s:%s] from "user" where id = %s
     ]], offset + 1, offset + page_size, uid))[1].inbox, "PG: Query Failed")
     pg:keepalive()
+
     return messages
 end
 
@@ -104,7 +107,12 @@ local function main()
 
         repeat
             page = get_offline_messages(uid, page_no, page_size)
-            wb:send_text(cjson.encode(page))
+
+            each(page, function(msg)
+                local msg_body = {"message", fmt("uid(%s):inbox", uid), msg}
+                wb:send_text(cjson.encode(msg_body))
+            end)
+
             page_no = page_no + 1
         until #page < page_size
 
@@ -146,18 +154,20 @@ local function main()
                     local msg = {type = "pong"}
                     local bytes, err = wb:send_text(cjson.encode(msg))
                     if not bytes then error(err) end
-                else
-                    local to = json.to -- @property {number} json.to
 
-                    if type(to) == "number" and to > 0 then
-                        local client = redis_client:new()
-                        local success = client:run("publish",
-                                                   fmt("uid(%s):inbox", to),
-                                                   data)
-                        if success == 0 then
-                            send_to_inbox(to, data)
-                        end
-                    end
+                    -- Use Ajax to send message, not ws.
+                    -- else
+                    -- local to = json.to -- @property {number} json.to
+
+                    -- if type(to) == "number" and to > 0 then
+                    --     local client = redis_client:new()
+                    --     local success = client:run("publish",
+                    --                                fmt("uid(%s):inbox", to),
+                    --                                data)
+                    --     if success == 0 then
+                    --         send_to_inbox(to, data)
+                    --     end
+                    -- end
                 end
             end
 

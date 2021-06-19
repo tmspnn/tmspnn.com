@@ -7,7 +7,7 @@
         "test": "ava",
         "fmt": "npx prettier --write app",
         "fmt-test": "npx prettier --write test",
-        "build": "NODE_ENV=production webpack",
+        "build": "webpack --node-env=production",
         "dev": "webpack --watch"
     },
     "dependencies": {
@@ -46,7 +46,7 @@
         "prettier": "^2.3.1",
         "sass": "^1.35.1",
         "sass-loader": "^12.1.0",
-        "webpack": "^5.39.0",
+        "webpack": "^5.39.1",
         "webpack-cli": "^4.7.2"
     },
     "ava": {

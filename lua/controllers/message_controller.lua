@@ -20,7 +20,11 @@ local function create_conversation(app)
 
     if not recipient_id then error("user.not.exists", 0) end
 
-    local conversation = User:new_conversation(sender_id, recipient_id)
+    local conversation = User:find_conversation_between(sender_id, recipient_id)
+
+    if not conversation then
+        conversation = User:new_conversation(sender_id, recipient_id)
+    end
 
     return {json = conversation}
 end

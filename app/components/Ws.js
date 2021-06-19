@@ -29,8 +29,6 @@ export default class Ws {
         window.addEventListener(
             "storage",
             _.debounce(() => {
-                if (document.hasFocus()) return;
-
                 const state = localStorage.getItem("ws.state");
                 const msg = localStorage.getItem("ws.message");
 
@@ -143,7 +141,6 @@ export default class Ws {
             if (typeof this.onError == "function") {
                 this.onError(e);
             }
-            this.sync();
         };
 
         window._ws.onclose = () => {

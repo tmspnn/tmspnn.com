@@ -15,11 +15,11 @@ const pages = fs.readdirSync("./app/pages");
 
 module.exports = {
     context: __dirname + "/app",
+    mode: isProduction ? "production" : "development",
     entry: _(pages)
         .keyBy()
         .mapValues((p) => `/pages/${p}/${p}.js`)
         .value(),
-    mode: isProduction ? "production" : "development",
     output: {
         path: __dirname + "/build",
         filename: `[name]-${version}.js`,
@@ -100,5 +100,5 @@ module.exports = {
                 new MiniCssExtractPlugin({ filename: `[name]-${version}.css` })
         )
     ],
-    watchOptions: { ignored: ["conf/**", "lua/**", "node_modules/**"] }
+    watchOptions: { ignored: ["conf/**", "lua/**"] }
 };

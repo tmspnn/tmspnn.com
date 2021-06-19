@@ -22,7 +22,7 @@
 			</button>
 		</div>
 		<div class="row tips">
-			已有账号? 点击<a href="/sign-in">登录</a>.
+			已有账号? 点击<a href="/sign-in" data-nopush>登录</a>.
 		</div>
 		<p class="tips">
 			<% render("views/icons/exclamation_circle") %>

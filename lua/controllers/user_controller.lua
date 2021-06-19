@@ -20,9 +20,6 @@ local function sign_in_required(app)
 end
 
 local function sign_in(app)
-    local ctx = app.ctx
-    ctx.trim_all(app.params)
-
     local mobile = app.params.mobile
     local password = app.params.password
 

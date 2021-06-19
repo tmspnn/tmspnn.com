@@ -260,6 +260,18 @@ end
 
 -- @param {unsigned int} sender_id
 -- @param {unsigned int} recipient_id
+function User:find_conversation_between(sender_id, recipient_id)
+    return self:query([[
+        select * from "conversation"
+        where
+            created_by in (?, ?) and
+            members in ('{?,?}', '{?,?}')
+    ]], sender_id, recipient_id, sender_id, recipient_id, recipient_id,
+                      sender_id)[1]
+end
+
+-- @param {unsigned int} sender_id
+-- @param {unsigned int} recipient_id
 function User:new_conversation(sender_id, recipient_id)
     local sender = self:find_by_id(sender_id)
     local recipient = self:find_by_id(recipient_id)
