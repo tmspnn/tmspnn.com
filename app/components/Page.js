@@ -19,6 +19,8 @@ export default class Page extends View {
 
     ctrl = null;
 
+    docElement = document.documentElement;
+
     constructor(name) {
         super(name, document.body);
         this._name = "root";

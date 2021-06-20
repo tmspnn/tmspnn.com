@@ -109,7 +109,9 @@ local function main()
             page = get_offline_messages(uid, page_no, page_size)
 
             each(page, function(msg)
-                local msg_body = {"message", fmt("uid(%s):inbox", uid), msg}
+                local msg_body = {
+                    "offline_message", fmt("uid(%s):inbox", uid), msg
+                }
                 wb:send_text(cjson.encode(msg_body))
             end)
 

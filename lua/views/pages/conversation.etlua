@@ -2,9 +2,7 @@
 local conv = conversation
 local page_title = ctx.page_title
 %>
-<div class="page-container">
-
-</div>
+<div class="page-container"></div>
 <% render("views.components.navbar", {title = page_title}) %>
 <div class="input-container">
     <div class="btn shortcut" data-ref="shortcutBtn">

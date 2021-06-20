@@ -98,8 +98,8 @@ export default class Ws {
     };
 
     connect = () => {
-        this.state = "connecting";
         localStorage.setItem("ws.state", "connecting");
+        window.dispatchEvent(new Event("storage"));
 
         if (window._ws) {
             window._ws.close();
@@ -127,14 +127,9 @@ export default class Ws {
 
         window._ws.onmessage = (e) => {
             const msg = e.data;
-
-            if (typeof this.onMessage == "function") {
-                this.onMessage(parseJSON(msg));
-            }
-
-            this.state = "online";
             localStorage.setItem("ws.state", "online");
             localStorage.setItem("ws.message", msg);
+            window.dispatchEvent(new Event("storage"));
         };
 
         window._ws.onerror = (e) => {

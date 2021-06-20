@@ -31,7 +31,7 @@ end
 -- @param {string} message.type
 -- @param {string} message.text
 -- @param {string} message.file
--- @param {table} message.data
+-- @param {table} message.string
 -- @param {unsigned int} message.timestamp
 function Conversation:appendMessage(conv_id, message)
     local obj = db.raw(fmt("'%s'::jsonb", message.data))

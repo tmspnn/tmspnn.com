@@ -1,3 +1,7 @@
+// External modules
+import dayjs from "dayjs";
+
+// Local modules
 import "./conversation.scss";
 import Page from "@components/Page";
 import navbar from "@components/navbar/navbar";
@@ -13,6 +17,39 @@ function conversation() {
 
     // UI logic
     const { _refs } = root;
+    const container = $(".page-container");
+
+    root.appendMessage = (msg) => {
+        const { created_by, type, text, created_at, obj } = msg;
+        const sentBySelf = created_by == root.data.uid;
+        const profileUrl = obj.profile
+            ? `url(${obj.profile})`
+            : "linear-gradient(135deg, var(--grey), var(--black))";
+        container.appendChild(
+            html2DOM(`
+            <div class="message">
+                ${
+                    sentBySelf
+                        ? `<div class="profile" style="background-image: ${profileUrl}"></div>`
+                        : ""
+                }
+                <div class="content">
+                    <div class="text ${
+                        sentBySelf ? "to-left" : "to-right"
+                    }">${text}</div>
+                    <div class="timestamp">${dayjs(created_at).format(
+                        "MM-DD HH:mm:ss"
+                    )}</div>
+                </div>
+                ${
+                    sentBySelf
+                        ? ""
+                        : `<div class="profile" style="background-image: ${profileUrl}"></div>`
+                }
+            </div>
+        `)
+        );
+    };
 
     _refs.input.on("input", () => {
         const v = _refs.input.value.trim();
@@ -62,6 +99,18 @@ function conversation() {
 
     ctrl.onWsMessage = (msg) => {
         console.log("conversation onWsMessage: ", msg);
+
+        if (!Array.isArray(msg)) return;
+
+        const [type, channel, messageBody] = msg;
+
+        if (type != "message") return;
+
+        const json = parseJSON(messageBody);
+
+        if (json.conversation_id == ctrl.data.conversation.id) {
+            ctrl.ui("root::appendMessage", json);
+        }
     };
 }
 

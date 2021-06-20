@@ -9,6 +9,7 @@ local fmt = string.format
 -- Local modules
 local Conversation = require "models.Conversation"
 local each = require "util.each"
+local extend = require "util.extend"
 local redis_client = require "models.redis_client"
 local sign_in_required = require "util.sign_in_required"
 local User = require "models.User"
@@ -31,6 +32,11 @@ end
 
 local function send_message(app)
     local sender_id = app.ctx.uid
+
+    local sender = User:find_by_id(sender_id)
+
+    if not sender then error("user.not.exists", 0) end
+
     local conversation_id = tonumber(app.params.conversation_id)
 
     if not conversation_id then error("conversation.not.exists", 0) end
@@ -45,8 +51,8 @@ local function send_message(app)
         type = app.params.type or "text",
         text = app.params.text or "",
         file = app.params.file or "",
-        data = type(app.params.data) == "table" and
-            cjson.encode(app.params.data) or "{}",
+        data = cjson.encode(extend(app.params.data or {},
+                                   {profile = sender.profile})),
         timestamp = os.time()
     }
 
