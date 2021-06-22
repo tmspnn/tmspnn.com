@@ -27,9 +27,11 @@ export default class PageContainer extends View {
     captureLinks = () => {
         const container = window._pageContainer;
         $$("a").forEach((link) => {
-            link.setAttribute("data-href", link.href);
-            link.removeAttribute("href");
-            link.on("click", (e) => container.onLinkClick(e));
+            if (link.hasAttribute("href")) {
+                link.setAttribute("data-href", link.href);
+                link.removeAttribute("href");
+                link.on("click", (e) => container.onLinkClick(e));
+            }
         });
     };
 

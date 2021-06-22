@@ -10,7 +10,7 @@ local page_controller = require "controllers.page_controller"
 local user_controller = require "controllers.user_controller"
 local article_controller = require "controllers.article_controller"
 local search_controller = require "controllers.search_controller"
-local message_controller = require "controllers.message_controller"
+local conversation_controller = require "controllers.conversation_controller"
 
 -- Initialization
 local app = lapis.Application()
@@ -36,6 +36,6 @@ page_controller(app)
 user_controller(app)
 article_controller(app)
 search_controller(app)
-message_controller(app)
+conversation_controller(app)
 
 lapis.serve(app)

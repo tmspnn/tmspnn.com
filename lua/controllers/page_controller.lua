@@ -13,7 +13,6 @@ local empty = require "util.empty"
 local User = require "models.User"
 
 -- Faked data for testing
-local faked_messages = require "faked_data.faked_messages"
 local faked_me = require "faked_data.faked_me"
 
 -- Implementation
@@ -125,20 +124,20 @@ local function article(app)
     return {render = "pages.article"}
 end
 
-local function messages(app)
+local function conversations(app)
     local ctx = app.ctx
+    ctx.data = {}
     ctx.page_title = "一刻阅读 | 消息"
-    ctx.tags_in_head = {css_tag("messages")}
-    ctx.tags_in_body = {json_tag(faked_messages), js_tag("messages")}
-    ctx.data = faked_messages
-    return {render = "pages.messages"}
+    ctx.tags_in_head = {css_tag("conversations")}
+    ctx.tags_in_body = {json_tag(ctx.data), js_tag("conversations")}
+    return {render = "pages.conversations"}
 end
 
 local function me(app)
     local ctx = app.ctx
     ctx.page_title = "一刻阅读 | 我的"
     ctx.tags_in_head = {css_tag("me")}
-    ctx.tags_in_body = {json_tag(faked_messages), js_tag("me")}
+    ctx.tags_in_body = {json_tag(faked_me), js_tag("me")}
     ctx.data = faked_me
 
     return {render = "pages.me"}
@@ -235,7 +234,7 @@ local function page_controller(app)
     app:get("/", index)
     app:get("/articles/:article_id", article)
     app:get("/trending", trending)
-    app:get("/messages", messages)
+    app:get("/conversations", conversations)
     app:match("/me", respond_to({before = sign_in_required, GET = me}))
     app:get("/sign-in", sign_in)
     app:get("/sign-up", sign_up)

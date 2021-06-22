@@ -1,14 +1,24 @@
-<div class="-message">
-    <div class="profile">
-        <% for i, p in ipairs(conversation_profiles) do %>
-        <% if i <= 3 then %>
-        <div class="img" style="background-image: url(<%= conversation_profiles[i] %>)"></div>
-        <% end %>
-        <% end %>
+<%
+local date = require "date"
+local fmt = string.format
+
+local sent_by_self = sent_by_self
+local profile_url = obj.profile
+    and fmt("url(%s)", obj.profile)
+    or "linear-gradient(135deg, var(--grey), var(--black))"
+local timestamp = date(created_at):fmt("%m/%d %H:%M")
+%>
+<div class="message">
+    <% if sent_by_self then %>
+    <div class="profile" style="background-image: <%= profile_url %>"></div>
+    <% end %>
+    <div class="content">
+        <div class="text <%= sent_by_self and "to-left" or "to-right" %>">
+            <%= text %>
+        </div>
+        <div class="timestamp"><%= timestamp %></div>
     </div>
-    <div class="meta">
-        <div class="conversation-name"><%= conversation_name %></div>
-        <div class="last-message"><%= last_message %></div>
-    </div>
-    <div class="last-updated"><%= last_updated %></div>
+    <% if not sent_by_self then %>
+    <div class="profile" style="background-image: <%= profile_url %>"></div>
+    <% end %>
 </div>

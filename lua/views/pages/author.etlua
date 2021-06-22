@@ -68,7 +68,7 @@ local desc = #au.desc > 0 and au.desc or "这个人很懒, 什么都没有写...
         <% end %>
     </section>
 </div>
-<% render("views.components.navbar", {title = title}) %>
+<% render("views.components.navbar", {title = au.nickname}) %>
 <button class="send-message" data-ref="messageBtn">
     <% render("views.icons.chat") %>
     发消息

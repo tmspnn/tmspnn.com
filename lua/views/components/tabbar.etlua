@@ -6,7 +6,7 @@
     <a href="/trending" class="tab <% if active_tab == "trending" then %>active<% end %>" data-nopush>
         <% render("views/icons/trending_up") %>
     </a>
-    <a href="/messages" class="tab <% if active_tab == "messages" then %>active<% end %>" data-nopush>
+    <a href="/conversations" class="tab <% if active_tab == "conversations" then %>active<% end %>" data-nopush>
         <% render("views/icons/chat") %>
     </a>
     <a href="/me" class="tab <% if active_tab == "me" then %>active<% end %>" data-nopush>

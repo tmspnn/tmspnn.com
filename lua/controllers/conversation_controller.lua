@@ -80,7 +80,21 @@ local function send_message(app)
     return {status = 204}
 end
 
-local function message_controller(app)
+local function get_brief(app)
+    local conv_id = tonumber(app.params.conversation_id)
+
+    if not conv_id then error("conversation.not.exists", 0) end
+
+    local conv = Conversation:find_by_id(conv_id)
+
+    conv.profiles = Conversation:get_profiles(app.ctx.uid, conv.members)
+
+    conv.last_message = Conversation:get_last_message(conv_id)
+
+    return {json = conv}
+end
+
+local function conversation_controller(app)
     app:match("/api/conversations", respond_to({
         before = sign_in_required({redirect = false}),
         POST = json_params(create_conversation)
@@ -90,6 +104,12 @@ local function message_controller(app)
         before = sign_in_required({redirect = false}),
         POST = json_params(send_message)
     }))
+
+    app:match("/api/conversations/:conversation_id/brief", respond_to(
+                  {
+            before = sign_in_required({redirect = false}),
+            GET = get_brief
+        }))
 end
 
-return message_controller
+return conversation_controller

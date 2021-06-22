@@ -1,0 +1,6 @@
+<%
+local title = ctx.page_title
+%>
+<div class="page-container"></div>
+<% render("views/components/navbar", { title = title }) %>
+<% render("views/components/tabbar", { active_tab = "conversations" }) %>

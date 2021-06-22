@@ -19,6 +19,13 @@ function conversation() {
     const { _refs } = root;
     const container = $(".page-container");
 
+    setTimeout(() => {
+        container.scrollTop = Math.max(
+            0,
+            container.scrollHeight - window.innerHeight
+        );
+    });
+
     root.appendMessage = (msg) => {
         const { created_by, type, text, created_at, obj } = msg;
         const sentBySelf = created_by == root.data.uid;
@@ -49,7 +56,20 @@ function conversation() {
             </div>
         `)
         );
+        container.scrollTop = Math.max(
+            0,
+            container.scrollHeight - window.innerHeight
+        );
     };
+
+    document.documentElement.on("pageshow", () => {
+        setTimeout(() => {
+            container.scrollTop = Math.max(
+                0,
+                container.scrollHeight - window.innerHeight
+            );
+        });
+    });
 
     _refs.input.on("input", () => {
         const v = _refs.input.value.trim();
@@ -110,6 +130,15 @@ function conversation() {
 
         if (json.conversation_id == ctrl.data.conversation.id) {
             ctrl.ui("root::appendMessage", json);
+        }
+    };
+
+    ctrl.clickBackBtn = () => {
+        const from = at(history, "state.from");
+        if (from) {
+            history.back();
+        } else {
+            location.replace("/");
         }
     };
 }

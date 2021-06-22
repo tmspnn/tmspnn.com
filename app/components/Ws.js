@@ -26,25 +26,19 @@ export default class Ws {
 
     constructor() {
         // Process messages from other tabs.
-        window.addEventListener(
-            "storage",
-            _.debounce(() => {
-                const state = localStorage.getItem("ws.state");
-                const msg = localStorage.getItem("ws.message");
+        window.addEventListener("storage", () => {
+            const state = localStorage.getItem("ws.state");
+            const msg = localStorage.getItem("ws.message");
 
-                if (this.state != state) {
-                    this.onStateChange(state);
-                }
+            if (this.state != state) {
+                this.onStateChange(state);
+            }
 
-                if (
-                    this.message != msg &&
-                    typeof this.onMessage == "function"
-                ) {
-                    this.onMessage(parseJSON(msg));
-                    this.message = msg;
-                }
-            }, 100)
-        );
+            if (this.message != msg && typeof this.onMessage == "function") {
+                this.onMessage(parseJSON(msg));
+                this.message = msg;
+            }
+        });
 
         this.sync();
 

@@ -22,5 +22,5 @@ local authors_7d = ctx.data.authors_7d or {}
         <% end %>
     </div>
 </div>
-<% render("views.components.navbar", {title = title}) %>
+<% render("views.components.navbar", {title = ctx.data.title}) %>
 <% render("views.components.tabbar", {active_tab = "trending"}) %>

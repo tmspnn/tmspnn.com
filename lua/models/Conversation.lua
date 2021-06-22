@@ -8,6 +8,8 @@ local fmt = string.format
 
 -- Local modules
 local Model = require "models.Model"
+local push = require "util.push"
+local remove = require "util.remove"
 
 -- Implementation
 local Conversation = Model:new("conversation")
@@ -43,6 +45,36 @@ function Conversation:appendMessage(conv_id, message)
             (?, ?, ?, ?, ?)
         returning *;
     ]], message.sender_id, conv_id, message.type, message.text, obj)[1]
+end
+
+-- @param {unsigned int} uid
+-- @param {unsigned int[]} members
+function Conversation:get_profiles(uid, members)
+    local is_group_conv = #members > 2
+
+    remove(members, uid)
+
+    local user_ids = {}
+
+    for _, v in pairs(members) do push(user_ids, v) end
+
+    user_ids = is_group_conv and
+                   {
+            user_ids[#user_ids - 2], user_ids[#user_ids - 1],
+            user_ids[#user_ids]
+        } or user_ids
+
+    return self:query([[
+        select profile from "user" where id in ?
+    ]], db.list(user_ids))
+end
+
+-- @param {unsigned int} conv_id
+function Conversation:get_last_message(conv_id)
+    return self:query([[
+        select * from "message" where conversation_id = ?
+        order by id desc limit 1
+    ]], conv_id)[1]
 end
 
 return Conversation
