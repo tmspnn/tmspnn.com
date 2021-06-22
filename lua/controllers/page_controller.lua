@@ -12,9 +12,6 @@ local Conversation = require "models.Conversation"
 local empty = require "util.empty"
 local User = require "models.User"
 
--- Faked data for testing
-local faked_me = require "faked_data.faked_me"
-
 -- Implementation
 local assets_prefix = ""
 local version = "1.0.0"
@@ -135,11 +132,14 @@ end
 
 local function me(app)
     local ctx = app.ctx
+    local user = User:find_by_id(ctx.uid)
+    local ratings_count = User:get_ratings_count(user.id)
+    user.ratings_count = ratings_count
+    local articles = Article:get_by_author(user.id)
+    ctx.data = {uid = ctx.uid, user = user, articles = articles}
     ctx.page_title = "一刻阅读 | 我的"
     ctx.tags_in_head = {css_tag("me")}
-    ctx.tags_in_body = {json_tag(faked_me), js_tag("me")}
-    ctx.data = faked_me
-
+    ctx.tags_in_body = {json_tag(ctx.data), js_tag("me")}
     return {render = "pages.me"}
 end
 

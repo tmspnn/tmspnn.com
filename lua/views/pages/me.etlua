@@ -1,90 +1,64 @@
 <%
-local data = ctx.data
-local id = data.id
-local nickname = data.nickname
-local cover = data.cover
-local profile = data.profile
-local fame = data.fame
-local gender = data.gender
-local location = data.location
-local mobile = data.mobile
-local email = data.email
-local indentity_no = data.indentity_no
-local articles_count = data.articles_count
-local followings_count = data.followings_count
-local followers_count = data.followers_count
-local obj = data.obj
-local created_at = data.created_at
-local updated_at = data.updated_at
-local desc = data.desc
+-- External modules
+local cjson = require "cjson"
+
+-- Aliases
+local fmt = string.format
+
+-- Data
+local au = ctx.data.user
+local articles = ctx.data.articles
+
+-- Computed props
+local fame = math.floor(au.fame)
+
+local bg_image = au.bg_image
+    and fmt("url(%s)", au.bg_image)
+    or "linear-gradient(135deg, var(--grey), var(--black))"
+
+local profile_url = #au.profile > 0
+    and fmt("url(%s)", au.profile)
+    or "linear-gradient(135deg, var(--grey), var(--black))"
+
+local desc = #au.desc > 0 and au.desc or "这个人很懒, 什么都没有写..."
 %>
 <div class="page-container">
-    <div class="bg">
-        <img src="<%= cover %>" alt="cover" class="cover">
+    <div class="bg" style="background-image: <%= bg_image %>"></div>
+    <div class="row">
+        <div class="profile" style="background-image: <%= profile_url %>"></div>
+        <div class="nickname"><%= au.nickname %></div>
     </div>
-    <div class="meta">
-        <div class="profile" style="background-image: url(<%= profile %>)"></div>
-        <button>
-            <a href="/editor">
-                <% render("views/icons/document_add") %>
-                <span>写一篇</span>
+    <div class="row">
+        <div class="fame">
+            <% render("views.icons.flag") %>
+            <span>声望 <b><%= fame %></b></span>
+        </div>
+    </div>
+    <blockquote><%= desc %></blockquote>
+    <ul class="btns">
+        <li class="followers">
+            <a href="/users/<%= au.id %>/followers">
+                <% render("views.icons.users") %>
+                粉丝<b> <%= au.followers_count %></b>
             </a>
-        </button>
-        <div class="row">
-            <label>
-                <% render("views/icons/user") %>
-                <span>昵称</span>
-            </label>
-            <span><%= nickname %></span>
-        </div>
-        <div class="row">
-            <label>
-                <% render("views/icons/user_circle") %>
-                <span>性别</span>
-            </label>
-            <span><%= gender == 1 and "女" or "男" %></span>
-        </div>
-        <div class="row">
-            <label>
-                <% render("views/icons/location_marker") %>
-                <span>地区</span>
-            </label>
-            <span><%= location %></span>
-        </div>
-        <div class="row">
-            <label>
-                <% render("views/icons/flag") %>
-                <span>声望</span>
-            </label>
-            <span><%= fame %></span>
-        </div>
-        <div class="row">
-            <label>
-                <% render("views/icons/heart") %>
-                <span>关注</span>
-            </label>
-            <span><%= followings_count %></span>
-            <% render("views/icons/chevron_right") %>
-        </div>
-        <div class="row">
-            <label>
-                <% render("views/icons/users") %>
-                <span>粉丝</span>
-            </label>
-            <span><%= followers_count %></span>
-            <% render("views/icons/chevron_right") %>
-        </div>
-        <div class="row operations">
-            <button class="sign-in" hidden>
-                <% render("views/icons/login") %>
-                <span>登录</span>
-            </button>
-            <button class="sign-out">
-                <% render("views/icons/logout") %>
-                <span>退出登录</span>
-            </button>
-        </div>
-    </div>
+        </li>
+        <li class="followings">
+            <a href="/users/<%= au.id %>/followings">
+                <% render("views.icons.heart") %>
+                关注<b> <%= au.followings_count %></b>
+            </a>
+        </li>
+        <li class="ratings">
+            <a href="/users/<%= au.id %>/ratings">
+                <% render("views.icons.star") %>
+                评价<b> <%= au.ratings_count %></b>
+            </a>
+        </li>
+    </ul>
+    <section class="articles">
+        <% for _, fd in ipairs(articles) do %>
+        <% render("views.components.feed", fd) %>
+        <% end %>
+    </section>
 </div>
-<% render("views/components/navbar", { title = ctx.data.title }) %>
-<% render("views/components/tabbar", { active_tab = "me" }) %>
+<% render("views.components.navbar", {title = ctx.page_title}) %>

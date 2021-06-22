@@ -18,7 +18,7 @@ local bg_image = au.bg_image
     or "linear-gradient(135deg, var(--grey), var(--black))"
 
 local profile_url = #au.profile > 0
-    and au.profile
+    and fmt("url(%s)", au.profile)
     or "linear-gradient(135deg, var(--grey), var(--black))"
 
 local desc = #au.desc > 0 and au.desc or "这个人很懒, 什么都没有写..."
