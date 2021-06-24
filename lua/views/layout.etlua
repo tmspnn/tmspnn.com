@@ -2,23 +2,23 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <% if ctx.tags_in_head then -%>
-  <% for i, el in ipairs(ctx.tags_in_head) do -%>
-  <% render("views.components.html_tag", el) %>
-  <% end -%>
-  <% end -%>
-  <title><%= ctx.page_title or "一刻阅读" %></title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <% if ctx.tags_in_head then -%>
+    <% for i, el in ipairs(ctx.tags_in_head) do -%>
+    <% render("views.components.html_tag", el) %>
+    <% end -%>
+    <% end -%>
+    <title><%= ctx.page_title or "一刻阅读" %></title>
 </head>
 
 <body>
-  <% content_for("inner") %>
-  <% if ctx.tags_in_body then -%>
-  <% for i, el in ipairs(ctx.tags_in_body) do -%>
-  <% render("views.components.html_tag", el) %>
-  <% end -%>
-  <% end -%>
+    <% content_for("inner") %>
+    <% if ctx.tags_in_body then -%>
+    <% for i, el in ipairs(ctx.tags_in_body) do -%>
+    <% render("views.components.html_tag", el) %>
+    <% end -%>
+    <% end -%>
 </body>
 
 </html>

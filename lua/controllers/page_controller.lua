@@ -6,7 +6,6 @@ local respond_to = require("lapis.application").respond_to
 local fmt = string.format
 
 -- Local modules
--- local render_component = require "controllers/page/render_component"
 local Article = require "models.Article"
 local Conversation = require "models.Conversation"
 local empty = require "util.empty"

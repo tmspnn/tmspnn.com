@@ -1,13 +1,19 @@
--- Local modules
-local User = require "models.User"
+local redis_client = require "services.redis_client"
+local fmt = string.format
 
--- Implementation
+-- @param {string} user_token
+-- @returns {int}
+local function get_uid_by_token(user_token)
+    local client = redis_client:new()
+    local uid = client:run("get", fmt("user_token(%s):uid", user_token))
+    return tonumber(uid)
+end
+
 local function context(app)
     local ctx = {
         os = "Unknown",
         is_mobile = false,
         uid = nil,
-        uuid = app.cookies.uuid,
         user_token = app.cookies.user_token
     }
     local ua = app.req.headers["user-agent"]
@@ -31,7 +37,7 @@ local function context(app)
         end
     end
 
-    if ctx.user_token then ctx.uid = User:get_id_by_token(ctx.user_token) end
+    if ctx.user_token then ctx.uid = get_uid_by_token(ctx.user_token) end
 
     app.ctx = ctx
 end

@@ -12,13 +12,13 @@ local redis_client = {}
 redis_client.__index = redis_client
 
 -- @param {string} conf.host
--- @param {double} conf.timeout
--- @param {double} conf.port
+-- @param {int} conf.timeout
+-- @param {int} conf.port
 function redis_client:new(conf)
     local resty_redis = require "resty.redis"
 
     if not conf then conf = {} end
-    local timeout = conf.timeout or 10000
+    local timeout = conf.timeout or 10000 -- 10 seconds
     local host = conf.host or "127.0.0.1"
     local port = conf.port or 6379
 
@@ -59,7 +59,7 @@ function redis_client:connect()
 end
 
 function redis_client:on_error(command, err)
-    -- In case of temporarily idle channel
+    -- In case of temporarily idle channels
     if command == "read_reply" and err == "timeout" then return end
 
     self:release()

@@ -16,12 +16,12 @@ Frontend & gateway of tmspnn.com
 
 ## Redis Cache
 
-| Key                | Type       |
-| ------------------ | ---------- |
-| recommended_tags   | Sorted Set |
-| search_placeholder | String     |
-| user_token(%s):uid | String     |
-| mobile(%s):vcode   | String     |
+| Key                            | Type       | Description                             |
+| ------------------------------ | ---------- | --------------------------------------- |
+| page(index):search_placeholder | String     | Placeholder of search input in homepage |
+| page(index):recommended_tags   | Sorted Set | Recommended tags in homepage            |
+| user_token(%s):uid             | String     |
+| mobile(%s):vcode               | String     |
 
 ## Postgres jsonb columns
 

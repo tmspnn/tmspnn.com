@@ -21,7 +21,7 @@ app.handle_error = exception.handle_error
 app:enable("etlua")
 app.layout = require "views.layout"
 
--- TTL of Cookies
+-- Set TTL of Cookies
 app.cookie_attributes = function()
     local expires = date():adddays(14):fmt("${http}")
     return "Expires=" .. expires .. "; Path=/; HttpOnly"

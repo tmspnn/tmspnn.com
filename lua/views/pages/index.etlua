@@ -3,7 +3,7 @@ local search_placeholder = ctx.data.search_placeholder or "搜索"
 local recommended_tags = ctx.data.recommended_tags
 local latest_articles = ctx.data.latest_articles
 %>
-<div class="page-container">
+<div id="root">
     <section class="search">
         <div class="container">
             <% render("views.icons.search") %>
@@ -20,8 +20,7 @@ local latest_articles = ctx.data.latest_articles
             <b>已显示全部结果.</b>
         </div>
         <button class="more" data-ref="moreResultBtn" hidden>
-            <% render("views.icons.chevron_double_right") %>
-            更多
+            <% render("views.icons.chevron_double_right") %> 更多
         </button>
     </section>
     <section class="recommended-tags">
@@ -35,5 +34,5 @@ local latest_articles = ctx.data.latest_articles
         <% end %>
     </section>
 </div>
-<% render("views.components.navbar", { title = title }) %>
+<% render("views.components.navbar", { title = ctx.page_title }) %>
 <% render("views.components.tabbar", { active_tab = "home" }) %>
