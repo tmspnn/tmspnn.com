@@ -1,148 +1,188 @@
-import { replaceNode } from "k-dom";
-import createDocument from "@helpers/createDocument";
-import isSameOrigin from "@helpers/isSameOrigin";
+// External modules
+import { $$, replaceNode } from "k-dom";
+import { each, Klass } from "k-util";
+import kxhr from "k-xhr";
 
-export default class PageContainer extends View {
-    cache = {};
-    lastUrl = null;
-    currentUrl = location.href.replace(/#.*/, "");
-    destUrl = null;
-    pushState = false;
+function isSameOrigin(url1, url2) {
+    return (
+        new URL(url1, location.href).origin ==
+        new URL(url2, location.href).origin
+    );
+}
+
+function createDocument(html) {
+    // Script tags in htmlDoc won't execute
+    const htmlDoc = document.implementation.createHTMLDocument("");
+    htmlDoc.documentElement.innerHTML = html;
+
+    const doc = document.implementation.createHTMLDocument("");
+    const scriptsInHead = [];
+    const scriptsInBody = [];
+
+    // Head
+    clearNode(doc.head); // Remove <title></title> in head
+    const elementsInHead = htmlDoc.head.children;
+
+    for (let i = 0; i < elementsInHead.length; ++i) {
+        const el = elementsInHead[i];
+        if (el instanceof HTMLScriptElement) {
+            scriptsInHead.push(cloneScriptElement(el));
+        } else {
+            const clonedEl = doc.importNode(el, true);
+            doc.head.appendChild(clonedEl);
+        }
+    }
+
+    // body
+    clearNode(doc.body);
+    const elementsInBody = htmlDoc.body.children;
+
+    for (let i = 0; i < elementsInBody.length; ++i) {
+        const el = elementsInBody[i];
+        if (el instanceof HTMLScriptElement) {
+            scriptsInBody.push(cloneScriptElement(el));
+        } else {
+            const clonedEl = doc.importNode(el, true);
+            doc.body.appendChild(clonedEl);
+        }
+    }
+
+    return {
+        documentElement: doc.documentElement,
+        loaded: false,
+        scriptsInHead,
+        scriptsInBody
+    };
+}
+
+const PageContainer = Klass({
+    name: "pageContainer",
+
+    cache: {},
+
+    prevUrl: null,
+
+    currentUrl: "",
+
+    nextUrl: null,
+
+    pushState: false,
+
+    ee = window._ee,
 
     constructor() {
-        super();
-        this._name = "pageContainer";
-
-        if (!window._pageContainer) {
+        if (!window._container) {
             this.cache[location.href] = {
                 documentElement: document.documentElement,
                 loaded: true
             };
-            history.replaceState({ url: this.currentUrl, from: null }, "");
-            window.on("popstate", this.onPopState);
-            window._pageContainer = this;
+            history.replaceState(
+                {
+                    url: this.currentUrl,
+                    prev: null
+                },
+                ""
+            );
+            window.on("popstate", this._onPopState.bind(this));
+            window._container = this;
         }
-    }
+    },
 
-    captureLinks = () => {
-        const container = window._pageContainer;
-        $$("a").forEach((link) => {
+    captureLinks() {
+        const container = window._container;
+
+        each($$("a"), (link) => {
             if (link.hasAttribute("href")) {
                 link.setAttribute("data-href", link.href);
                 link.removeAttribute("href");
-                link.on("click", (e) => container.onLinkClick(e));
+                link.on("click", container._onLinkClick.bind(container));
             }
         });
-    };
+    },
 
-    onLinkClick = (e) => {
+    preloadStyles(doc) {
+        const stylesToLoad = $$('link[rel="stylesheet"]', doc.documentElement);
+
+        return Promise.all(
+            stylesToLoad.map((link) => {
+                xhr(link.href).then((response) => {
+                    const styleTag = document.createElement("style");
+                    styleTag.textContent = response;
+                    replaceNode(styleTag, link);
+                });
+            })
+        ).then(() => doc);
+    },
+
+    go(path, pushState = true) {
+        const url = new URL(path, location.href).href;
+
+        if (!isSameOrigin(url, location.href)) {
+            return location.assign(url);
+        }
+
+        if (url == this.currentUrl || this.nextUrl == url) return;
+
+        this.nextUrl = url;
+        this.pushState = pushState;
+        this._switchPage();
+    },
+
+    _onLinkClick(e) {
         const link = e.currentTarget;
         const url = link.getAttribute("data-href");
+        const pushState = !link.hasAttribute("data-nopush");
+        this.go(url, pushState);
+    },
 
-        if (!isSameOrigin(url)) {
-            return (location.href = link.href);
-        }
-
-        if (this.currentUrl == url || this.destUrl == url) return;
-
-        this.destUrl = url;
-        this.pushState = !link.hasAttribute("data-nopush");
-        this.switchPage();
-    };
-
-    onPopState = (e) => {
-        this.destUrl = e.state.url;
+    _onPopState(e) {
+        this.nextUrl = e.state.url;
         this.pushState = false;
-        this.switchPage();
-    };
+        this._switchPage();
+    },
 
-    toPage = (url, pushState = true) => {
-        const parsedUrl = this.toAbsolutePath(url);
-        if (!isSameOrigin(parsedUrl) || this.currentUrl == parsedUrl) return;
-        this.destUrl = parsedUrl;
-        this.pushState = pushState;
-        this.switchPage();
-    };
-
-    switchPage = () => {
-        if (this.destUrl in this.cache) {
-            this.showDestPage();
+    _switchPage() {
+        if (this.nextUrl in this.cache) {
+            this._replaceDocument();
         } else {
-            this.loadPage(this.destUrl, (xhr) => {
-                this.destUrl = xhr.responseURL;
-                this.showDestPage();
+            this._loadPage(this.nextUrl).then(() => {
+                this._replaceDocument();
             });
         }
-    };
+    },
 
-    loadPage = (url, onLoad) => {
-        const parsedUrl = this.toAbsolutePath(url);
+    _loadPage(url) {
+        this.ee.emit("global", this.name + ".loading", url);
 
-        if (parsedUrl in this.cache || !isSameOrigin(parsedUrl)) return;
-
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", parsedUrl, true);
-        xhr.onload = () => {
-            if (xhr.status >= 200 && xhr.status < 400) {
-                this.cache[xhr.responseURL] = createDocument(xhr.responseText);
-                this.preloadStyles(this.cache[xhr.responseURL], () => {
-                    if (typeof onLoad == "function") {
-                        onLoad(xhr);
-                    }
-                });
-            } else {
-                this.onXHRError(xhr);
+        return kxhr(url, "get", null, {
+            onProgress(e) {
+                const loaded = e.loaded;
+                const total = e.total;
+                const progress = loaded < total ? loaded / total : 1;
+                this.ee.emit("global", this.name + ".progress", progress);
             }
-        };
-        xhr.onerror = () => this.onXHRError(xhr);
-        xhr.onprogress = this.onXHRProgress;
-        xhr.send();
-    };
+        })
+            .then((response) => {
+                const doc = createDocument(response);
+                return this.preloadStyles(doc);
+            })
+            .then((doc) => {
+                this.cache[url] = doc;
+                this.ee.emit("global", this.name + ".loaded");
+            })
+            .catch((e) => {
+                this.ee.emit("global", this.name + ".failed", e);
+                this.nextUrl = null;
+            })
+            .finally(() => {
+                this.ee.emit("global", this.name + ".completed");
+            });
+    },
 
-    onXHRError = (xhr) => {
-        this.destUrl = null;
-        const err = isJSON(xhr.responseText)
-            ? JSON.parse(xhr.responseText).err
-            : xhr.status;
-        this.dispatch("onPageLoadingError", { err });
-    };
+    _replaceDocument() {
+        const doc = this.cache[this.nextUrl];
 
-    onXHRProgress = (e) => {
-        const { loaded, total } = e;
-        const progress = loaded < total ? e.loaded / e.total : 1;
-        this.dispatch("onPageLoadingProgress", { progress });
-    };
-
-    preloadStyles = (doc, onLoad) => {
-        const stylesToLoad = $$('link[rel="stylesheet"]', doc.documentElement);
-        let completed = 0;
-        stylesToLoad.forEach((link) => {
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", link.href, true);
-            xhr.onload = () => {
-                if (xhr.status >= 200 && xhr.status < 400) {
-                    const styleTag = document.createElement("style");
-                    styleTag.textContent = xhr.responseText;
-                    replaceNode(styleTag, link);
-                    if (
-                        ++completed == stylesToLoad.length &&
-                        typeof onLoad == "function"
-                    ) {
-                        onLoad();
-                    }
-                } else {
-                    this.onXHRError(xhr);
-                }
-            };
-            xhr.onerror = () => this.onXHRError(xhr);
-            xhr.send();
-        });
-    };
-
-    showDestPage = () => {
-        const doc = this.cache[this.destUrl];
-
-        if (document.documentElement != doc.documentElement) {
+        if (doc && doc.documentElement != document.documentElement) {
             const eBeforePageHide = new Event("beforepagehide");
             const eBeforePageShow = new Event("beforepageshow");
             const ePageHide = new Event("pagehide");
@@ -156,47 +196,35 @@ export default class PageContainer extends View {
             document.replaceChild(docToShow, docToHide);
 
             history[this.pushState ? "pushState" : "replaceState"](
-                { url: this.destUrl, from: this.currentUrl },
+                { url: this.nextUrl, prev: this.currentUrl },
                 "",
-                this.destUrl
+                this.nextUrl
             );
 
             if (!doc.loaded) {
-                for (let i = 0; i < doc.scriptsInHead.length; ++i) {
-                    document.head.appendChild(doc.scriptsInHead[i]);
-                }
+                each(doc.scriptsInHead, (script) => {
+                    document.head.appendChild(script);
+                });
 
-                for (let i = 0; i < doc.scriptsInBody.length; ++i) {
-                    document.body.appendChild(doc.scriptsInBody[i]);
-                }
+                each(doc.scriptsInBody, (script) => {
+                    document.body.appendChild(script);
+                });
 
                 doc.loaded = true;
             }
 
             docToHide.dispatchEvent(ePageHide);
             docToShow.dispatchEvent(ePageShow);
+
+            this._cleanUp();
         }
+    },
 
-        this.cleanUp();
-    };
+    _cleanUp() {
+        this.prevUrl = this.currentUrl;
+        this.currentUrl = this.nextUrl;
+        this.nextUrl = null;
+    }
+});
 
-    toAbsolutePath = (url) => {
-        let absPath;
-
-        if (/^https?:\/\//i.test(url)) {
-            absPath = url;
-        } else {
-            const link = document.createElement("a");
-            link.href = url;
-            absPath = link.href;
-        }
-
-        return absPath.replace(/#.*/, "");
-    };
-
-    cleanUp = () => {
-        this.lastUrl = this.currentUrl;
-        this.currentUrl = this.destUrl;
-        this.destUrl = null;
-    };
-}
+export default PageContainer;

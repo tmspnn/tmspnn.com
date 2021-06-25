@@ -1,70 +1,120 @@
-import immediatelyScrollTo from "@helpers/immediatelyScrollTo";
-import PageContainer from "@components/PageContainer";
-import PageController from "@components/PageController";
-import toast from "@components/toast/toast";
-import customSpinner from "@components/customSpinner";
+// External modules
+import { $ } from "k-dom";
+import { at, parseJSON, Klass, View } from "k-util";
+import kxhr from "k-xhr";
 
-/**
- * @property {string[]} prefetch
- * @property {object} data
- * @property {number} data.scrollTop
- * @property {PageController} ctrl
- * @method {(string|int) => void} go
- */
-export default class Page extends View {
-    prefetch = [];
+// Local modules
+import immediatelyScrollTo from "../helpers/immediatelyScrollTo";
+import PageContainer from "../components/PageContainer";
+import Ws from "../components/Ws";
+import Toast from "../components/Toast/Toast";
+import CustomSpinner from "../components/CustomSpinner";
 
-    data =
-        parseJSON(at($('script[type="application/json"'), "textContent")) || {};
+const assign = Object.assign;
 
-    ctrl = null;
+const Page = Klass(
+    {
+        blocked: false,
 
-    docElement = document.documentElement;
+        scrollTop: 9,
 
-    constructor(name) {
-        super(name, document.body);
-        this._name = "root";
+        ws: new Ws(),
 
-        // Child components
-        this.$toast = toast(name);
-        this.$customSpinner = customSpinner(name);
-        this.$pageContainer = window._pageContainer || new PageContainer();
+        data:
+            parseJSON(at($('script[type="application/json"'), "textContent")) ||
+            {},
 
-        // UI logic
-        setTimeout(() => {
-            this.$pageContainer.captureLinks();
+        constructor() {
+            this.Super();
 
-            // Fetch styles of the current page
-            this.$pageContainer.preloadStyles(document);
+            setTimeout(() => {
+                this.$toast = new Toast();
+                this.$customSpinner = new CustomSpinner();
+                this.$container = window._container || new PageContainer();
 
-            // Prefetch related pages
-            each(this.prefetch, (p) => this.$pageContainer.loadPage(p));
+                this.$container.preloadStyles(document);
+                this.$container.captureLinks();
 
-            // Event listeners
-            const container = $(".page-container");
+                this.rootDiv = $("#root");
 
-            document.documentElement.on("pageshow", () => {
-                if (this.data.scrollTop > 0) {
-                    immediatelyScrollTo(container, this.data.scrollTop | 0);
-                }
+                document.documentElement.on("pageshow", () => {
+                    if (this.scrollTop > 0) {
+                        immediatelyScrollTo(rootDiv, this.scrollTop | 0);
+                    }
+                });
+
+                rootDiv.on("scroll", () => {
+                    this.scrollTop = rootDiv.scrollTop;
+                });
             });
+        },
 
-            container.on("scroll", () => {
-                this.data.scrollTop = container.scrollTop;
-            });
-        });
+        toast(text) {
+            this.dispatch("toast.show", text);
+        },
 
-        // Business logic
-        this.ctrl = new PageController(name, this.data);
+        block() {
+            this.blocked = true;
+            this.dispatch("customSpinner.show");
+        },
 
-        this.ctrl.onWsMessage = console.log;
-    }
+        unblock() {
+            this.blocked = false;
+            this.dispatch("customSpinner.hide");
+        },
 
-    go = (urlOrStep) => {
-        if (typeof urlOrStep == "string") {
-            this.$pageContainer.toPage(urlOrStep);
-        } else if (typeof urlOrStep == "number") {
-            history.go(urlOrStep);
+        getJSON(url) {
+            if (this.blocked) return;
+            this.block();
+            return kxhr(url)
+                .then((res) => parseJSON(res))
+                .catch((e) => this.handleException(e))
+                .finally(() => this.unblock());
+        },
+
+        postJSON(url, data, options) {
+            if (this.blocked) return;
+            this.block();
+            return kxhr(
+                url,
+                "post",
+                JSON.stringify(data),
+                assign({ contentType: "application/json" }, options)
+            )
+                .then((res) => parseJSON(res))
+                .catch((e) => this.handleException(e))
+                .finally(() => this.unblock());
+        },
+
+        putJSON(url, data, options) {
+            if (this.blocked) return;
+            this.block();
+            return kxhr(
+                url,
+                "put",
+                JSON.stringify(data),
+                assign({ contentType: "application/json" }, options)
+            )
+                .then((res) => parseJSON(res))
+                .catch((e) => this.handleException(e))
+                .finally(() => this.unblock());
+        },
+
+        del(url) {
+            if (this.blocked) return;
+            this.block();
+            return kxhr(url, "delete")
+                .then((res) => parseJSON(res))
+                .catch((e) => this.handleException(e))
+                .finally(() => this.unblock());
+        },
+
+        handleException(e) {
+            const msg = at(parseJSON(e.message), "err") || e.message;
+            this.toast(msg || "服务器繁忙, 请稍后再试.");
         }
-    };
-}
+    },
+    View
+);
+
+export default Page;

@@ -7,19 +7,19 @@ local latest_articles = ctx.data.latest_articles
     <section class="search">
         <div class="container">
             <% render("views.icons.search") %>
-            <input type="text" placeholder="<%= search_placeholder %>" data-ref="input" />
+            <input type="text" placeholder="<%= search_placeholder %>" data-on="input: onInput" data-ref="input" />
             <% render("views.icons.x") %>
         </div>
-        <div class="tips-empty" data-ref="tipsEmpty" hidden>
+        <div class="tips-empty" data-:="hidden: tipsEmptyHidden" hidden>
             <% render("views.icons.emoji_sad") %>
             <b>搜不到任何东西...</b>
         </div>
-        <ul data-ref="result" hidden></ul>
-        <div class="tips-all-loaded" data-ref="tipsAllLoaded" hidden>
+        <ul data-:="hidden: resultListHidden" hidden></ul>
+        <div class="tips-all-loaded" data-:="hidden: tipsAllLoadedHidden" hidden>
             <% render("views.icons.emoji_happy") %>
             <b>已显示全部结果.</b>
         </div>
-        <button class="more" data-ref="moreResultBtn" hidden>
+        <button class="more" data-:="hidden: moreResultBtnHidden" data-on="click: onMoreResultBtnClick" hidden>
             <% render("views.icons.chevron_double_right") %> 更多
         </button>
     </section>

@@ -50,3 +50,4 @@ build
 
 # Frontend dependency repo
 node_modules
+package-lock.json

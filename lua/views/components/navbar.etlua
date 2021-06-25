@@ -1,12 +1,15 @@
+<%
+local title = title or "一刻阅读"
+%>
 <nav class="-navbar">
     <div class="left">
-        <div class="btn back" data-ref="backBtn" hidden>
+        <div class="btn back" data-:="hidden: backBtnHidden" data-on="click: clickBackBtn" hidden>
             <% render("views/icons/chevron_left") %>
         </div>
     </div>
-    <div class="center"><%= ctx.page_title %></div>
+    <div class="center"><%= title %></div>
     <div class="right">
-        <div class="btn share" data-ref="shareBtn" hidden>
+        <div class="btn share" data-:="hidden: shareBtnHidden" data-on="click: clickShareBtn" hidden>
             <% render("views/icons/share") %>
         </div>
     </div>

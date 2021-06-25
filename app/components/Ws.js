@@ -1,82 +1,92 @@
+import { Klass } from "k-util";
+
 const { CONNECTING, OPEN } = WebSocket;
 
-/**
- * @property {string} origin
- * @property {string} url
- * @property {string} state -- syncing | connecting | online | offline
- * @property {string} message
- * @property {number} timeoutId
- * @property {number} intervalId
- * @property {number} createdAt
- */
-export default class Ws {
-    origin = "https://tmspnn.com";
+const Ws = Klass({
+    origin: location.origin,
 
-    url = "wss://tmspnn.com/ws/";
+    url: "wss://tmspnn.com/ws/",
 
-    state = null;
+    stata: null, // syncing | connecting | online | offline
 
-    message = null;
+    message: null,
 
-    timeoutId = null;
+    timeoutId: null,
 
-    intervalId = null;
+    intervalId: null,
 
-    createdAt = Date.now();
+    createdAt: Date.now(),
 
     constructor() {
-        // Process messages from other tabs.
+        // Process messages from other tabs and documents.
         window.addEventListener("storage", () => {
             const state = localStorage.getItem("ws.state");
-            const msg = localStorage.getItem("ws.message");
+            const message = localStorage.getItem("ws.message");
 
-            if (this.state != state) {
-                this.onStateChange(state);
+            if (state != this.state) {
+                this.onState(state);
             }
 
-            if (this.message != msg && typeof this.onMessage == "function") {
-                this.onMessage(parseJSON(msg));
-                this.message = msg;
+            if (
+                message != this.message &&
+                typeof this.onMessage == "function"
+            ) {
+                this.onMessage(parseJSON(message));
+                this.message = message;
             }
         });
 
         this.sync();
 
-        // Synchronize every minute
-        setInterval(this.sync, 60000);
-    }
+        // Synchronize state for every minute
+        setInterval(() => this.sync(), 60000);
+    },
 
-    sync = () => {
+    sync() {
         /**
          * If there's no active connection, create one.
          * Could be cancelled if there is any active connection in other tabs.
          */
         if (!this.isOnline() && navigator.onLine) {
-            this.timeoutId = setTimeout(this.connect, 500);
-            localStorage.setItem("ws.state", "syncing");
+            this.timeoutId = setTimeout(() => this.connect(), 500);
+            this.state = "syncing";
+            this.broadcastState("syncing");
         }
-    };
+    },
 
-    isOnline = () => {
+    /**
+     * @param {string} msg
+     */
+    broadcast(msg) {
+        localStorage.setItem("ws.message", msg);
+        window.dispatchEvent(new Event("storage"));
+    },
+
+    /**
+     * @param {string} state
+     */
+    broadcastState(state) {
+        localStorage.setItem("ws.state", state);
+        window.dispatchEvent(new Event("storage"));
+    },
+
+    isOnLine() {
         return (
             window._ws &&
             (window._ws.readyState == CONNECTING ||
                 window._ws.readyState == OPEN)
         );
-    };
+    },
 
-    onStateChange = (state) => {
+    onState(state) {
         switch (state) {
             case "syncing":
                 if (this.isOnline()) {
                     this.state = "online";
-                    localStorage.setItem("ws.state", "online");
-                } else {
-                    this.state = "syncing";
+                    this.broadcastState("online");
                 }
                 break;
             case "connecting":
-                this.state = "connecting";
                 clearTimeout(this.timeoutId);
                 break;
             case "online":
@@ -89,11 +99,10 @@ export default class Ws {
             default:
                 break;
         }
-    };
+    },
 
-    connect = () => {
-        localStorage.setItem("ws.state", "connecting");
-        window.dispatchEvent(new Event("storage"));
+    connect() {
+        this.broadcastState("connecting");
 
         if (window._ws) {
             window._ws.close();
@@ -103,27 +112,29 @@ export default class Ws {
         window._ws = new WebSocket(this.url);
 
         window._ws.onopen = () => {
-            window._ws.send(JSON.stringify({ type: "ping" }));
+            window._ws.send("ping");
 
             /**
-             * Timeout is one minute, keep then connection alive with
+             * Timeout is one minute, keep the connection alive with
              * a interval ping every 55 seconds
              */
             this.intervalId = setInterval(() => {
                 if (this.isOnline()) {
-                    window._ws.send(JSON.stringify({ type: "ping" }));
+                    window._ws.send("ping");
                 }
             }, 55000);
 
             this.state = "online";
-            localStorage.setItem("ws.state", "online");
         };
 
         window._ws.onmessage = (e) => {
             const msg = e.data;
-            localStorage.setItem("ws.state", "online");
-            localStorage.setItem("ws.message", msg);
-            window.dispatchEvent(new Event("storage"));
+
+            this.state = "online";
+            this.broadcastState("online");
+
+            this.message = msg;
+            this.broadcast(msg);
         };
 
         window._ws.onerror = (e) => {
@@ -134,6 +145,9 @@ export default class Ws {
 
         window._ws.onclose = () => {
             this.state = "offline";
+            clearInterval(this.intervalId);
         };
-    };
-}
+    }
+});
+
+export default Ws;
