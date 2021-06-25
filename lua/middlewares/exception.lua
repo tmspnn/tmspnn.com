@@ -2,7 +2,7 @@
 local ngx = require "ngx"
 
 -- Local modules
-local error_messages = require "models.error_messages"
+local error_messages = require "controllers.error_messages"
 
 -- Implementation
 local exception = {}

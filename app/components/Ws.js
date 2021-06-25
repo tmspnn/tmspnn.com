@@ -1,4 +1,4 @@
-import { Klass } from "k-util";
+import { Klass, parseJSON } from "k-util";
 
 const { CONNECTING, OPEN } = WebSocket;
 
@@ -70,7 +70,7 @@ const Ws = Klass({
         window.dispatchEvent(new Event("storage"));
     },
 
-    isOnLine() {
+    isOnline() {
         return (
             window._ws &&
             (window._ws.readyState == CONNECTING ||

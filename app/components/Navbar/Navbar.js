@@ -21,11 +21,11 @@ const Navbar = Klass(
             this.element = element;
             this.bindData();
 
-            if (options.leftBtn) {
+            if (options && options.leftBtn) {
                 this.setData(options.leftBtn + "BtnHidden", false);
             }
 
-            if (options.rightBtn) {
+            if (options && options.rightBtn) {
                 this.setData(options.rightBtn + "BtnHidden", false);
             }
         },

@@ -18,7 +18,7 @@ const Page = Klass(
 
         scrollTop: 9,
 
-        ws: new Ws(),
+        ws: null,
 
         data:
             parseJSON(at($('script[type="application/json"'), "textContent")) ||
@@ -26,6 +26,10 @@ const Page = Klass(
 
         constructor() {
             this.Super();
+
+            if (this.data.uid) {
+                this.ws = new Ws();
+            }
 
             setTimeout(() => {
                 this.$toast = new Toast();
@@ -35,16 +39,15 @@ const Page = Klass(
                 this.$container.preloadStyles(document);
                 this.$container.captureLinks();
 
-                this.rootDiv = $("#root");
+                this.refs.rootDiv = $("#root");
+                this.refs.rootDiv.on("scroll", () => {
+                    this.scrollTop = rootDiv.scrollTop;
+                });
 
                 document.documentElement.on("pageshow", () => {
                     if (this.scrollTop > 0) {
                         immediatelyScrollTo(rootDiv, this.scrollTop | 0);
                     }
-                });
-
-                rootDiv.on("scroll", () => {
-                    this.scrollTop = rootDiv.scrollTop;
                 });
             });
         },

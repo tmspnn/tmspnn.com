@@ -6,10 +6,8 @@ local respond_to = require("lapis.application").respond_to
 local fmt = string.format
 
 -- Local modules
-local Article = require "models.Article"
-local Conversation = require "models.Conversation"
+local index = require "controllers.page_ctrl.index"
 local empty = require "util.empty"
-local User = require "models.User"
 
 -- Implementation
 local assets_prefix = ""
@@ -46,23 +44,6 @@ end
 
 local function sign_in_required(app)
     if not app.ctx.uid then app:write({redirect_to = "/sign-in"}) end
-end
-
-local function index(app)
-    local ctx = app.ctx
-    local search_placeholder = Article:get_search_placeholder()
-    local recommended_tags = Article:get_recommended_tags()
-    local latest_articles = Article:get_latest()
-    ctx.data = {
-        uid = ctx.uid,
-        search_placeholder = search_placeholder,
-        recommended_tags = recommended_tags,
-        latest_articles = latest_articles
-    }
-    ctx.page_title = "一刻阅读 | 首页"
-    ctx.tags_in_head = {css_tag("index")}
-    ctx.tags_in_body = {json_tag(ctx.data), js_tag("index")}
-    return {render = "pages.index"}
 end
 
 local function trending(app)

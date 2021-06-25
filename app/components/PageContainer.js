@@ -68,7 +68,7 @@ const PageContainer = Klass({
 
     pushState: false,
 
-    ee = window._ee,
+    ee: window._ee,
 
     constructor() {
         if (!window._container) {
@@ -105,7 +105,7 @@ const PageContainer = Klass({
 
         return Promise.all(
             stylesToLoad.map((link) => {
-                xhr(link.href).then((response) => {
+                kxhr(link.href).then((response) => {
                     const styleTag = document.createElement("style");
                     styleTag.textContent = response;
                     replaceNode(styleTag, link);
