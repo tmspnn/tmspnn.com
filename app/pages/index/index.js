@@ -71,9 +71,16 @@ const Index = Klass(
             }
         },
 
-        onMoreResultBtnClick() {},
+        onMoreResultBtnClick() {
+            if (this.lastSearchText) {
+                this.go("/q?" + qs.stringify({ text: this.lastSearchText }));
+            }
+        },
 
-        onClearBtnClick() {},
+        onClearBtnClick() {
+            this.refs.input.value = "";
+            this.refs.input.dispatchEvent(new Event("input"));
+        },
 
         search(text) {
             if (this.cachedResult[text]) {

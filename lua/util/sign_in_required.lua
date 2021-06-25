@@ -1,8 +1,8 @@
 -- @param {boolean} options.redirect
 -- @param {string} options.url
 local function sign_in_required(options)
-    local redirect = options.redirect or false
-    local url = options.url or "/sign-in"
+    local redirect = (options and options.redirect) or false
+    local url = (options and options.url) or "/sign-in"
 
     return function(app)
         if app.ctx.uid then return end

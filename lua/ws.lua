@@ -6,7 +6,6 @@ local PG = require "services.PG"
 local server = require "resty.websocket.server"
 
 -- Local modules
-local each = require "util.each"
 local redis_client = require "services.redis_client"
 local unescape = require "util.unescape"
 

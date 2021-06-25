@@ -1,5 +1,5 @@
 // External modules
-import { $$, replaceNode } from "k-dom";
+import { $$, clearNode, replaceNode } from "k-dom";
 import { each, Klass } from "k-util";
 import kxhr from "k-xhr";
 
@@ -8,6 +8,19 @@ function isSameOrigin(url1, url2) {
         new URL(url1, location.href).origin ==
         new URL(url2, location.href).origin
     );
+}
+
+function cloneScript(script) {
+    const cloned = document.createElement("script");
+    if (script.type) {
+        cloned.type = script.type;
+    }
+    if (script.src) {
+        cloned.src = script.src;
+    } else {
+        cloned.textContent = script.textContent;
+    }
+    return cloned;
 }
 
 function createDocument(html) {
@@ -26,7 +39,7 @@ function createDocument(html) {
     for (let i = 0; i < elementsInHead.length; ++i) {
         const el = elementsInHead[i];
         if (el instanceof HTMLScriptElement) {
-            scriptsInHead.push(cloneScriptElement(el));
+            scriptsInHead.push(cloneScript(el));
         } else {
             const clonedEl = doc.importNode(el, true);
             doc.head.appendChild(clonedEl);
@@ -40,7 +53,7 @@ function createDocument(html) {
     for (let i = 0; i < elementsInBody.length; ++i) {
         const el = elementsInBody[i];
         if (el instanceof HTMLScriptElement) {
-            scriptsInBody.push(cloneScriptElement(el));
+            scriptsInBody.push(cloneScript(el));
         } else {
             const clonedEl = doc.importNode(el, true);
             doc.body.appendChild(clonedEl);
@@ -105,7 +118,7 @@ const PageContainer = Klass({
 
         return Promise.all(
             stylesToLoad.map((link) => {
-                kxhr(link.href).then((response) => {
+                return kxhr(link.href).then((response) => {
                     const styleTag = document.createElement("style");
                     styleTag.textContent = response;
                     replaceNode(styleTag, link);
@@ -155,7 +168,7 @@ const PageContainer = Klass({
         this.ee.emit("global", this.name + ".loading", url);
 
         return kxhr(url, "get", null, {
-            onProgress(e) {
+            onProgress: (e) => {
                 const loaded = e.loaded;
                 const total = e.total;
                 const progress = loaded < total ? loaded / total : 1;

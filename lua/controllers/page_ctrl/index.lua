@@ -1,7 +1,7 @@
 -- Local modules and aliases
 local PG = require "services.PG"
 local redis_client = require "services.redis_client"
-local tags = require "controllers.page_ctrl.tags"
+local tags = require "util.tags"
 
 local function get_search_placeholder()
     local client = redis_client:new()

@@ -40,8 +40,8 @@ const Page = Klass(
                 this.$container.captureLinks();
 
                 this.refs.rootDiv = $("#root");
-                this.refs.rootDiv.on("scroll", () => {
-                    this.scrollTop = rootDiv.scrollTop;
+                this.refs.rootDiv.on("scroll", (e) => {
+                    this.scrollTop = e.currentTarget.scrollTop;
                 });
 
                 document.documentElement.on("pageshow", () => {

@@ -2,12 +2,11 @@
 local cjson = require "cjson"
 local respond_to = require("lapis.application").respond_to
 
--- Aliases
-local fmt = string.format
-
--- Local modules
+-- Local modules and aliases
 local index = require "controllers.page_ctrl.index"
+local trending = require "controllers.page_ctrl.trending"
 local empty = require "util.empty"
+local fmt = string.format
 
 -- Implementation
 local assets_prefix = ""
@@ -44,17 +43,6 @@ end
 
 local function sign_in_required(app)
     if not app.ctx.uid then app:write({redirect_to = "/sign-in"}) end
-end
-
-local function trending(app)
-    local ctx = app.ctx
-    local articles_7d = Article:get_hot_articles_7d()
-    local authors_7d = User:get_hot_authors_7d()
-    ctx.data = {articles_7d = articles_7d, authors_7d = authors_7d}
-    ctx.page_title = "一刻阅读 | 排行"
-    ctx.tags_in_head = {css_tag("trending")}
-    ctx.tags_in_body = {json_tag(ctx.data), js_tag("trending")}
-    return {render = "pages.trending"}
 end
 
 local function article(app)
