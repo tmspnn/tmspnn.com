@@ -1,6 +1,6 @@
 <%
 local reverse = require "util.reverse"
-local extend  = require "util.extend"
+local assign = require "util.assign"
 
 local conv = conversation
 local page_title = ctx.page_title
@@ -10,7 +10,7 @@ local uid = ctx.data.uid
 <div class="page-container">
     <% for _, m in ipairs(messages) do %>
     <% render("views.components.message",
-        extend(m, {sent_by_self = m.created_by == uid})) %>
+        assign(m, {sent_by_self = m.created_by == uid})) %>
     <% end %>
 </div>
 <% render("views.components.navbar", {title = page_title}) %>

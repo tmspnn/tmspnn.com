@@ -1,11 +1,12 @@
 // External modules
+import { $ } from "k-dom";
 import { Klass } from "k-util";
 import "highlight.js/styles/github.css";
 import hljs from "highlight.js";
 
 // Local modules
-import "@components/feed.scss";
 import "./article.scss";
+
 import Page from "@components/Page";
 import navbar from "@components/navbar/navbar";
 import ratingBar from "./ratingBar";

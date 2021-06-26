@@ -83,6 +83,8 @@ const PageContainer = Klass({
 
     ee: window._ee,
 
+    observer: null,
+
     constructor() {
         if (!window._container) {
             this.cache[location.href] = {
@@ -99,18 +101,34 @@ const PageContainer = Klass({
             window.on("popstate", this._onPopState.bind(this));
             window._container = this;
         }
-    },
 
-    captureLinks() {
-        const container = window._container;
-
-        each($$("a"), (link) => {
-            if (link.hasAttribute("href")) {
-                link.setAttribute("data-href", link.href);
-                link.removeAttribute("href");
-                link.on("click", container._onLinkClick.bind(container));
+        this.observer = new MutationObserver((mutationsList) => {
+            for (const mutation of mutationsList) {
+                for (const node of mutation.addedNodes) {
+                    if (
+                        node instanceof HTMLAnchorElement &&
+                        node.hasAttribute("href")
+                    ) {
+                        window._container.captureLinks(node);
+                    }
+                }
             }
         });
+
+        this.observer.observe(document.body, { childList: true });
+    },
+
+    captureLinks(el) {
+        const container = window._container;
+        const links = $$("a[href]", el || document.body);
+
+        if (el instanceof HTMLAnchorElement) links.push(el);
+
+        for (const link of links) {
+            link.setAttribute("data-href", link.href);
+            link.removeAttribute("href");
+            link.on("click", container._onLinkClick.bind(container));
+        }
     },
 
     preloadStyles(doc) {

@@ -1,16 +1,9 @@
 <a class="-conversation-item" data-:="href: link" data-on="click: onClick">
     <div class="dot" data-:="hidden: dotHidden"></div>
-    <div
-        class="profiles"
-        data-:="*setProfiles: profiles"
-        data-ref="profilesDiv"
-    ></div>
+    <div class="profiles" data-:="@setProfiles: profiles" data-ref="profilesDiv"></div>
     <div class="meta">
         <div class="title" data-:="textContent: title"></div>
-        <div
-            class="latest-message"
-            data-:="textContent: last_message.text"
-        ></div>
+        <div class="latest-message" data-:="textContent: last_message.text"></div>
     </div>
     <div class="state">
         <div class="muted" data-:="hidden: mutedHidden">已静音</div>
