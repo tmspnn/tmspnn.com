@@ -21,7 +21,7 @@ local function get_hot_articles_7d()
             updated_at
         from  "article"
         where created_at > now() - interval '7 days'
-        order by fame desc limit 20
+        order by fame desc limit 50
     ]])
 end
 
@@ -40,7 +40,7 @@ local function get_hot_authors_7d()
             followers_count
         from  "user"
         where created_at > now() - interval '7 days'
-        order by fame desc limit 20
+        order by fame desc limit 50
     ]])
 end
 

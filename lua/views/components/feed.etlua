@@ -13,13 +13,15 @@ local article_link = "/articles/" .. id
 local author_link = "/users/" .. created_by
 local author = author
 local title = title
-local desc = desc
+local summary = summary
 local cover = cover
 local hide_cover = not cover or #cover == 0
 local rating = fmt("%.1f", rating)
 local created_at = date(created_at):fmt("%m/%d %H:%M")
 local wordcount = wordcount
 local pageview = pageview
+
+-- Computed
 local has_profile = author_profile and #author_profile > 0
 local profile_bg = has_profile
     and fmt("url(%s)", author_profile)
@@ -27,15 +29,13 @@ local profile_bg = has_profile
 local profile_text = has_profile and "" or utf8.sub(author, 1, 1)
 %>
 <section class="-feed">
-    <a href="<%= article_link %>" class="cover"
-        style="background-image: url(<%= cover %>)"
+    <a href="<%= article_link %>" class="cover" style="background-image: url(<%= cover %>)"
         <% if hide_cover then %>hidden<% end %>>
     </a>
     <div class="content">
         <div class="head">
             <a href="<%= author_link %>">
-                <div class="profile"
-                    style="background-image: <%= profile_bg %>">
+                <div class="profile" style="background-image: <%= profile_bg %>">
                     <%= profile_text %>
                 </div>
             </a>
@@ -50,7 +50,7 @@ local profile_text = has_profile and "" or utf8.sub(author, 1, 1)
         <h1>
             <a href="<%= article_link %>"><%= title %></a>
         </h1>
-        <div class="desc"><a href="<%= article_link %>"><%= desc %></a></div>
+        <div class="summary"><a href="<%= article_link %>"><%= summary %></a></div>
         <div class="meta">
             <% render("views.icons.star") %>
             <span><%= rating %></span>

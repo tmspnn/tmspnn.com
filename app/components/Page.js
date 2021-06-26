@@ -46,7 +46,10 @@ const Page = Klass(
 
                 document.documentElement.on("pageshow", () => {
                     if (this.scrollTop > 0) {
-                        immediatelyScrollTo(rootDiv, this.scrollTop | 0);
+                        immediatelyScrollTo(
+                            this.refs.rootDiv,
+                            this.scrollTop | 0
+                        );
                     }
                 });
             });

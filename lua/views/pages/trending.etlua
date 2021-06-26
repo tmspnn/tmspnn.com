@@ -1,8 +1,8 @@
 <%
-local articles_7d = ctx.data.articles_7d or {}
-local authors_7d = ctx.data.authors_7d or {}
+local articles_7d = ctx.data.articles_7d
+local authors_7d = ctx.data.authors_7d
 %>
-<div class="page-container">
+<div id="root">
     <h2>
         <% render("views.icons.users") %>
         7日热门作者
@@ -22,5 +22,5 @@ local authors_7d = ctx.data.authors_7d or {}
         <% end %>
     </div>
 </div>
-<% render("views.components.navbar", {title = ctx.data.title}) %>
+<% render("views.components.navbar", {title = ctx.page_title}) %>
 <% render("views.components.tabbar", {active_tab = "trending"}) %>

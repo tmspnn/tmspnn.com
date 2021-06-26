@@ -34,5 +34,5 @@ local latest_articles = ctx.data.latest_articles
         <% end %>
     </section>
 </div>
-<% render("views.components.navbar", { title = ctx.page_title }) %>
-<% render("views.components.tabbar", { active_tab = "home" }) %>
+<% render("views.components.navbar", {title = ctx.page_title}) %>
+<% render("views.components.tabbar", {active_tab = "home"}) %>

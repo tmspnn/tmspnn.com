@@ -51,7 +51,7 @@ create table "article" (
     wordcount smallint not null,
     pageview integer not null default 0,
     content text not null,
-    -- 0: normal, 1: comment_unavailable, -1: removed
+    -- 0: normal, 1: comment_unavailable, 2: abuse_reported, -1: removed
     state smallint not null default 0,
     obj jsonb not null default '{}' :: jsonb,
     ts_vector tsvector not null default to_tsvector(''),

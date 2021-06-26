@@ -10,6 +10,8 @@ const Navbar = Klass(
 
         data: { backBtnHidden: true, shareBtnHidden: true },
 
+        element: null,
+
         /**
          * @param {HTMLElement} element
          * @param {Object} options

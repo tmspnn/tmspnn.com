@@ -2,7 +2,7 @@
 -- External modules
 local cjson = require "cjson"
 
--- Aliases
+-- Local modules and aliases
 local fmt = string.format
 
 -- Data
@@ -13,15 +13,17 @@ local articles = ctx.data.articles
 -- Computed props
 local fame = math.floor(au.fame)
 
-local bg_image = au.bg_image
-    and fmt("url(%s)", au.bg_image)
+local bg_image = au.obj.bg_image
+    and fmt("url(%s)", au.obj.bg_image)
     or "linear-gradient(135deg, var(--grey), var(--black))"
 
 local profile_url = #au.profile > 0
     and fmt("url(%s)", au.profile)
     or "linear-gradient(135deg, var(--grey), var(--black))"
 
-local desc = #au.desc > 0 and au.desc or "这个人很懒, 什么都没有写..."
+local desc = #au.description > 0
+    and au.description
+    or "这个人很懒, 什么都没有写..."
 %>
 <div class="page-container">
     <div class="bg" style="background-image: <%= bg_image %>"></div>

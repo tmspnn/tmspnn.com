@@ -1,4 +1,5 @@
 // External modules
+import { Klass } from "k-util";
 import "highlight.js/styles/github.css";
 import hljs from "highlight.js";
 

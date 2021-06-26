@@ -1,19 +1,35 @@
+// External modules
+import { $ } from "k-dom";
+import { Klass } from "k-util";
+
+// Local modules
 import "./trending.scss";
-// import Page from "@components/Page";
-// import navbar from "@components/navbar/navbar";
-// import tabbar from "@components/tabbar/tabbar";
-// import "@components/feed.scss";
-// import "@components/authorCard.scss";
+import "../../components/tabbar.scss";
+import "../../components/feed.scss";
+import "../../components/authorCard.scss";
+import Page from "../../components/Page";
+import Navbar from "../../components/Navbar/Navbar";
 
-// function trending() {
-//     const pageName = "trending";
+const Trending = Klass(
+    {
+        constructor() {
+            this.Super();
+            this.element = $("#root");
 
-//     const root = new Page(pageName);
-//     root.prefetch = ["/", "/trending", "/messages", "/me"];
+            // Child components
+            this.$navbar = new Navbar($(".-navbar"));
 
-//     // Child components
-//     root.$navbar = navbar(pageName, $(".-navbar"), {});
-//     root.$tabbar = tabbar(pageName, $(".-tabbar"), { activeTab: pageName });
-// }
+            // WebSocket
+            if (this.ws) {
+                this.ws.onMessage = this.onWsMessage.bind(this);
+            }
+        },
 
-// trending();
+        onWsMessage(msg) {
+            console.log("Trending.onWsMessage: ", msg);
+        }
+    },
+    Page
+);
+
+new Trending();

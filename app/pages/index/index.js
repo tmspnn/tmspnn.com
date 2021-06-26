@@ -20,6 +20,8 @@ const Index = Klass(
 
         constructor() {
             this.Super();
+
+            // Data binding
             this.element = $("#root");
             this.bindData({
                 tipsEmptyHidden: true,
@@ -35,7 +37,10 @@ const Index = Klass(
             this.refs.clearBtn = $(".search > .container > svg:last-child");
             this.refs.clearBtn.on("click", () => this.onClearBtnClick());
 
-            this.ws.onMessage = this.onWsMessage.bind(this);
+            // WebSocket
+            if (this.ws) {
+                this.ws.onMessage = this.onWsMessage.bind(this);
+            }
         },
 
         onWsMessage(msg) {

@@ -18,7 +18,7 @@ local desc = (desc and #desc > 0)
     and desc
     or fmt([[%s篇文档, %s声望]], articles_count, math.floor(fame))
 
--- Computed props
+-- Computed
 local author_link = "/users/" .. id
 local has_profile = profile and #profile > 0
 local profile_bg = has_profile
@@ -27,8 +27,7 @@ local profile_bg = has_profile
 local profile_text = has_profile and "" or utf8.sub(nickname, 1, 1)
 %>
 <a class="-author-card" href="<%= author_link %>">
-    <div class="profile"
-        style="background-image: <%= profile_bg %>">
+    <div class="profile" style="background-image: <%= profile_bg %>">
         <%= profile_text %>
     </div>
     <div class="meta">
