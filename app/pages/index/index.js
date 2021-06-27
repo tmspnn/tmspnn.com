@@ -23,7 +23,7 @@ const Index = Klass(
 
             // Data binding
             this.element = $("#root");
-            this.bindData({
+            this.setData({
                 tipsEmptyHidden: true,
                 resultListHidden: true,
                 tipsAllLoadedHidden: true,

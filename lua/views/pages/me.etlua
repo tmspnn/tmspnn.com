@@ -20,9 +20,11 @@ local profile_url = #au.profile > 0
     and fmt("url(%s)", au.profile)
     or "linear-gradient(135deg, var(--grey), var(--black))"
 
-local desc = #au.desc > 0 and au.desc or "这个人很懒, 什么都没有写..."
+local description = #au.description > 0
+    and au.description
+    or "这个人很懒, 什么都没有写..."
 %>
-<div class="page-container">
+<div id="root">
     <div class="bg" style="background-image: <%= bg_image %>"></div>
     <div class="row">
         <div class="profile" style="background-image: <%= profile_url %>"></div>
@@ -34,7 +36,7 @@ local desc = #au.desc > 0 and au.desc or "这个人很懒, 什么都没有写...
             <span>声望 <b><%= fame %></b></span>
         </div>
     </div>
-    <blockquote><%= desc %></blockquote>
+    <blockquote><%= description %></blockquote>
     <ul class="btns">
         <li class="followers">
             <a href="/users/<%= au.id %>/followers">
@@ -56,9 +58,10 @@ local desc = #au.desc > 0 and au.desc or "这个人很懒, 什么都没有写...
         </li>
     </ul>
     <section class="articles">
-        <% for _, fd in ipairs(articles) do %>
+        <% for _, fd in ipairs(au.articles) do %>
         <% render("views.components.feed", fd) %>
         <% end %>
     </section>
 </div>
 <% render("views.components.navbar", {title = ctx.page_title}) %>
+<% render("views.components.tabbar", {active_tab = "me"}) %>

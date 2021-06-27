@@ -1,14 +1,34 @@
+// External modules
+import { $ } from "k-dom";
+import { Klass } from "k-util";
+
+// Local modules
 import "./me.scss";
-import Page from "@components/Page";
-import navbar from "@components/navbar/navbar";
-import tabbar from "@components/tabbar/tabbar";
+import "../../components/tabbar.scss";
+import "../../components/feed.scss";
+import Page from "../../components/Page";
+import Navbar from "../../components/Navbar/Navbar";
 
-function me() {
-    const pageName = "me";
+const Me = Klass(
+    {
+        constructor() {
+            this.Super();
+            this.element = $("#root");
 
-    const root = new Page(pageName);
-    root.$navbar = navbar(pageName, $(".-navbar"), {});
-    root.$tabbar = tabbar(pageName, $(".-tabbar"), { activeTab: pageName });
-}
+            // Child components
+            this.$navbar = new Navbar($(".-navbar"));
 
-me();
+            // WebSocket
+            if (this.ws) {
+                this.ws.onMessage = this.onWsMessage.bind(this);
+            }
+        },
+
+        onWsMessage(msg) {
+            console.log("Me.onWsMessage: ", msg);
+        }
+    },
+    Page
+);
+
+new Me();

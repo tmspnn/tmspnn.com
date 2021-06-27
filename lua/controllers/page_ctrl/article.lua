@@ -13,22 +13,22 @@ local tags = require "util.tags"
 local function get_article_by_id(id)
     return PG.query([[
         select
-            id
-            created_by
-            rating
-            weight
-            fame
-            cover
-            title
-            author
-            author_profile
-            summary
-            wordcount
-            pageview
-            content
-            state
-            obj
-            created_at
+            id,
+            created_by,
+            rating,
+            weight,
+            fame,
+            cover,
+            title,
+            author,
+            author_profile,
+            summary,
+            wordcount,
+            pageview,
+            content,
+            state,
+            obj,
+            created_at,
             updated_at
         from "article"
         where id = ?
@@ -93,7 +93,7 @@ local function article(app)
 
     if (ctx.uid) then
         local advocated = get_advocated(ctx.uid,
-                                        map(comments, lambda("c", "c.id")))
+                                        map(a.comments, lambda("c", "c.id")))
         local advocated_ids = map(advocated, lambda("c", "c.id"))
 
         each(a.comments, function(c)

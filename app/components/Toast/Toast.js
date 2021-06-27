@@ -19,7 +19,7 @@ const Toast = Klass(
         constructor() {
             this.Super();
             this.element = DOM(T);
-            this.bindData();
+            this.setData(this.data);
             this.listen();
             document.body.appendChild(this.element);
         },

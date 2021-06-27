@@ -15,15 +15,16 @@ const ConversationItem = Klass(
             this.Super();
             this.name = `conversation(${data.id})`;
             this.element = element || DOM(T);
-            this.data = assign(data, {
-                dotHidden: true,
-                mutedHidden: true,
-                lastUpdated: dayjs(data.last_message.created_at).format(
-                    "MM-DD HH:mm"
-                ),
-                link: "/conversations/" + data.id
-            });
-            this.bindData();
+            this.setData(
+                assign(data, {
+                    dotHidden: true,
+                    mutedHidden: true,
+                    lastUpdated: dayjs(data.last_message.created_at).format(
+                        "MM-DD HH:mm"
+                    ),
+                    link: "/conversations/" + data.id
+                })
+            );
             this.listen();
         },
 

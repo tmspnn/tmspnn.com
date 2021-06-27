@@ -24,6 +24,8 @@ const Page = Klass(
             parseJSON(at($('script[type="application/json"'), "textContent")) ||
             {},
 
+        refs: {},
+
         constructor() {
             this.Super();
 

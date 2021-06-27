@@ -14,14 +14,14 @@ const Navbar = Klass(
 
         /**
          * @param {HTMLElement} element
-         * @param {Object} options
+         * @param {Object?} options
          * @param {String?} options.leftBtn
          * @param {String?} options.rightBtn
          */
         constructor(element, options) {
             this.Super();
             this.element = element;
-            this.bindData();
+            this.setData(this.data);
 
             if (options && options.leftBtn) {
                 this.setData(options.leftBtn + "BtnHidden", false);

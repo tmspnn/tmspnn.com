@@ -24,7 +24,7 @@ const Conversations = Klass(
                 this.element.appendChild(
                     DocFrag(
                         ...this.data.conversations.map(
-                            (conv) => new ConversationItem(null, conv).item
+                            (conv) => new ConversationItem(null, conv).element
                         )
                     )
                 );
