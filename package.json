@@ -39,7 +39,6 @@
         "css-loader": "^5.2.6",
         "html-loader": "^2.1.2",
         "mini-css-extract-plugin": "^1.6.2",
-        "prettier": "^2.3.2",
         "sass": "^1.35.1",
         "sass-loader": "^12.1.0",
         "webpack": "^5.41.0",

@@ -62,38 +62,34 @@ local function main()
         remove_offline_messages(uid)
     end
 
-    local function listen_realtime_messages()
-        rds:run("subscribe", fmt("uid(%s):inbox", uid))
-
+    local function listen_ws()
         while true do
-            local msg = rds:run("read_reply")
+            local data, typ, err = wb:recv_frame()
 
-            -- ["message","uid(4):inbox","{ JSON string of message }"]
-            if msg then assert(wb:send_text(msg[3])) end
+            if not data then error(err) end
+
+            if typ == "close" then
+                assert(wb:send_close())
+                ngx.exit(499)
+            elseif typ == "ping" then
+                assert(wb:send_pong())
+            elseif typ == "text" and data == "ping" then
+                assert(wb:send_text("pong"))
+            end
         end
     end
 
     send_offline_messages()
 
-    ngx.thread.spawn(listen_realtime_messages)
+    ngx.thread.spawn(listen_ws)
+
+    rds:run("subscribe", fmt("uid(%s):inbox", uid))
 
     while true do
-        local data, typ, err = wb:recv_frame()
+        local msg = rds:run("read_reply")
 
-        if not data then
-            rds:release()
-            error(err)
-        end
-
-        if typ == "close" then
-            rds:release()
-            assert(wb:send_close())
-            ngx.exit(499)
-        elseif typ == "ping" then
-            assert(wb:send_pong())
-        elseif typ == "text" and data == "ping" then
-            assert(wb:send_text("pong"))
-        end
+        -- ["message","uid(4):inbox","{ JSON string of message }"]
+        if msg then assert(wb:send_text(msg[3])) end
     end
 end
 
