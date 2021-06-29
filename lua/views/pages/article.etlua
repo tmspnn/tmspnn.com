@@ -50,16 +50,18 @@ local author_url = "/users/" .. created_by
     </div>
 </div>
 <% render("views.components.navbar", {title = title}) %>
-<div class="rating-bar" <% if my_rating > 0 then %>hidden<% end %>>
-    <h3 <% if my_rating == 0 then %>hidden<% end %>>我的评价</h3>
+<div class="rating-bar" data-:="@onRatingChange: rating" <% if my_rating > 0 then %>hidden<% end %>>
+    <h3 data-:="hidden: rated" <% if my_rating == 0 then %>hidden<% end %>>我的评价</h3>
     <% for i = 1, my_rating do %>
-    <div class="active">
+    <div class="active" data-idx="<%= i - 1 %>" data-on="click: onStarClick">
         <% render("views.icons.star") %>
     </div>
     <% end %>
     <% for i = 1, 5 - my_rating do %>
-    <div><% render("views.icons.star") %></div>
+    <div data-idx="<%= my_rating + i - 1 %>" data-on="click: onStarClick">
+        <% render("views.icons.star") %>
+    </div>
     <% end %>
-    <span <% if my_rating > 0 then %>hidden<% end %>></span>
-    <button <% if my_rating > 0 then %>hidden<% end %>>评价</button>
+    <span data:="textContent: spanText" <% if my_rating > 0 then %>hidden<% end %>></span>
+    <button data-:="hidden: rated" data-on="click: rateArticle" <% if my_rating > 0 then %>hidden<% end %>>评价</button>
 </div>

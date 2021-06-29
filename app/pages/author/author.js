@@ -1,103 +1,83 @@
 // External modules
+import { $ } from "k-dom";
+import { includes } from "lodash";
+import { Klass } from "k-util";
 
 // Local modules
-import "@components/feed.scss";
 import "./author.scss";
-import Page from "@components/Page";
-import navbar from "@components/navbar/navbar";
-import comment from "../article/comment";
+import "../../components/feed.scss";
+import Page from "../../components/Page";
+import Navbar from "../../components/Navbar/Navbar";
 
-function author() {
-    const pageName = location.pathname;
+const Author = Klass(
+    {
+        constructor() {
+            this.Super();
+            this.element = $("#root");
+            this.setData({
+                followBtnText: this.data.author.followed ? "已关注" : "关注"
+            });
+            this.listen();
 
-    const root = new Page(pageName);
+            // Child components
+            new Navbar($(".-navbar"), { leftBtn: "back" });
 
-    // Child components
-    root.$navbar = navbar(pageName, $(".-navbar"), {});
-    root.$navbar.showBackBtn();
-
-    root.$comments = $$(".-comment").map((el, idx) => {
-        return comment(pageName, el, root.data.comments[idx]);
-    });
-
-    // UI logic
-    const { _refs } = root;
-
-    root.onFollowshipChange = ({ followed }) => {
-        if (followed) {
-            _refs.followingState.textContent = "已关注";
-        } else {
-            _refs.followingState.textContent = "关注";
-        }
-    };
-
-    _refs.followBtn.on("click", () => root.dispatch("clickFollowBtn"));
-
-    _refs.messageBtn.on("click", () => root.dispatch("startConversation"));
-
-    // Business logic
-    const { ctrl } = root;
-
-    ctrl.onWsMessage = (msg) => {
-        console.log("author onWsMessage: ", msg);
-    };
-
-    ctrl.clickBackBtn = () => {
-        const from = at(history, "state.from");
-        if (from) {
-            history.back();
-        } else {
-            location.replace("/");
-        }
-    };
-
-    ctrl.clickFollowBtn = () => {
-        ctrl.putJson(`/api/users/${ctrl.data.author.id}/followers`)
-            .then((res) => {
-                ctrl.ui("root::onFollowshipChange", res);
-            })
-            .catch(ctrl.handleException);
-    };
-
-    ctrl.startConversation = () => {
-        if (!ctrl.data.uid) {
-            return root.go("/sign-in");
-        }
-
-        const localConversations = localStorage.getItem("conversations");
-
-        if (localConversations) {
-            const reuseableConversation = parseJSON(localConversations).filter(
-                (c) => {
-                    if (
-                        c.created_by == ctrl.data.uid &&
-                        c.members.length == 1 &&
-                        c.members[0] == ctrl.data.author.id
-                    ) {
-                        return true;
-                    }
-
-                    if (
-                        c.created_by == ctrl.data.author.id &&
-                        c.members.length == 1 &&
-                        c.members[0] == ctrl.data.uid
-                    ) {
-                        return true;
-                    }
-
-                    return false;
-                }
-            )[0];
-
-            if (reuseableConversation) {
-                return root.go("/conversations/" + reuseableConversation.id);
+            // WebSocket
+            if (this.ws) {
+                this.ws.onMessage = this.onWsMessage.bind(this);
             }
+        },
+
+        onWsMessage(msg) {
+            console.log("Author.onWsMessage: ", msg);
+        },
+
+        clickFollowBtn() {
+            this.putJSON(`/api/users/${this.data.author.id}/followers`).then(
+                (res) => {
+                    this.onFollowshipChange(res);
+                }
+            );
+        },
+
+        onFollowshipChange(fl) {
+            this.data.author.followed = fl.followed;
+            this.setData({
+                followBtnText: fl.followed ? "已关注" : "关注"
+            });
+        },
+
+        startConversation() {
+            if (!this.data.uid) {
+                return window._container.go("/sign-in");
+            }
+
+            const localConvs = localStorage.getItem("conversations");
+
+            if (localConvs) {
+                const reuseableConv = parseJSON(localConvs).filter((c) => {
+                    return (
+                        (c.created_by == this.data.uid ||
+                            c.created_by == this.data.author.id) &&
+                        c.members.length == 2 &&
+                        includes(c.members, this.data.uid) &&
+                        includes(c.members, this.data.author.id)
+                    );
+                })[0];
+
+                if (reuseableConv) {
+                    return window._container.go(
+                        "/conversations/" + reuseableConv.id
+                    );
+                }
+            }
+
+            this.postJSON("/api/conversations", {
+                with: this.data.author.id
+            }).then((res) => window._container.go("/conversations/" + res.id));
         }
+    },
+    Page
+);
 
-        ctrl.postJson("/api/conversations", { with: ctrl.data.author.id })
-            .then((res) => root.go("/conversations/" + res.id))
-            .catch(ctrl.handleException);
-    };
-}
-
-author();
+new Author();

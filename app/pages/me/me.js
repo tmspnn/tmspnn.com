@@ -14,9 +14,11 @@ const Me = Klass(
         constructor() {
             this.Super();
             this.element = $("#root");
+            this.setData();
+            this.listen();
 
             // Child components
-            this.$navbar = new Navbar($(".-navbar"));
+            new Navbar($(".-navbar"));
 
             // WebSocket
             if (this.ws) {

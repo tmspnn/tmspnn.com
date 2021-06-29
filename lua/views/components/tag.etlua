@@ -1,6 +1,4 @@
-<%
-local name = name or "??"
-%>
+<% local name = name or "??" %>
 <a href="/tags/<%= name %>" class="-tag">
     <%= name %>
 </a>

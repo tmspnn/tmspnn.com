@@ -1,43 +1,44 @@
+// External modules
+import { $ } from "k-dom";
+import { Klass } from "k-util";
+
+// Local modules
 import "./signIn.scss";
-import "@components/logoHeader.scss";
-import Page from "@components/Page";
+import "../../components/logoHeader.scss";
+import Page from "../../components/Page";
 
-function signIn() {
-    const pageName = "signIn";
+const SignIn = Klass(
+    {
+        constructor() {
+            this.Super();
+            this.element = $("#root");
+            this.setData({
+                passInputType: "password"
+            });
+            this.listen();
 
-    const root = new Page(pageName);
+            const eyeIcon = this.refs.passInput.nextElementSibling;
+            eyeIcon.on("click", () => {
+                if (eyeIcon.hasClass("light")) {
+                    this.setData({ passInputType: "password" });
+                    eyeIcon.removeClass("light");
+                } else {
+                    this.setData({ passInputType: "text" });
+                    eyeIcon.addClass("light");
+                }
+            });
+        },
 
-    // UI logic
-    const { mobileInput, passInput, signInBtn } = root._refs;
-    const eyeIcon = passInput.nextElementSibling;
+        submit() {
+            const mobile = this.refs.mobileInput.value.trim();
+            const password = this.refs.passInput.value.trim();
 
-    eyeIcon.on("click", () => {
-        if (hasClass(eyeIcon, "light")) {
-            passInput.type = "password";
-            removeClass(eyeIcon, "light");
-        } else {
-            passInput.type = "text";
-            addClass(eyeIcon, "light");
+            this.postJson("/api/sign-in", { mobile, password }).then(() => {
+                location.replace(history.state.prev || "/me");
+            });
         }
-    });
+    },
+    Page
+);
 
-    signInBtn.on("click", () => {
-        const mobile = mobileInput.value.trim();
-        const password = passInput.value.trim();
-        root.dispatch("submit", mobile, password);
-    });
-
-    // Business logic
-    const { ctrl } = root;
-
-    ctrl.submit = (mobile, password) => {
-        ctrl.postJson("/api/sign-in", { mobile, password })
-            .then(() => {
-                const from = at(history, "state.from");
-                location.replace(from || "/me");
-            })
-            .catch(ctrl.handleException);
-    };
-}
-
-signIn();
+new SignIn();

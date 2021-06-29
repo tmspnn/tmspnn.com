@@ -4,6 +4,7 @@ local cjson = require "cjson"
 local date = require "date"
 local sha1 = require "sha1"
 
+-- https://support.huaweicloud.com/api-obs/obs_04_0012.html
 local function get_oss_token(uid)
     local current_date = date()
     local expiration_date = current_date:adddays(1)

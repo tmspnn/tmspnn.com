@@ -8,7 +8,7 @@ local profile_url = obj.profile
     or "linear-gradient(135deg, var(--grey), var(--black))"
 local timestamp = date(created_at):fmt("%m/%d %H:%M")
 %>
-<div class="message">
+<div class="-message">
     <% if sent_by_self then %>
     <div class="profile" style="background-image: <%= profile_url %>"></div>
     <% end %>

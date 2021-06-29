@@ -6,11 +6,18 @@ local title = title or "一刻阅读"
         <div class="btn back" data-:="hidden: backBtnHidden" data-on="click: clickBackBtn" hidden>
             <% render("views/icons/chevron_left") %>
         </div>
+        <div class="btn close" data-:="hidden: closeBtnHidden" data-on="click: clickCloseBtn" hidden>
+            <% render("views/icons/x") %>
+        </div>
     </div>
     <div class="center"><%= title %></div>
     <div class="right">
         <div class="btn share" data-:="hidden: shareBtnHidden" data-on="click: clickShareBtn" hidden>
             <% render("views/icons/share") %>
+        </div>
+        <div class="btn publish" data-:="hidden: publishBtnHidden" data-on="click: clickPublishBtn" hidden>
+            <% render("views/icons/upload") %>
+            <span>发布</span>
         </div>
     </div>
 </nav>

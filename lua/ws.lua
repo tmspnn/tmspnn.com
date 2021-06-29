@@ -52,20 +52,22 @@ local function main()
 
     -- Respond to ping
     ngx.thread.spawn(function()
-        while true do
-            local data, typ, err = wb:recv_frame()
+        xpcall(function()
+            while true do
+                local data, typ, err = wb:recv_frame()
 
-            if not data then error(err) end
+                if not data then error(err) end
 
-            if typ == "close" then
-                assert(wb:send_close())
-                ngx.exit(499)
-            elseif typ == "ping" then
-                assert(wb:send_pong())
-            elseif typ == "text" and data == "ping" then
-                assert(wb:send_text("pong"))
+                if typ == "close" then
+                    assert(wb:send_close())
+                    ngx.exit(499)
+                elseif typ == "ping" then
+                    assert(wb:send_pong())
+                elseif typ == "text" and data == "ping" then
+                    assert(wb:send_text("pong"))
+                end
             end
-        end
+        end, handle_exception)
     end)
 
     local function listen()

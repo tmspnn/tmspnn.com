@@ -16,8 +16,7 @@ local profile_text = has_profile and "" or utf8.sub(obj.author, 1, 1)
 <li class="-comment">
     <div class="head">
         <a href="<%= author_link %>">
-            <div class="profile"
-                style="background-image: <%= profile_bg %>">
+            <div class="profile" style="background-image: <%= profile_bg %>">
                 <%= profile_text %>
             </div>
         </a>
@@ -40,15 +39,16 @@ local profile_text = has_profile and "" or utf8.sub(obj.author, 1, 1)
         </div>
     </div>
     <div class="footer">
-        <div class="advocate <% if advocated then %>active<% end %>" data-ref="advocateBtn">
+        <div class="advocate <% if advocated then %>active<% end %>" data-:="className: advocateBtnClassName"
+            data-on="click: clickAdvocateBtn">
             <% render("views/icons/thumb_up") %>
-            <span data-ref="advocatorsCountSpan"><%= advocators_count %></span>
+            <span data-:="textContent: advocators_count"><%= advocators_count %></span>
         </div>
         <a href="/comment-editor?refer_to=<%= id %>" class="reply">
             <% render("views/icons/reply") %>
             <span>回复</span>
         </a>
-        <div class="report-abuse" data-ref="reportAbuseBtn">
+        <div class="report-abuse" data-on="click: clickReportAbuseBtn">
             <% render("views/icons/exclamation") %>
             <span>举报</span>
         </div>

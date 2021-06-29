@@ -1,6 +1,6 @@
 // External modules
 import { clearNode, DOM } from "k-dom";
-import { Klass, View } from "k-util";
+import { each, Klass, View } from "k-util";
 import dayjs from "dayjs";
 
 // Local modules
@@ -31,10 +31,10 @@ const ConversationItem = Klass(
         setProfiles() {
             clearNode(this.refs.profilesDiv);
 
-            for (const p of this.data.profiles) {
+            each(this.data.profiles, (p) => {
                 const img = DOM(`<img src="${p.profile}">`);
                 this.refs.profilesDiv.appendChild(img);
-            }
+            });
         },
 
         onMessage(msg) {

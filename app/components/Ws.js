@@ -38,7 +38,7 @@ const Ws = Klass({
 
         this.sync();
 
-        // Synchronize state for every minute
+        // Synchronize state every minute
         setInterval(() => this.sync(), 60000);
     },
 

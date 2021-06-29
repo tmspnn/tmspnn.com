@@ -29,9 +29,10 @@ const Index = Klass(
                 tipsAllLoadedHidden: true,
                 moreResultBtnHidden: true
             });
+            this.listen();
 
             // Child components
-            this.$navbar = new Navbar($(".-navbar"));
+            new Navbar($(".-navbar"));
 
             // Event listeners
             this.refs.clearBtn = $(".search > .container > svg:last-child");

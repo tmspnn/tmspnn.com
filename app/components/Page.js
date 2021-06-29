@@ -24,8 +24,6 @@ const Page = Klass(
             parseJSON(at($('script[type="application/json"'), "textContent")) ||
             {},
 
-        refs: {},
-
         constructor() {
             this.Super();
 
@@ -34,12 +32,12 @@ const Page = Klass(
             }
 
             setTimeout(() => {
-                this.$toast = new Toast();
-                this.$customSpinner = new CustomSpinner();
-                this.$container = window._container || new PageContainer();
+                new Toast();
+                new CustomSpinner();
+                new PageContainer();
 
-                this.$container.preloadStyles(document);
-                this.$container.captureLinks();
+                window._container.preloadStyles(document);
+                window._container.captureLinks();
 
                 this.refs.rootDiv = $("#root");
                 this.refs.rootDiv.on("scroll", (e) => {
@@ -120,6 +118,14 @@ const Page = Klass(
         handleException(e) {
             const msg = at(parseJSON(e.message), "err") || e.message;
             this.toast(msg || "服务器繁忙, 请稍后再试.");
+        },
+
+        stepBack() {
+            if (history.state.prev) {
+                history.back();
+            } else {
+                location.replace("/");
+            }
         }
     },
     View

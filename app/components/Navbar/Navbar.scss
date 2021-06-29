@@ -60,6 +60,24 @@
                 font-size: 1.3rem;
             }
         }
+
+        &.close {
+            svg {
+                font-size: 1.5rem;
+            }
+        }
+
+        &.publish {
+            color: var(--dark-green);
+
+            span {
+                font-size: 1.1rem;
+            }
+
+            svg {
+                font-size: 1.2rem;
+            }
+        }
     }
 }
 

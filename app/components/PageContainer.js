@@ -103,16 +103,16 @@ const PageContainer = Klass({
         }
 
         this.observer = new MutationObserver((mutationsList) => {
-            for (const mutation of mutationsList) {
-                for (const node of mutation.addedNodes) {
+            each(mutationsList, (mutation) => {
+                each(mutation.addedNodes, (node) => {
                     if (
                         node instanceof HTMLAnchorElement &&
                         node.hasAttribute("href")
                     ) {
                         window._container.captureLinks(node);
                     }
-                }
-            }
+                });
+            });
         });
 
         this.observer.observe(document.body, { childList: true });
@@ -122,13 +122,14 @@ const PageContainer = Klass({
         const container = window._container;
         const links = $$("a[href]", el || document.body);
 
-        if (el instanceof HTMLAnchorElement) links.push(el);
+        if (el instanceof HTMLAnchorElement && el.hasAttribute("href"))
+            links.push(el);
 
-        for (const link of links) {
+        each(links, (link) => {
             link.setAttribute("data-href", link.href);
             link.removeAttribute("href");
             link.on("click", container._onLinkClick.bind(container));
-        }
+        });
     },
 
     preloadStyles(doc) {

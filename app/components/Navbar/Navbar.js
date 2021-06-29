@@ -8,20 +8,22 @@ const Navbar = Klass(
     {
         name: "navbar",
 
-        data: { backBtnHidden: true, shareBtnHidden: true },
-
-        element: null,
-
         /**
          * @param {HTMLElement} element
-         * @param {Object?} options
-         * @param {String?} options.leftBtn
-         * @param {String?} options.rightBtn
+         * @param {Object} options
+         * @param {String} options.leftBtn
+         * @param {String} options.rightBtn
          */
         constructor(element, options) {
             this.Super();
             this.element = element;
-            this.setData(this.data);
+            this.setData({
+                backBtnHidden: true,
+                shareBtnHidden: true,
+                closeBtnHidden: true,
+                publishBtnHidden: true
+            });
+            this.listen();
 
             if (options && options.leftBtn) {
                 this.setData(options.leftBtn + "BtnHidden", false);
@@ -38,6 +40,14 @@ const Navbar = Klass(
 
         clickShareBtn() {
             this.dispatch(".share");
+        },
+
+        clickCloseBtn() {
+            this.dispatch(".close");
+        },
+
+        clickPublishBtn() {
+            this.dispatch(".publish");
         }
     },
     View

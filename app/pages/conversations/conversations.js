@@ -15,6 +15,8 @@ const Conversations = Klass(
         constructor() {
             this.Super();
             this.element = $("#root");
+            this.setData();
+            this.listen();
 
             // Local conversations
             this.data.conversations =
@@ -31,7 +33,7 @@ const Conversations = Klass(
             }
 
             // Child components
-            this.$navbar = new Navbar($(".-navbar"));
+            new Navbar($(".-navbar"));
 
             // WebSocket
             if (this.ws) {

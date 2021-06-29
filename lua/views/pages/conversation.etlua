@@ -9,23 +9,22 @@ local uid = ctx.data.uid
 %>
 <div class="page-container">
     <% for _, m in ipairs(messages) do %>
-    <% render("views.components.message",
-        assign(m, {sent_by_self = m.created_by == uid})) %>
+    <% render("views.components.message", assign(m, {sent_by_self = m.created_by == uid})) %>
     <% end %>
 </div>
 <% render("views.components.navbar", {title = page_title}) %>
 <div class="input-container">
-    <div class="btn shortcut" data-ref="shortcutBtn">
+    <div class="btn shortcut" data-:="hidden: shortcutBtnHidden" data-on="click: clickShortcutBtn">
         <% render("views.icons.emoji_happy") %>
     </div>
-    <textarea data-ref="input"></textarea>
-    <div class="btn clip" data-ref="clipBtn">
+    <textarea data-ref="input" data-on="input: onInput"></textarea>
+    <div class="btn clip" data-:="hidden: clipBtnHidden" data-on="click: clickClipBtn">
         <% render("views.icons.paper_clip") %>
     </div>
-    <div class="btn audio" data-ref="audioBtn" hidden>
+    <div class="btn audio" data-:="hidden: audioBtnHidden" data-on="click: clickAudioBtn" hidden>
         <% render("views.icons.microphone") %>
     </div>
-    <div class="btn send" data-ref="sendBtn" hidden>
+    <div class="btn send" data-:="hidden: sendBtnHidden" data-on="click: clickSendBtn" hidden>
         <% render("views.icons.arrow_circle_right") %>
     </div>
 </div>
