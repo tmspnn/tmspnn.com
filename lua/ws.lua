@@ -5,17 +5,19 @@ local ngx = require "ngx"
 local PG = require "services.PG"
 local server = require "resty.websocket.server"
 
--- Local modules
+-- Local modules and aliases
 local redis_client = require "services.redis_client"
 local unescape = require "util.unescape"
-
--- Aliases
 local fmt = string.format
+
+-- ** Redis client with a one-minute timeout **
+local client = redis_client:new({timeout = 60000})
 
 -- @param {string} err
 -- @returns {nil}
 local function handle_exception(err)
-    ngx.log(ngx.ERR, "WebSocket: ", err)
+    client:release()
+    ngx.log(ngx.ERR, "WebSocket Error -> ", err)
     ngx.exit(444)
 end
 
@@ -71,7 +73,7 @@ local function main()
     end)
 
     local function listen()
-        -- Send offline messages
+        -- Offline messages
         local i = 0
         local messages_page
 
@@ -83,9 +85,10 @@ local function main()
 
         remove_offline_messages(uid)
 
-        local client = redis_client:new({timeout = 60000}) -- 60 seconds
+        -- Redis subscription
         client:run("subscribe", fmt("uid(%s):inbox", uid))
 
+        -- Realtime messages
         while true do
             local msg = client:run("read_reply")
 
