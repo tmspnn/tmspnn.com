@@ -103,11 +103,7 @@ const Ws = Klass({
 
     connect() {
         this.broadcastState("connecting");
-
-        if (window._ws) {
-            window._ws.close();
-            clearInterval(this.intervalId);
-        }
+        clearInterval(this.intervalId);
 
         window._ws = new WebSocket(this.url);
 

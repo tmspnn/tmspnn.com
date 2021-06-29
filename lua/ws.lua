@@ -10,13 +10,9 @@ local redis_client = require "services.redis_client"
 local unescape = require "util.unescape"
 local fmt = string.format
 
--- ** Redis client with a one-minute timeout **
-local client = redis_client:new({timeout = 60000})
-
 -- @param {string} err
 -- @returns {nil}
 local function handle_exception(err)
-    client:release()
     ngx.log(ngx.ERR, "WebSocket Error -> ", err)
     ngx.exit(444)
 end
@@ -49,31 +45,11 @@ end
 local function main()
     local uid = assert(get_uid())
 
-    -- One miniute, the same as nginx's default send_timeout
+    -- Timeout is 60 seconds, the same as nginx's default send_timeout
     local wb = assert(server:new{timeout = 60000})
+    local rds = redis_client:new({timeout = 60000})
 
-    -- Respond to ping
-    ngx.thread.spawn(function()
-        xpcall(function()
-            while true do
-                local data, typ, err = wb:recv_frame()
-
-                if not data then error(err) end
-
-                if typ == "close" then
-                    assert(wb:send_close())
-                    ngx.exit(499)
-                elseif typ == "ping" then
-                    assert(wb:send_pong())
-                elseif typ == "text" and data == "ping" then
-                    assert(wb:send_text("pong"))
-                end
-            end
-        end, handle_exception)
-    end)
-
-    local function listen()
-        -- Offline messages
+    local function send_offline_messages()
         local i = 0
         local messages_page
 
@@ -84,20 +60,41 @@ local function main()
         until #messages_page < 100
 
         remove_offline_messages(uid)
+    end
 
-        -- Redis subscription
-        client:run("subscribe", fmt("uid(%s):inbox", uid))
+    local function listen_realtime_messages()
+        rds:run("subscribe", fmt("uid(%s):inbox", uid))
 
-        -- Realtime messages
         while true do
-            local msg = client:run("read_reply")
+            local msg = rds:run("read_reply")
 
             -- ["message","uid(4):inbox","{ JSON string of message }"]
             if msg then assert(wb:send_text(msg[3])) end
         end
     end
 
-    listen()
+    send_offline_messages()
+
+    ngx.thread.spawn(listen_realtime_messages)
+
+    while true do
+        local data, typ, err = wb:recv_frame()
+
+        if not data then
+            rds:release()
+            error(err)
+        end
+
+        if typ == "close" then
+            rds:release()
+            assert(wb:send_close())
+            ngx.exit(499)
+        elseif typ == "ping" then
+            assert(wb:send_pong())
+        elseif typ == "text" and data == "ping" then
+            assert(wb:send_text("pong"))
+        end
+    end
 end
 
 xpcall(main, handle_exception)

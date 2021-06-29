@@ -2,10 +2,6 @@
 -- https://leafo.net/lapis/reference/database.html
 local db = require "lapis.db"
 
--- Local modules and aliases
-local fmt = string.format
-
--- Implementation
 local PG = {MAX_INT = 2147483647}
 
 -- @param { string } table_name
