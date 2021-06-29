@@ -48,7 +48,7 @@ const Ws = Klass({
          * Could be cancelled if there is any active connection in other tabs.
          */
         if (!this.isOnline() && navigator.onLine) {
-            this.timeoutId = setTimeout(() => this.connect(), 500);
+            this.timeoutId = setTimeout(() => this.connect(), 1000);
             this.state = "syncing";
             this.broadcastState("syncing");
         }
@@ -102,6 +102,8 @@ const Ws = Klass({
     },
 
     connect() {
+        if (this.isOnline()) return;
+
         this.broadcastState("connecting");
         clearInterval(this.intervalId);
 

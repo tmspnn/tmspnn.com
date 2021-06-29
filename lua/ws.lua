@@ -74,7 +74,8 @@ local function main()
             elseif typ == "ping" then
                 assert(wb:send_pong())
             elseif typ == "text" and data == "ping" then
-                assert(wb:send_text("pong"))
+                local rds = redis_client:new()
+                rds:run("publish", fmt("uid(%s):inbox", uid), "pong")
             end
         end
     end
@@ -88,8 +89,13 @@ local function main()
     while true do
         local msg = rds:run("read_reply")
 
+        if not msg then
+            rds:release()
+            break
+        end
+
         -- ["message","uid(4):inbox","{ JSON string of message }"]
-        if msg then assert(wb:send_text(msg[3])) end
+        assert(wb:send_text(msg[3]))
     end
 end
 
