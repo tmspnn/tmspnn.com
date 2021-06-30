@@ -7,10 +7,10 @@ local context = require "middlewares.context"
 local CORS = require "middlewares.CORS"
 local exception = require "middlewares.exception"
 local page_controller = require "controllers.page_controller"
--- local user_controller = require "controllers.user_controller"
--- local article_controller = require "controllers.article_controller"
--- local search_controller = require "controllers.search_controller"
--- local conversation_controller = require "controllers.conversation_controller"
+local user_controller = require "controllers.user_controller"
+local article_controller = require "controllers.article_controller"
+local search_controller = require "controllers.search_controller"
+local conversation_controller = require "controllers.conversation_controller"
 
 -- Initialization
 local app = lapis.Application()
@@ -33,9 +33,9 @@ app:before_filter(context)
 
 -- Controllers
 page_controller(app)
--- user_controller(app)
--- article_controller(app)
--- search_controller(app)
--- conversation_controller(app)
+user_controller(app)
+article_controller(app)
+search_controller(app)
+conversation_controller(app)
 
 lapis.serve(app)

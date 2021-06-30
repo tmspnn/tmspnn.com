@@ -18,29 +18,37 @@ local comment_editor = require "controllers.page_ctrl.comment_editor"
 local function page_controller(app)
     -- L1 pages
     app:get("/", index)
+
     app:get("/trending", trending)
+
     app:match("/conversations", respond_to(
                   {
             before = sign_in_required({redirect = true}),
             GET = conversations
         }))
+
     app:match("/me", respond_to(
                   {before = sign_in_required({redirect = true}), GET = me}))
 
     -- L2 pages
     app:get("/articles/:article_id", article)
+
     app:get("/users/:author_id", author)
+
     app:match("/conversations/:conversation_id", respond_to(
                   {
             before = sign_in_required({redirect = true}),
             GET = conversation
         }))
+
     app:match("/editor", respond_to(
                   {before = sign_in_required({redirect = true}), GET = editor}))
 
     -- L3 pages
     app:get("/sign-in", sign_in)
+
     app:get("/sign-up", sign_up)
+
     app:match("/comment-editor", respond_to(
                   {
             before = sign_in_required({redirect = true}),

@@ -11,8 +11,11 @@ local toggle_followship = require "controllers.user_ctrl.toggle_followship"
 
 local function user_controller(app)
     app:post("/api/sign-up", json_params(sign_up))
+
     app:post("/api/sign-in", json_params(sign_in))
+
     app:post("/api/vcodes", json_params(send_vcode))
+
     app:match("/api/users/:user_id/followers", respond_to(
                   {before = sign_in_required(), PUT = toggle_followship}))
 end

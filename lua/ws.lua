@@ -89,11 +89,6 @@ local function main()
     while true do
         local msg = rds:run("read_reply")
 
-        if not msg then
-            rds:release()
-            break
-        end
-
         -- ["message","uid(4):inbox","{ JSON string of message }"]
         assert(wb:send_text(msg[3]))
     end

@@ -113,7 +113,7 @@ create index comment_article_id_idx on "comment" (article_id);
 -- Interaction
 create table "interaction" (
     id serial primary key,
-    -- 1: comment_advocation, 2: followship
+    -- 1: comment_advocation, 2: followship, 3: abuse_report
     "type" smallint not null,
     created_by integer not null,
     refer_to integer not null,

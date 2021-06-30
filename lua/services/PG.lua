@@ -7,8 +7,8 @@ local PG = {MAX_INT = 2147483647}
 -- @param { string } table_name
 -- @param { table } data
 -- @returns { 1: table, affected_rows: int }
-function PG.create(table_name, data)
-    return assert(db.insert(table_name, data, db.raw("*")))
+function PG.create(table_name, data, returning)
+    return assert(db.insert(table_name, data, returning or db.raw("*")))
 end
 
 -- @param { string } table_name

@@ -44,7 +44,10 @@ function redis_client:run(command, ...)
 
     local res, err = self.redis[command](self.redis, ...)
 
-    if not res then return self:on_error(command, err) end
+    if not res then
+        self:release()
+        error(err)
+    end
 
     self:post_run(command, ...)
 
@@ -56,14 +59,6 @@ end
 function redis_client:connect()
     assert(self.redis:connect(self.host, self.port))
     self.connected = true
-end
-
-function redis_client:on_error(command, err)
-    -- In case of temporarily idle channels
-    if command == "read_reply" and err == "timeout" then return end
-
-    self:release()
-    error(err)
 end
 
 function redis_client:post_run(command, ...)
