@@ -1,12 +1,12 @@
-<a class="-conversation-item" data-:="href: link" data-on="click: onClick">
-    <div class="dot" data-:="hidden: dotHidden"></div>
-    <div class="profiles" data-:="@setProfiles: profiles" data-ref="profilesDiv"></div>
+<a href="" class="-conversation-item" data-click="onClick">
+    <div class="dot" data-ref="dot" hidden></div>
+    <div class="profiles" data-ref="profiles"></div>
     <div class="meta">
-        <div class="title" data-:="textContent: title"></div>
-        <div class="latest-message" data-:="textContent: last_message.text"></div>
+        <div class="title" data-ref="title"></div>
+        <div class="latest-message" data-ref="lastMessage"></div>
     </div>
     <div class="state">
-        <div class="muted" data-:="hidden: mutedHidden">已静音</div>
-        <div class="last-updated" data-:="textContent: lastUpdated"></div>
+        <div class="muted" data-ref="muted" hidden>已静音</div>
+        <div class="last-updated" data-ref="lastUpdated"></div>
     </div>
 </a>

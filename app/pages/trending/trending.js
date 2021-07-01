@@ -15,10 +15,8 @@ const Trending = Klass(
         constructor() {
             this.Super();
             this.element = $("#root");
-            this.setData();
             this.listen();
 
-            // Child components
             new Navbar($(".-navbar"));
 
             // WebSocket

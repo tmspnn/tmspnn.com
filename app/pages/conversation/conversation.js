@@ -10,8 +10,6 @@ import Page from "../../components/Page";
 import Message from "./Message";
 import Navbar from "../../components/Navbar/Navbar";
 
-const isArray = Array.isArray;
-
 const Conversation = Klass(
     {
         text: "",
@@ -19,12 +17,12 @@ const Conversation = Klass(
         constructor() {
             this.Super();
             this.element = $("#root");
-            this.setData({
-                shortcutBtnHidden: false,
-                clipBtnHidden: false,
-                audioBtnHidden: true,
-                sendBtnHidden: true
-            });
+            // this.setData({
+            //     shortcutBtnHidden: false,
+            //     clipBtnHidden: false,
+            //     audioBtnHidden: true,
+            //     sendBtnHidden: true
+            // });
             this.listen();
 
             setTimeout(() => this.scrollToBottom());
@@ -64,7 +62,9 @@ const Conversation = Klass(
             );
         },
 
-        clickShortcutBtn() {},
+        shortcut() {},
+
+        clip() {},
 
         onInput(e) {
             this.text = e.currentTarget.value.trim();
@@ -79,11 +79,11 @@ const Conversation = Klass(
             e.currentTarget.style = e.currentTarget.scrollHeight + "px";
         },
 
-        clickClipBtn() {},
+        startRecord() {},
 
-        clickAudioBtn() {},
+        endRecord() {},
 
-        clickSendBtn() {
+        send() {
             if (this.text.length > 0) {
                 this.postJSON(
                     `/api/conversations/${this.data.conversation.id}/messages`,
@@ -236,5 +236,3 @@ function conversation() {
         }
     };
 }
-
-conversation();

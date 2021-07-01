@@ -7,46 +7,40 @@ import dayjs from "dayjs";
 import T from "./ConversationItem.html";
 import "./ConversationItem.scss";
 
-const assign = Object.assign;
-
 const ConversationItem = Klass(
     {
         constructor(element, data) {
             this.Super();
             this.name = `conversation(${data.id})`;
             this.element = element || DOM(T);
-            this.setData(
-                assign(data, {
-                    dotHidden: true,
-                    mutedHidden: true,
-                    lastUpdated: dayjs(data.last_message.created_at).format(
-                        "MM-DD HH:mm"
-                    ),
-                    link: "/conversations/" + data.id
-                })
-            );
             this.listen();
+            this.sync(data);
         },
 
-        setProfiles() {
-            clearNode(this.refs.profilesDiv);
-
-            each(this.data.profiles, (p) => {
+        sync(data) {
+            this.element.href = "/conversations/" + data.id;
+            clearNode(this.refs.profiles);
+            each(data.profiles, (p) => {
                 const img = DOM(`<img src="${p.profile}">`);
-                this.refs.profilesDiv.appendChild(img);
+                this.refs.profiles.appendChild(img);
             });
+            this.refs.title.textContent = data.title;
+            this.refs.lastMessage.textContent = data.last_message.text;
+            this.refs.lastUpdated.textContent = dayjs(data.created_at).format(
+                "MM-DD HH:mm"
+            );
         },
 
         onMessage(msg) {
-            this.setData({
-                dotHidden: false,
-                last_message: msg,
-                lastUpdated: dayjs(msg.created_at).format("MM-DD HH:mm")
-            });
+            this.refs.dot.hidden = false;
+            this.refs.lastMessage.textContent = msg.text;
+            this.refs.lastUpdated.textContent = dayjs(msg.created_at).format(
+                "MM-DD HH:mm"
+            );
         },
 
         onClick() {
-            this.setData("dotHidden", true);
+            this.refs.dot.hidden = true;
         }
     },
     View

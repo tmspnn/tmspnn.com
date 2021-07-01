@@ -1,6 +1,6 @@
 .search {
     @extend ._with-icon;
-    padding: 1.5rem 1rem;
+    padding: 1.5rem 1rem 0;
 
     .container {
         position: relative;
@@ -44,11 +44,14 @@
             }
         }
     }
+}
+
+.result {
+    @extend ._with-icon;
 
     .tips-empty,
     .tips-all-loaded {
-        min-height: 100vh;
-        padding-top: 10vh;
+        padding-top: 2rem;
         font-size: 1.3rem;
         text-align: center;
 
@@ -60,18 +63,75 @@
     }
 
     ul {
-        padding: 1rem 0;
+        margin: 0 1rem;
+        border-radius: 0.5rem;
+        background-color: var(--white);
+        overflow: hidden;
 
-        .-feed {
-            .cover,
-            .meta {
-                display: none;
+        li.-article-item {
+            padding: 0.5rem;
+            border-top: 1px solid var(--light-white);
+
+            .title {
+                padding: 0.3rem;
+                font-size: 1.2rem;
+                font-weight: bold;
+            }
+
+            .author-n-pageview {
+                @extend ._flex;
+
+                .author {
+                    @extend ._inline;
+                    @extend ._truncated;
+                    max-width: 10rem;
+                }
+
+                svg {
+                    &:nth-child(3) {
+                        margin-left: auto;
+                        width: 1.1em;
+                        height: 1.1rem;
+                    }
+                }
             }
         }
-    }
 
-    .tips-all-loaded {
-        padding: 1rem 0;
+        li.-user-item {
+            padding: 0.5rem;
+            border-top: 1px solid var(--light-white);
+
+            a {
+                @extend ._flex;
+            }
+
+            .profile {
+                width: 3rem;
+                min-width: 3rem;
+                height: 3rem;
+                border-radius: 50%;
+                background-size: cover;
+                background-position: center;
+                box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.05);
+            }
+
+            .meta {
+                padding: 0.5rem;
+
+                .nickname {
+                    @extend ._truncated;
+                    max-width: 15rem;
+                    font-size: 1.1rem;
+                    font-weight: bold;
+                }
+
+                .description {
+                    @extend ._truncated;
+                    max-width: 15rem;
+                    color: var(--grey);
+                }
+            }
+        }
     }
 
     .more {
@@ -79,15 +139,17 @@
     }
 }
 
-.recommended-tags {
-    @extend ._horizontal-scrolling;
-    padding: 0 1rem 1.5rem;
+.main {
+    .recommended-tags {
+        @extend ._horizontal-scrolling;
+        padding: 1.5rem 1rem;
 
-    .-tag {
-        padding: 0.3rem 0.8rem;
-        font-size: 1.2rem;
-        background-color: var(--white);
-        border-radius: 2rem;
-        box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.05);
+        .-tag {
+            padding: 0.3rem 0.8rem;
+            font-size: 1.2rem;
+            background-color: var(--white);
+            border-radius: 2rem;
+            box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.05);
+        }
     }
 }

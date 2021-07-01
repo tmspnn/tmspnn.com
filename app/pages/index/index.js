@@ -1,7 +1,7 @@
 // External modules
-import { $ } from "k-dom";
+import { $, DocFrag } from "k-dom";
 import { Klass } from "k-util";
-import { isEmpty } from "lodash";
+import { isEmpty, debounce } from "lodash";
 import qs from "qs";
 
 // Local modules
@@ -11,6 +11,8 @@ import "../../components/tag.scss";
 import "../../components/feed.scss";
 import Page from "../../components/Page";
 import Navbar from "../../components/Navbar/Navbar";
+import ArticleItem from "./ArticleItem";
+import UserItem from "./UserItem";
 
 const Index = Klass(
     {
@@ -20,25 +22,18 @@ const Index = Klass(
 
         constructor() {
             this.Super();
-
-            // Data binding
             this.element = $("#root");
-            this.setData({
-                tipsEmptyHidden: true,
-                resultListHidden: true,
-                tipsAllLoadedHidden: true,
-                moreResultBtnHidden: true
-            });
             this.listen();
 
-            // Child components
             new Navbar($(".-navbar"));
 
-            // Event listeners
             this.refs.clearBtn = $(".search > .container > svg:last-child");
             this.refs.clearBtn.on("click", () => this.onClearBtnClick());
 
-            // WebSocket
+            window._container.observer.observe(this.refs.ul, {
+                childList: true
+            });
+
             if (this.ws) {
                 this.ws.onMessage = this.onWsMessage.bind(this);
             }
@@ -48,32 +43,57 @@ const Index = Klass(
             console.log("Index.onWsMessage: ", msg);
         },
 
-        onInput(e) {
-            const text = e.currentTarget.value.trim();
+        onInput: debounce(function () {
+            const {
+                input,
+                clearBtn,
+                result,
+                tipsEmpty,
+                moreResultBtn,
+                tipsAllLoaded,
+                main
+            } = this.refs;
+
+            const text = input.value.trim();
+
             if (text.length > 0) {
-                this.refs.clearBtn.addClass("visible");
+                clearBtn.addClass("visible");
                 this.search(text);
             } else {
-                this.refs.clearBtn.removeClass("visible");
-                this.setData({
-                    tipsEmptyHidden: true,
-                    resultListHidden: true,
-                    tipsAllLoadedHidden: true,
-                    moreResultBtnHidden: true
-                });
+                clearBtn.removeClass("visible");
+                result.hidden = true;
+                tipsEmpty.hidden = true;
+                tipsAllLoaded.hidden = true;
+                moreResultBtn.hidden = true;
+                main.hidden = false;
             }
-        },
+        }, 500),
 
-        onSearchResult(result) {
-            if (isEmpty(result.articles) && isEmpty(result.users)) {
-                this.setData({
-                    tipsEmptyHidden: false,
-                    resultListHidden: true,
-                    tipsAllLoadedHidden: true,
-                    moreResultBtnHidden: true
-                });
+        onSearchResult(res) {
+            this.dispatch("articleItem.destroy");
+            this.dispatch("userItem.destroy");
+
+            this.refs.main.hidden = true;
+            this.refs.result.hidden = false;
+            this.refs.tipsEmpty.hidden = true;
+            this.refs.tipsAllLoaded.hidden = true;
+            this.refs.moreResultBtn.hidden = true;
+
+            if (isEmpty(res.articles) && isEmpty(res.users)) {
+                this.refs.tipsEmpty.hidden = false;
             } else {
-                // TODO: Create searchResultItems on client side
+                this.refs.ul.appendChild(
+                    DocFrag(
+                        ...res.articles.map((a) => new ArticleItem(a).element),
+                        ...res.users.map((u) => new UserItem(u).element)
+                    )
+                );
+
+                if (res.articles.length < 10 && res.users.length < 10) {
+                    this.refs.tipsAllLoaded.hidden = false;
+                } else {
+                    this.refs.moreResultBtn.hidden = false;
+                }
             }
         },
 
@@ -93,7 +113,7 @@ const Index = Klass(
                 return this.onSearchResult(this.cachedResult[text]);
             }
 
-            this.getJSON("/api/search?" + qs.stringify({ text })).then(
+            return this.getJSON("/api/search?" + qs.stringify({ text })).then(
                 (res) => {
                     if (isEmpty(res.articles)) {
                         res.articles = [];

@@ -17,36 +17,32 @@ const Navbar = Klass(
         constructor(element, options) {
             this.Super();
             this.element = element;
-            this.setData({
-                backBtnHidden: true,
-                shareBtnHidden: true,
-                closeBtnHidden: true,
-                publishBtnHidden: true
-            });
             this.listen();
 
             if (options && options.leftBtn) {
-                this.setData(options.leftBtn + "BtnHidden", false);
+                const btn = this.refs[options.leftBtn + "Btn"];
+                if (btn) btn.hidden = false;
             }
 
             if (options && options.rightBtn) {
-                this.setData(options.rightBtn + "BtnHidden", false);
+                const btn = this.refs[options.rightBtn + "Btn"];
+                if (btn) btn.hidden = false;
             }
         },
 
-        clickBackBtn() {
+        stepBack() {
             this.dispatch(".stepBack");
         },
 
-        clickShareBtn() {
+        share() {
             this.dispatch(".share");
         },
 
-        clickCloseBtn() {
+        close() {
             this.dispatch(".close");
         },
 
-        clickPublishBtn() {
+        publish() {
             this.dispatch(".publish");
         }
     },

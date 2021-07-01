@@ -5,7 +5,7 @@ local db = require "lapis.db"
 -- Local modules
 local PG = require "services.PG"
 local redis_client = require "services.redis_client"
-local each = require "each"
+local each = require "util.each"
 local push = require "util.push"
 local fmt = string.format
 

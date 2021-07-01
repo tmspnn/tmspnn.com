@@ -6,6 +6,8 @@ import { DOM } from "k-dom";
 import "./Toast.scss";
 import T from "./Toast.html";
 
+const assign = Object.assign;
+
 const Toast = Klass(
     {
         name: "toast",
@@ -14,12 +16,9 @@ const Toast = Klass(
 
         timeout: 1500,
 
-        data: { text: "", selfHidden: true },
-
         constructor() {
             this.Super();
             this.element = DOM(T);
-            this.setData(this.data);
             this.listen();
             document.body.appendChild(this.element);
         },
@@ -28,8 +27,7 @@ const Toast = Klass(
             if (!this.available) return;
 
             this.available = false;
-
-            this.setData({ selfHidden: false });
+            this.element.hidden = false;
 
             setTimeout(() => {
                 this.refs.textDiv.textContent = text;
@@ -43,7 +41,7 @@ const Toast = Klass(
 
         onTextTransitionEnd() {
             if (this.refs.textDiv.hasClass("invisible")) {
-                this.setData({ selfHidden: true });
+                this.element.hidden = true;
                 this.available = true;
             } else {
                 setTimeout(() => this.hide(), this.timeout);

@@ -10,28 +10,32 @@ local latest_articles = ctx.data.latest_articles
             <input type="text" placeholder="<%= search_placeholder %>" data-on="input: onInput" data-ref="input" />
             <% render("views.icons.x") %>
         </div>
-        <div class="tips-empty" data-:="hidden: tipsEmptyHidden" hidden>
+    </section>
+    <section class="result" data-ref="result" hidden>
+        <div class="tips-empty" data-ref="tipsEmpty" hidden>
             <% render("views.icons.emoji_sad") %>
             <b>搜不到任何东西...</b>
         </div>
-        <ul data-:="hidden: resultListHidden" hidden></ul>
-        <div class="tips-all-loaded" data-:="hidden: tipsAllLoadedHidden" hidden>
+        <ul data-ref="ul"></ul>
+        <div class="tips-all-loaded" data-ref="tipsAllLoaded" hidden>
             <% render("views.icons.emoji_happy") %>
             <b>已显示全部结果.</b>
         </div>
-        <button class="more" data-:="hidden: moreResultBtnHidden" data-on="click: onMoreResultBtnClick" hidden>
+        <button class="more" data-ref="moreResultBtn" data-click="onMoreResultBtnClick" hidden>
             <% render("views.icons.chevron_double_right") %> 更多
         </button>
     </section>
-    <section class="recommended-tags">
-        <% for i, t in ipairs(recommended_tags) do %>
-        <% render("views.components.tag", { name = t }) %>
-        <% end %>
-    </section>
-    <section class="feeds">
-        <% for i, fd in ipairs(latest_articles) do %>
-        <% render("views.components.feed", fd) %>
-        <% end %>
+    <section class="main" data-ref="main">
+        <section class="recommended-tags">
+            <% for i, t in ipairs(recommended_tags) do %>
+            <% render("views.components.tag", { name = t }) %>
+            <% end %>
+        </section>
+        <section class="feeds">
+            <% for i, fd in ipairs(latest_articles) do %>
+            <% render("views.components.feed", fd) %>
+            <% end %>
+        </section>
     </section>
 </div>
 <% render("views.components.navbar", {title = ctx.page_title}) %>

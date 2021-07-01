@@ -31,27 +31,22 @@ const Page = Klass(
                 this.ws = new Ws();
             }
 
-            setTimeout(() => {
-                new Toast();
-                new CustomSpinner();
-                new PageContainer();
+            new Toast();
+            new CustomSpinner();
+            new PageContainer();
 
-                window._container.preloadStyles(document);
-                window._container.captureLinks();
+            window._container.preloadStyles(document);
+            window._container.captureLinks();
 
-                this.refs.rootDiv = $("#root");
-                this.refs.rootDiv.on("scroll", (e) => {
-                    this.scrollTop = e.currentTarget.scrollTop;
-                });
+            this.refs.rootDiv = $("#root");
+            this.refs.rootDiv.on("scroll", (e) => {
+                this.scrollTop = e.currentTarget.scrollTop;
+            });
 
-                document.documentElement.on("pageshow", () => {
-                    if (this.scrollTop > 0) {
-                        immediatelyScrollTo(
-                            this.refs.rootDiv,
-                            this.scrollTop | 0
-                        );
-                    }
-                });
+            document.documentElement.on("pageshow", () => {
+                if (this.scrollTop > 0) {
+                    immediatelyScrollTo(this.refs.rootDiv, this.scrollTop | 0);
+                }
             });
         },
 
@@ -126,6 +121,10 @@ const Page = Klass(
             } else {
                 location.replace("/");
             }
+        },
+
+        go(url) {
+            window._container.go(url);
         }
     },
     View

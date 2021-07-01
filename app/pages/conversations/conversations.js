@@ -15,8 +15,10 @@ const Conversations = Klass(
         constructor() {
             this.Super();
             this.element = $("#root");
-            this.setData();
             this.listen();
+            window._container.observer.observe(this.element, {
+                childList: true
+            });
 
             // Local conversations
             this.data.conversations =
@@ -32,7 +34,6 @@ const Conversations = Klass(
                 );
             }
 
-            // Child components
             new Navbar($(".-navbar"));
 
             // WebSocket
@@ -47,7 +48,6 @@ const Conversations = Klass(
 
         onNewConversation(conv) {
             const newConv = new ConversationItem(null, conv);
-            newConv.setData("dotHidden", false);
             container.insertBefore(newConv.element, container.firstChild);
         },
 

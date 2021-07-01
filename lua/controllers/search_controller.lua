@@ -4,7 +4,6 @@ local ngx = require "ngx"
 
 -- Local modules
 local PG = require "services.PG"
-local each = require "util.each"
 
 local function search_article(tokens, start_id)
     return PG.query([[

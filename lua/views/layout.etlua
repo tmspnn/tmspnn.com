@@ -9,6 +9,7 @@
     <% render("views.components.html_tag", el) %>
     <% end -%>
     <% end -%>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <title><%= ctx.page_title or "一刻阅读" %></title>
 </head>
 

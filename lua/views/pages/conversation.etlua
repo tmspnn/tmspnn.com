@@ -2,29 +2,28 @@
 local reverse = require "util.reverse"
 local assign = require "util.assign"
 
-local conv = conversation
-local page_title = ctx.page_title
-local messages = reverse(ctx.data.conversation.messages)
 local uid = ctx.data.uid
+local conv = ctx.data.conversation
+reverse(conv.messages)
 %>
 <div class="page-container">
-    <% for _, m in ipairs(messages) do %>
+    <% for _, m in ipairs(conv.messages) do %>
     <% render("views.components.message", assign(m, {sent_by_self = m.created_by == uid})) %>
     <% end %>
 </div>
-<% render("views.components.navbar", {title = page_title}) %>
+<% render("views.components.navbar", {title = ctx.page_title}) %>
 <div class="input-container">
-    <div class="btn shortcut" data-:="hidden: shortcutBtnHidden" data-on="click: clickShortcutBtn">
+    <div class="btn shortcut" data-ref="shortcutBtn" data-click="shortcut">
         <% render("views.icons.emoji_happy") %>
     </div>
     <textarea data-ref="input" data-on="input: onInput"></textarea>
-    <div class="btn clip" data-:="hidden: clipBtnHidden" data-on="click: clickClipBtn">
+    <div class="btn clip" data-ref="clipBtn" data-click="clip">
         <% render("views.icons.paper_clip") %>
     </div>
-    <div class="btn audio" data-:="hidden: audioBtnHidden" data-on="click: clickAudioBtn" hidden>
+    <div class="btn audio" data-ref="audioBtn" data-on="touchstart: startRecord; touchend: endRecord" hidden>
         <% render("views.icons.microphone") %>
     </div>
-    <div class="btn send" data-:="hidden: sendBtnHidden" data-on="click: clickSendBtn" hidden>
+    <div class="btn send" data-ref="sendBtn" data-click="send" hidden>
         <% render("views.icons.arrow_circle_right") %>
     </div>
 </div>

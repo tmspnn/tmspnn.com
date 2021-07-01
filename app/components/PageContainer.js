@@ -104,14 +104,7 @@ const PageContainer = Klass({
 
         this.observer = new MutationObserver((mutationsList) => {
             each(mutationsList, (mutation) => {
-                each(mutation.addedNodes, (node) => {
-                    if (
-                        node instanceof HTMLAnchorElement &&
-                        node.hasAttribute("href")
-                    ) {
-                        window._container.captureLinks(node);
-                    }
-                });
+                each(mutation.addedNodes, (node) => this.captureLinks(node));
             });
         });
 
@@ -119,6 +112,8 @@ const PageContainer = Klass({
     },
 
     captureLinks(el) {
+        if (!(el instanceof Element)) return;
+
         const container = window._container;
         const links = $$("a[href]", el || document.body);
 

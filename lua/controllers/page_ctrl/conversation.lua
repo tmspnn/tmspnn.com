@@ -10,7 +10,7 @@ local function get_conversation(conv_id)
 end
 
 local function get_messages(conv_id)
-    return PG:query([[
+    return PG.query([[
         select * from "message"
         where conversation_id = ?
         order by id desc limit 20
@@ -28,7 +28,7 @@ local function conversation(app)
 
     ctx.data = {uid = ctx.uid, conversation = conv}
 
-    ctx.page_title = conversation.title .. " | 一刻阅读"
+    ctx.page_title = conv.title .. " | 一刻阅读"
     ctx.tags_in_head = {tags:css("conversation")}
     ctx.tags_in_body = {tags:json(ctx.data), tags:js("conversation")}
 
