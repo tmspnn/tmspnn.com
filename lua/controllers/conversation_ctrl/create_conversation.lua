@@ -4,6 +4,16 @@ local db = require "lapis.db"
 -- Local modules
 local PG = require "services.PG"
 
+-- Has user a followed user b
+-- @param {unsigned int} a
+-- @param {unsigned int} b
+local function has_followed(a, b)
+    return PG.query([[
+        select id from "interaction"
+        where created_by = ? and refer_to = ? and type = ?
+    ]], a, b, 2)[1] ~= nil -- 1: comment_advocation, 2: followship
+end
+
 local function get_conv_between(sender_id, recipient_id)
     return PG.query([[
         select * from "conversation"
@@ -29,6 +39,10 @@ local function create_conversation(app)
     local recipient_id = tonumber(app.params.with)
 
     if not recipient_id then error("user.not.exists", 0) end
+
+    local conv_available = has_followed(recipient_id, sender_id)
+
+    if not conv_available then error("conversation.unavailable", 0) end
 
     local conversation = get_conv_between(sender_id, recipient_id)
 

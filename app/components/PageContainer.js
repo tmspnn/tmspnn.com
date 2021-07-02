@@ -75,7 +75,7 @@ const PageContainer = Klass({
 
     prevUrl: null,
 
-    currentUrl: "",
+    currentUrl: location.pathname,
 
     nextUrl: null,
 

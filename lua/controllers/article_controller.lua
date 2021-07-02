@@ -3,7 +3,7 @@ local json_params = require("lapis.application").json_params
 local respond_to = require("lapis.application").respond_to
 
 -- Local modules
-local sign_in_required = require "util.sign_in_required"
+local sign_in_required = require "middlewares.sign_in_required"
 local create_article = require "controllers.article_ctrl.create_article"
 local rate_article = require "controllers.article_ctrl.rate_article"
 local create_comment = require "controllers.article_ctrl.create_comment"

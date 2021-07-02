@@ -3,7 +3,7 @@ local json_params = require("lapis.application").json_params
 local respond_to = require("lapis.application").respond_to
 
 -- Local modules
-local sign_in_required = require "util.sign_in_required"
+local sign_in_required = require "middlewares.sign_in_required"
 local sign_up = require "controllers.user_ctrl.sign_up"
 local sign_in = require "controllers.user_ctrl.sign_in"
 local send_vcode = require "controllers.user_ctrl.send_vcode"

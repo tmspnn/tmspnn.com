@@ -148,9 +148,10 @@ create table "message" (
     nickname varchar(256) not null,
     profile varchar(256) not null,
     conversation_id integer not null,
-    -- 0: text
+    -- 0: text, 1: image, 2: video
     "type" smallint not null default 0,
     "text" text not null default '',
+    "file" varchar(256) not null default '',
     obj jsonb not null default '{}' :: jsonb,
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now()

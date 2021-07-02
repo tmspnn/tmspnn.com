@@ -2,7 +2,8 @@
 local respond_to = require("lapis.application").respond_to
 
 -- Local modules and aliases
-local sign_in_required = require "util.sign_in_required"
+local sign_in_required = require "middlewares.sign_in_required"
+local is_conv_member = require "middlewares.is_conv_member"
 local index = require "controllers.page_ctrl.index"
 local trending = require "controllers.page_ctrl.trending"
 local article = require "controllers.page_ctrl.article"
@@ -37,7 +38,7 @@ local function page_controller(app)
 
     app:match("/conversations/:conversation_id", respond_to(
                   {
-            before = sign_in_required({redirect = true}),
+            before = is_conv_member({redirect = true}),
             GET = conversation
         }))
 

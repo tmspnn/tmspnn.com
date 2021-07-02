@@ -38,14 +38,14 @@ const Page = Klass(
             window._container.preloadStyles(document);
             window._container.captureLinks();
 
-            this.refs.rootDiv = $("#root");
-            this.refs.rootDiv.on("scroll", (e) => {
+            this.refs.root = $("#root");
+            this.refs.root.on("scroll", (e) => {
                 this.scrollTop = e.currentTarget.scrollTop;
             });
 
             document.documentElement.on("pageshow", () => {
                 if (this.scrollTop > 0) {
-                    immediatelyScrollTo(this.refs.rootDiv, this.scrollTop | 0);
+                    immediatelyScrollTo(this.refs.root, this.scrollTop | 0);
                 }
             });
         },

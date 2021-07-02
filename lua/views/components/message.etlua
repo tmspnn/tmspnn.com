@@ -3,8 +3,8 @@ local date = require "date"
 local fmt = string.format
 
 local sent_by_self = sent_by_self
-local profile_url = obj.profile
-    and fmt("url(%s)", obj.profile)
+local profile_url = profile
+    and fmt("url(%s)", profile)
     or "linear-gradient(135deg, var(--grey), var(--black))"
 local timestamp = date(created_at):fmt("%m/%d %H:%M")
 %>

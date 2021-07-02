@@ -6,7 +6,7 @@ local uid = ctx.data.uid
 local conv = ctx.data.conversation
 reverse(conv.messages)
 %>
-<div class="page-container">
+<div id="root">
     <% for _, m in ipairs(conv.messages) do %>
     <% render("views.components.message", assign(m, {sent_by_self = m.created_by == uid})) %>
     <% end %>

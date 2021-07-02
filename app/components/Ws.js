@@ -131,7 +131,6 @@ const Ws = Klass({
             this.state = "online";
             this.broadcastState("online");
 
-            this.message = msg;
             this.broadcast(msg);
         };
 

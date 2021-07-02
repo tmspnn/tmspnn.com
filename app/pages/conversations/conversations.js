@@ -74,16 +74,16 @@ const Conversations = Klass(
                     JSON.stringify(this.data.conversations)
                 );
             } else {
-                this.getJSON(
-                    `/api/conversations/${msg.conversation_id}/brief`
-                ).then((res) => {
-                    this.data.conversations.unshift(res);
-                    this.onNewConversation(res);
-                    localStorage.setItem(
-                        "conversations",
-                        JSON.stringify(this.data.conversations)
-                    );
-                });
+                this.getJSON(`/api/conversations/${msg.conversation_id}`).then(
+                    (res) => {
+                        this.data.conversations.unshift(res);
+                        this.onNewConversation(res);
+                        localStorage.setItem(
+                            "conversations",
+                            JSON.stringify(this.data.conversations)
+                        );
+                    }
+                );
             }
         }
     },

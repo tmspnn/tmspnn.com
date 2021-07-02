@@ -11,14 +11,14 @@ local fmt = string.format
 
 local function get_user(uid)
     return PG.query([[
-        select id, profile from "user" where id = ?
-    ]], uid)
+        select id, nickname, profile from "user" where id = ?
+    ]], uid)[1]
 end
 
 local function get_conv(conv_id)
     return PG.query([[
         select * from "conversation" where id = ?
-    ]], conv_id)
+    ]], conv_id)[1]
 end
 
 local function create_message(m) return PG.create("message", m)[1] end
@@ -44,7 +44,7 @@ local function send_message(app)
         created_by = user.id,
         nickname = user.nickname,
         profile = user.profile,
-        type = app.params.type or "text",
+        type = tonumber(app.params.type) or 0,
         text = app.params.text or "",
         file = app.params.file or "",
         obj = db.raw(fmt("'%s'::jsonb", cjson.encode(app.params.data or {})))
