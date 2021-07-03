@@ -12,18 +12,15 @@ const SignIn = Klass(
         constructor() {
             this.Super();
             this.element = $("#root");
-            this.setData({
-                passInputType: "password"
-            });
             this.listen();
 
             const eyeIcon = this.refs.passInput.nextElementSibling;
             eyeIcon.on("click", () => {
                 if (eyeIcon.hasClass("light")) {
-                    this.setData({ passInputType: "password" });
+                    this.refs.passInput.type = "password";
                     eyeIcon.removeClass("light");
                 } else {
-                    this.setData({ passInputType: "text" });
+                    this.refs.passInput.type = "text";
                     eyeIcon.addClass("light");
                 }
             });
@@ -33,8 +30,8 @@ const SignIn = Klass(
             const mobile = this.refs.mobileInput.value.trim();
             const password = this.refs.passInput.value.trim();
 
-            this.postJson("/api/sign-in", { mobile, password }).then(() => {
-                location.replace(history.state.prev || "/me");
+            this.postJSON("/api/sign-in", { mobile, password }).then(() => {
+                // location.replace(history.state.prev || "/me");
             });
         }
     },

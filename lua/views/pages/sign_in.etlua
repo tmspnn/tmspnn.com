@@ -7,12 +7,11 @@
 		</div>
 		<div class="row">
 			<% render("views/icons/key") %>
-			<input type="password" id="password" placeholder="密码" spellcheck="false" data-:="type: passInputType"
-				data-ref="passInput">
+			<input type="password" id="password" placeholder="密码" spellcheck="false" data-ref="passInput">
 			<% render("views/icons/eye") %>
 		</div>
 		<div class="row">
-			<button data-ref="signInBtn" data-on="click: submit">
+			<button data-ref="signInBtn" data-click="submit">
 				<% render("views/icons/login") %>
 				<span>登录</span>
 			</button>

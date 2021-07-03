@@ -6,6 +6,7 @@ import { Klass } from "k-util";
 
 // Local modules
 import "./conversation.scss";
+import uploadConversationFile from "../../helpers/uploadConversationFile";
 import Page from "../../components/Page";
 import Message from "./Message";
 import Navbar from "../../components/Navbar/Navbar";
@@ -17,12 +18,6 @@ const Conversation = Klass(
         constructor() {
             this.Super();
             this.element = $("body");
-            // this.setData({
-            //     shortcutBtnHidden: false,
-            //     clipBtnHidden: false,
-            //     audioBtnHidden: true,
-            //     sendBtnHidden: true
-            // });
             this.listen();
 
             if (this.ws) {
@@ -63,9 +58,28 @@ const Conversation = Klass(
             );
         },
 
-        shortcut() {},
+        shortcut() {
+            this.refs.shortcuts.toggleClass("visible");
+            this.refs.shortcutBtn.toggleClass("active");
+            this.refs.input.focus();
+        },
 
-        clip() {},
+        clip() {
+            this.refs.fileInput.click();
+        },
+
+        onFile() {
+            const file = this.refs.fileInput.files[0];
+            if (!file) return;
+
+            if (file.size > 2e8) return this.toast("请选择200M以内的文件.");
+
+            return uploadConversationFile(file, {
+                convId: this.data.conversation.id,
+                ossPolicy: this.data.oss_policy,
+                ossSignature: this.data.oss_signature
+            }).then((url) => console.log(url));
+        },
 
         onInput(e) {
             this.text = e.currentTarget.value.trim();
@@ -74,8 +88,26 @@ const Conversation = Klass(
             this.refs.clipBtn.hidden = !inputEmpty;
             this.refs.sendBtn.hidden = inputEmpty;
 
-            e.currentTarget.style = "2.2rem";
-            e.currentTarget.style = e.currentTarget.scrollHeight + "px";
+            e.currentTarget.style.height = "2.2rem";
+            e.currentTarget.style.height = e.currentTarget.scrollHeight + "px";
+        },
+
+        clickShortcut(e) {
+            const emoji = e.currentTarget.textContent;
+            const input = this.refs.input;
+
+            const selectionStart = input.selectionStart;
+            const text = input.value;
+
+            input.value =
+                text.slice(0, selectionStart) +
+                emoji +
+                text.slice(selectionStart);
+            input.selectionStart = selectionStart + 2;
+            input.selectionEnd = selectionStart + 2;
+            input.focus();
+            input.dispatchEvent(new Event("input"));
+            this.shortcut();
         },
 
         startRecord() {},
@@ -91,9 +123,10 @@ const Conversation = Klass(
                         text: this.text
                     }
                 ).then(() => {
-                    this.refs.input.value = "";
                     this.refs.clipBtn.hidden = false;
                     this.refs.sendBtn.hidden = true;
+                    this.refs.input.value = "";
+                    input.dispatchEvent(new Event("input"));
                 });
             }
         }

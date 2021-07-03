@@ -5,10 +5,21 @@ local assign = require "util.assign"
 local uid = ctx.data.uid
 local conv = ctx.data.conversation
 reverse(conv.messages)
+
+local shortcuts = {
+    "😀", "🤣", "😍", "😘", "🤩", "🤔", "🤨", "😑", "😶", "😏", "🤐", "😴", "😛", "🤤",
+    "😒", "🤯", "🤑", "😖", "😤", "😭", "🤢", "🤮", "🤧", "🤕", "😱", "😵", "😡", "🤬",
+    "😷", "🤒", "💩", "🦊", "🐈", "🐕", "🐾", "🐣", "🌾"
+}
 %>
 <div id="root">
     <% for _, m in ipairs(conv.messages) do %>
     <% render("views.components.message", assign(m, {sent_by_self = m.created_by == uid})) %>
+    <% end %>
+</div>
+<div class="shortcuts" data-ref="shortcuts">
+    <% for _, s in ipairs(shortcuts) do %>
+    <div class="item" data-click="clickShortcut"><%= s %></div>
     <% end %>
 </div>
 <% render("views.components.navbar", {title = ctx.page_title}) %>
@@ -27,3 +38,4 @@ reverse(conv.messages)
         <% render("views.icons.arrow_circle_right") %>
     </div>
 </div>
+<input type="file" accept="image/*,video/*,audio/*" data-ref="fileInput" data-on="change: onFile">

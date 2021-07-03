@@ -9,6 +9,8 @@ local is_mobile = require "util.is_mobile"
 local trim = require "util.trim"
 local fmt = string.format
 
+local TOKEN_TTL = 60 * 60 * 24 * 14 -- two weeks
+
 local function remove_token(token)
     local client = redis_client:new()
     client:run("del", fmt("user_token(%s):uid", token))

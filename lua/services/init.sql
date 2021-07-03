@@ -151,6 +151,7 @@ create table "message" (
     -- 0: text, 1: image, 2: video
     "type" smallint not null default 0,
     "text" text not null default '',
+    -- Pathname of the resource, not the whole uri
     "file" varchar(256) not null default '',
     obj jsonb not null default '{}' :: jsonb,
     created_at timestamp with time zone not null default now(),

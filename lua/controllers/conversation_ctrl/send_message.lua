@@ -68,7 +68,7 @@ local function send_message(app)
         if ok ~= 1 then push(offline_members, conv.members[idx]) end
     end)
 
-    offline_message(json, offline_members)
+    if #offline_members > 0 then offline_message(json, offline_members) end
 
     return {status = 204}
 end

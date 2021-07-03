@@ -1,5 +1,8 @@
 -- Local modules and aliases
 local PG = require "services.PG"
+local each = require "util.each"
+local get_conv_oss_token = require "util.get_conv_oss_token"
+local get_oss_auth_key = require "util.get_oss_auth_key"
 local has_value = require "util.has_value"
 local tags = require "util.tags"
 
@@ -26,7 +29,18 @@ local function conversation(app)
 
     conv.messages = get_messages(conv_id)
 
-    ctx.data = {uid = ctx.uid, conversation = conv}
+    each(conv.messages, function(m)
+        if m.file ~= "" then m.auth_key = get_oss_auth_key(m.file) end
+    end)
+
+    local policy, signature = get_conv_oss_token(conv_id)
+
+    ctx.data = {
+        uid = ctx.uid,
+        conversation = conv,
+        oss_policy = policy,
+        oss_signature = signature
+    }
 
     ctx.page_title = conv.title .. " | 一刻阅读"
     ctx.tags_in_head = {tags:css("conversation")}

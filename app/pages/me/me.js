@@ -14,7 +14,6 @@ const Me = Klass(
         constructor() {
             this.Super();
             this.element = $("#root");
-            this.setData();
             this.listen();
 
             // Child components

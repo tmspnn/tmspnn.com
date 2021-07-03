@@ -3,6 +3,7 @@ local db = require "lapis.db"
 
 -- Local modules
 local PG = require "services.PG"
+local filter = require "util.filter"
 
 -- Has user a followed user b
 -- @param {unsigned int} a
@@ -24,14 +25,20 @@ local function get_conv_between(sender_id, recipient_id)
     ]], sender_id, recipient_id, sender_id, recipient_id)[1]
 end
 
-local function new_conversation(sender_id, recipient_id)
+local function get_users(user_ids)
+    return PG.query([[
+        select id, nickname, profile from "user" where id in ?
+    ]], db.list(user_ids))
+end
+
+local function new_conversation(sender_id, recipient_id, title)
     return PG.query([[
         insert into "conversation"
             (created_by, members, title)
         values
             (?, ?, ?)
         returning *
-    ]], sender_id, db.array({sender_id, recipient_id}), "")[1]
+    ]], sender_id, db.array({sender_id, recipient_id}), title)[1]
 end
 
 local function create_conversation(app)
@@ -47,7 +54,14 @@ local function create_conversation(app)
     local conversation = get_conv_between(sender_id, recipient_id)
 
     if not conversation then
-        conversation = new_conversation(sender_id, recipient_id)
+        local users = get_users({sender_id, recipient_id})
+        local sender =
+            filter(users, function(u) return u.id == sender_id end)[1]
+        local recipient = filter(users,
+                                 function(u) return u.id == recipient_id end)[1]
+        conversation = new_conversation(sender_id, recipient_id,
+                                        sender.nickname .. ", " ..
+                                            recipient.nickname)
     end
 
     return {json = conversation}

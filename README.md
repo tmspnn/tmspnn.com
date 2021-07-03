@@ -7,12 +7,14 @@ Frontend & gateway of tmspnn.com
 -   basexx
 -   cjson
 -   lapis
+-   md5
 -   pgmoon
 -   resty.cookie
 -   resty.jit-uuid
 -   resty.redis
 -   resty.validation
 -   resty.websocket
+-   sha1
 
 ## Redis Cache
 
@@ -23,14 +25,8 @@ Frontend & gateway of tmspnn.com
 | user_token(%s):uid             | String     |
 | mobile(%s):vcode               | String     |
 
-## Postgres jsonb columns
-
-| Key                         | Desc                |
-| --------------------------- | ------------------- |
-| user.obj.advocated_comments | {comment_id?: true} |
-
 ## Postgres Advisory Locks
 
-| Number | Desc              |
+| Number | Description       |
 | ------ | ----------------- |
 | 0      | Rating an article |
