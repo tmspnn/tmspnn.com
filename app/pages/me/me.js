@@ -13,7 +13,7 @@ const Me = Klass(
     {
         constructor() {
             this.Super();
-            this.element = $("#root");
+            this.element = document.body;
             this.listen();
 
             // Child components

@@ -1,5 +1,5 @@
 <% local active_tab = active_tab or "home" %>
-<nav class="-tabbar">
+<nav class="tabbar">
     <a href="/" class="tab <% if active_tab == "home" then %>active<% end %>" data-nopush>
         <% render("views/icons/home") %>
     </a>

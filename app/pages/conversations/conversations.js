@@ -15,9 +15,8 @@ const Conversations = Klass(
     {
         constructor() {
             this.Super();
-            this.element = $("#root");
             this.listen();
-            window._container.observer.observe(this.element, {
+            window._container.observer.observe(this.refs.root, {
                 childList: true
             });
 
@@ -26,7 +25,7 @@ const Conversations = Klass(
                 parseJSON(localStorage.getItem("conversations")) || [];
 
             if (this.data.conversations.length > 0) {
-                this.element.appendChild(
+                this.refs.root.appendChild(
                     DocFrag(
                         ...this.data.conversations.map(
                             (conv) => new ConversationItem(null, conv).element
@@ -45,7 +44,10 @@ const Conversations = Klass(
 
         onNewConversation(conv) {
             const newConv = new ConversationItem(null, conv);
-            this.element.insertBefore(newConv.element, this.element.firstChild);
+            this.refs.root.insertBefore(
+                newConv.element,
+                this.refs.root.firstChild
+            );
         },
 
         onWsMessage(msg) {

@@ -36,7 +36,7 @@ const Page = Klass(
             new PageContainer();
 
             window._container.preloadStyles(document);
-            window._container.captureLinks();
+            window._container.captureLinks(document.body);
 
             this.refs.root = $("#root");
             this.refs.root.on("scroll", (e) => {
