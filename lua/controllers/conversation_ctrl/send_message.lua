@@ -7,6 +7,7 @@ local PG = require "services.PG"
 local redis_client = require "services.redis_client"
 local each = require "util.each"
 local push = require "util.push"
+local get_oss_auth_key = require "util.get_oss_auth_key"
 local fmt = string.format
 
 local function get_user(uid)
@@ -51,6 +52,9 @@ local function send_message(app)
     }
 
     local msg = create_message(m)
+
+    if msg.type ~= 0 then msg.auth_key = get_oss_auth_key(msg.file) end
+
     local json = cjson.encode(msg)
 
     local client = redis_client:new()

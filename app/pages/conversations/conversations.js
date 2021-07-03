@@ -1,4 +1,5 @@
 // External modules
+import { map } from "lodash";
 import { $, DocFrag } from "k-dom";
 import { find } from "lodash";
 import { Klass, parseJSON } from "k-util";
@@ -42,21 +43,20 @@ const Conversations = Klass(
             }
         },
 
-        onWsMessage(msg) {
-            console.log("Conversations.onWsMessage: ", msg);
-        },
-
         onNewConversation(conv) {
             const newConv = new ConversationItem(null, conv);
-            container.insertBefore(newConv.element, container.firstChild);
+            this.element.insertBefore(newConv.element, this.element.firstChild);
         },
 
         onWsMessage(msg) {
             console.log("Conversations onWsMessage: ", msg);
 
+            if (!msg) return;
+
             if (msg.offline_messages) {
-                // Offline messages
-                return;
+                return map(msg.offline_messages, (m) => parseJSON(m)).forEach(
+                    (m) => this.onWsMessage(m)
+                );
             }
 
             const existedConv = find(

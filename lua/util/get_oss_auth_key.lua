@@ -9,9 +9,11 @@ local function get_oss_auth_key(pathname)
     local timestamp = os.time()
     local random_number = floor(1e4 * random())
     local uid = 0
-    local private_key = ngx.var.oss_private_key
-    return md5.sumhexa(filename .. "=" .. timestamp .. "=" .. random_number ..
-                           "=" .. uid .. "=" .. private_key)
+    local private_key = ngx.var.oss_auth_key
+    local hash = md5.sumhexa(filename .. "-" .. timestamp .. "-" ..
+                                 random_number .. "-" .. uid .. "-" ..
+                                 private_key)
+    return timestamp .. "-" .. random_number .. "-" .. uid .. "-" .. hash
 end
 
 return get_oss_auth_key

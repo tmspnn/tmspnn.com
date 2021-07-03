@@ -7,15 +7,26 @@ local profile_url = profile
     and fmt("url(%s)", profile)
     or "linear-gradient(135deg, var(--grey), var(--black))"
 local timestamp = date(created_at):fmt("%m/%d %H:%M")
+
+local text_class = "text " .. (sent_by_self and "to-left" or "to-right")
+local resource_url = file == "" and "" or "https://oss.tmspnn.com/" .. file .. "?auth_key=" .. auth_key
 %>
 <div class="-message">
     <% if sent_by_self then %>
     <div class="profile" style="background-image: <%= profile_url %>"></div>
     <% end %>
     <div class="content">
-        <div class="text <%= sent_by_self and "to-left" or "to-right" %>">
+        <% if type == 0 then %>
+        <div class="<%= text_class %>">
             <%= text %>
         </div>
+        <% elseif type == 1 then %>
+        <div class="<%= text_class %>">
+            <img src="<%= resource_url %>" alt="">
+        </div>
+        <% elseif type == 2 then %>
+        <div class="video"></div>
+        <% end %>
         <div class="timestamp"><%= timestamp %></div>
     </div>
     <% if not sent_by_self then %>

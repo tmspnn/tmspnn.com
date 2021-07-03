@@ -13,6 +13,7 @@ const ConversationItem = Klass(
             this.Super();
             this.name = `conversation(${data.id})`;
             this.element = element || DOM(T);
+            this.data = data;
             this.listen();
             this.sync(data);
         },
@@ -25,13 +26,17 @@ const ConversationItem = Klass(
                 this.refs.profiles.appendChild(img);
             });
             this.refs.title.textContent = data.title;
-            this.refs.lastMessage.textContent = data.last_message.text;
+            this.refs.lastMessage.textContent =
+                data.latest_messages[data.latest_messages.length - 1].text ||
+                "...";
             this.refs.lastUpdated.textContent = dayjs(data.created_at).format(
                 "MM-DD HH:mm"
             );
         },
 
         onMessage(msg) {
+            this.data.latest_messages[this.data.latest_messages.length - 1] =
+                msg;
             this.refs.dot.hidden = false;
             this.refs.lastMessage.textContent = msg.text;
             this.refs.lastUpdated.textContent = dayjs(msg.created_at).format(
@@ -40,6 +45,16 @@ const ConversationItem = Klass(
         },
 
         onClick() {
+            this.refs.dot.hidden = true;
+        },
+
+        onBroadcast(name, method) {
+            if (this.name == name) {
+                this[method].call(this);
+            }
+        },
+
+        hideDot() {
             this.refs.dot.hidden = true;
         }
     },

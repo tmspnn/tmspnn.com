@@ -1,8 +1,7 @@
 // External modules
-// External modules
-import { isEmpty } from "lodash";
+import { map } from "lodash";
 import { $ } from "k-dom";
-import { Klass } from "k-util";
+import { Klass, parseJSON } from "k-util";
 
 // Local modules
 import "./conversation.scss";
@@ -38,17 +37,24 @@ const Conversation = Klass(
 
             if (!msg) return;
 
-            if (!isEmpty(msg.offline_messages)) {
-                msg.offline_messages.forEach((m) => {
-                    m.sentBySelf = m.created_by == this.data.uid;
-                    this.refs.root.appendChild(new Message(m).element);
-                });
-            } else if (msg.type == 0) {
-                msg.sentBySelf = msg.created_by == this.data.uid;
-                this.refs.root.appendChild(new Message(msg).element);
+            if (msg.offline_messages) {
+                return map(msg.offline_messages, (m) => parseJSON(m)).forEach(
+                    (m) => this.onWsMessage(m)
+                );
             }
 
-            setTimeout(() => this.scrollToBottom(), 50);
+            msg.sentBySelf = msg.created_by == this.data.uid;
+            this.refs.root.appendChild(new Message(msg).element);
+
+            setTimeout(() => {
+                this.scrollToBottom();
+                if (location.pathname == this.namespace) {
+                    this.broadcast(
+                        `conversation(${msg.conversation_id})`,
+                        "hideDot"
+                    );
+                }
+            }, 50);
         },
 
         scrollToBottom() {
@@ -74,11 +80,13 @@ const Conversation = Klass(
 
             if (file.size > 2e8) return this.toast("请选择200M以内的文件.");
 
+            if (this.blocked) return;
+
             return uploadConversationFile(file, {
                 convId: this.data.conversation.id,
                 ossPolicy: this.data.oss_policy,
                 ossSignature: this.data.oss_signature
-            }).then((url) => console.log(url));
+            }).then((pathname) => this.sendFile(pathname, file.type));
         },
 
         onInput(e) {
@@ -129,6 +137,21 @@ const Conversation = Klass(
                     input.dispatchEvent(new Event("input"));
                 });
             }
+        },
+
+        sendFile(pathname, type) {
+            const fileType = type.split("/")[0];
+            const t = fileType == "image" ? 1 : fileType == "video" ? 2 : null;
+
+            if (!t) return toast("暂不支持此文件格式.");
+
+            return this.postJSON(
+                `/api/conversations/${this.data.conversation.id}/messages`,
+                {
+                    type: t,
+                    file: pathname
+                }
+            );
         }
     },
     Page

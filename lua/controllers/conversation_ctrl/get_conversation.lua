@@ -4,11 +4,12 @@ local db = require "lapis.db"
 -- Local modules
 local PG = require "services.PG"
 local push = require "util.push"
+local reverse = require "util.reverse"
 
 local function get_conv(conv_id)
     return PG.query([[
         select * from "conversation" where id = ?
-    ]], conv_id)
+    ]], conv_id)[1]
 end
 
 local function get_profiles(uid, members)
@@ -25,7 +26,7 @@ local function get_profiles(uid, members)
     ]], db.list(user_ids))
 end
 
-local function get_latest_message(conv_id)
+local function get_latest_messages(conv_id)
     return PG.query([[
         select * from "message"
         where conversation_id = ? order by id desc limit 20
@@ -41,7 +42,7 @@ local function get_conversation(app)
 
     conv.profiles = get_profiles(app.ctx.uid, conv.members)
 
-    conv.latest_message = get_latest_message(conv_id)
+    conv.latest_messages = reverse(get_latest_messages(conv_id))
 
     return {json = conv}
 end

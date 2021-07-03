@@ -126,6 +126,12 @@
                 right: -10px;
                 bottom: 15px;
             }
+
+            > img {
+                width: 100%;
+                max-width: 100%;
+                border-radius: 0.5rem;
+            }
         }
 
         .timestamp {

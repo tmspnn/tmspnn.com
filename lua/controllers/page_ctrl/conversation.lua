@@ -4,6 +4,7 @@ local each = require "util.each"
 local get_conv_oss_token = require "util.get_conv_oss_token"
 local get_oss_auth_key = require "util.get_oss_auth_key"
 local has_value = require "util.has_value"
+local reverse = require "util.reverse"
 local tags = require "util.tags"
 
 local function get_conversation(conv_id)
@@ -27,7 +28,7 @@ local function conversation(app)
 
     if not has_value(conv.members, ctx.uid) then error("forbidden", 0) end
 
-    conv.messages = get_messages(conv_id)
+    conv.messages = reverse(get_messages(conv_id))
 
     each(conv.messages, function(m)
         if m.file ~= "" then m.auth_key = get_oss_auth_key(m.file) end

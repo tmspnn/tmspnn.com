@@ -25,6 +25,16 @@ const Message = Klass(
             }
 
             this.refs.text.textContent = data.text;
+
+            if (data.type == 1) {
+                const url =
+                    "https://oss.tmspnn.com/" +
+                    data.file +
+                    "?auth_key=" +
+                    data.auth_key;
+                this.refs.text.appendChild(DOM(`<img src="${url}">`));
+            }
+
             this.refs.date.textContent = dayjs(data.created_at).format(
                 "MM-DD HH:mm:ss"
             );

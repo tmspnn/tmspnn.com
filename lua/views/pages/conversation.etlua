@@ -1,10 +1,8 @@
 <%
-local reverse = require "util.reverse"
 local assign = require "util.assign"
 
 local uid = ctx.data.uid
 local conv = ctx.data.conversation
-reverse(conv.messages)
 
 local shortcuts = {
     "😀", "🤣", "😍", "😘", "🤩", "🤔", "🤨", "😑", "😶", "😏", "🤐", "😴", "😛", "🤤",
@@ -38,4 +36,4 @@ local shortcuts = {
         <% render("views.icons.arrow_circle_right") %>
     </div>
 </div>
-<input type="file" accept="image/*,video/*,audio/*" data-ref="fileInput" data-on="change: onFile">
+<input type="file" accept="image/*" data-ref="fileInput" data-on="change: onFile">
