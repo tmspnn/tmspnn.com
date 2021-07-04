@@ -42,6 +42,10 @@ const Navbar = Klass(
             this.dispatch(".close");
         },
 
+        settings() {
+            this.dispatch(".settings");
+        },
+
         publish() {
             this.dispatch(".publish");
         }

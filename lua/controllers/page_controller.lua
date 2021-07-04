@@ -15,6 +15,7 @@ local sign_in = require "controllers.page_ctrl.sign_in"
 local sign_up = require "controllers.page_ctrl.sign_up"
 local editor = require "controllers.page_ctrl.editor"
 local comment_editor = require "controllers.page_ctrl.comment_editor"
+local settings = require "controllers.page_ctrl.settings"
 
 local function page_controller(app)
     -- L1 pages
@@ -44,6 +45,9 @@ local function page_controller(app)
 
     app:match("/editor", respond_to(
                   {before = sign_in_required({redirect = true}), GET = editor}))
+
+    app:match("/settings", respond_to(
+                  {before = sign_in_required({redirect = true}), GET = settings}))
 
     -- L3 pages
     app:get("/sign-in", sign_in)

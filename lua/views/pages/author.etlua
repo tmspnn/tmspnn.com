@@ -25,7 +25,7 @@ local desc = #au.description > 0
     and au.description
     or "这个人很懒, 什么都没有写..."
 %>
-<div class="page-container">
+<div id="#root">
     <div class="bg" style="background-image: <%= bg_image %>"></div>
     <div class="row">
         <div class="profile" style="background-image: <%= profile_url %>"></div>

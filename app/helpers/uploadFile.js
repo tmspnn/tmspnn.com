@@ -33,5 +33,5 @@ export default function uploadFile(file, options) {
         options.ossEntry || "https://tmspnn.obs.cn-east-2.myhuaweicloud.com",
         "post",
         fd
-    ).then(() => "https://oss.tmspnn.com" + "/" + key);
+    ).then(() => key);
 }

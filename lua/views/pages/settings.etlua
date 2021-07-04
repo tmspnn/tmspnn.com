@@ -1,0 +1,53 @@
+<%
+local u = ctx.data.user
+%>
+<div id="root">
+    <div class="row">
+        <span>
+            <% render("views/icons/photograph") %>
+            背景图
+        </span>
+        <div class="bg-image" data-ref="bgImage" data-click="clickBgImage"
+            style="background-image: url(<%= u.bg_image %>)"></div>
+    </div>
+    <div class="row">
+        <span>
+            <% render("views/icons/user_circle") %>
+            头像
+        </span>
+        <div class="profile" data-ref="profile" data-click="clickProfile"
+            style="background-image: url(<%= u.profile %>)"></div>
+    </div>
+    <div class="row">
+        <span>
+            <% render("views/icons/identification") %>
+            昵称
+        </span>
+        <input class="nickname" value="<%= u.nickname %>" data-ref="nickname" data-on="blur: onBlur">
+    </div>
+    <div class="row">
+        <span>
+            <% render("views/icons/document_text") %>
+            简介
+        </span>
+        <textarea class="description" data-on="blur: onBlur" rows="3" data-ref="description"
+            placeholder="这个人很懒, 什么也没有写..."><%= u.description %></textarea>
+    </div>
+    <div class="row">
+        <span>
+            <% render("views/icons/location_marker") %>
+            地区
+        </span>
+        <input class="location" data-ref="location" data-on="blur: onBlur" placeholder="不知在哪里..."
+            value="<%= u.location %>">
+    </div>
+</div>
+<div class="submit-btn">
+    <button data-click="submit">
+        <% render("views/icons/check") %>
+        确定
+    </button>
+</div>
+<% render("views/components/navbar", {title = ctx.page_title}) %>
+<input type="file" accept="image/*" class="bg-image" data-ref="bgInput" data-on="change: onBgImage">
+<input type="file" accept="image/*" class="profile" data-ref="profileInput" data-on="change: onProfile">

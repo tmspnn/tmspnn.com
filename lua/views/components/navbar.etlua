@@ -13,6 +13,9 @@
         <div class="btn share" data-ref="shareBtn" data-click="share" hidden>
             <% render("views/icons/share") %>
         </div>
+        <div class="btn settings" data-ref="settingsBtn" data-click="settings" hidden>
+            <% render("views/icons/cog") %>
+        </div>
         <div class="btn publish" data-ref="publishBtn" data-click="publish" hidden>
             <% render("views/icons/upload") %>
             <span>发布</span>

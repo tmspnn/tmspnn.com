@@ -17,7 +17,7 @@ const Me = Klass(
             this.listen();
 
             // Child components
-            new Navbar($(".-navbar"));
+            new Navbar($(".-navbar"), { rightBtn: "settings" });
 
             // WebSocket
             if (this.ws) {
@@ -27,6 +27,10 @@ const Me = Klass(
 
         onWsMessage(msg) {
             console.log("Me.onWsMessage: ", msg);
+        },
+
+        settings() {
+            this.go("/settings");
         }
     },
     Page
