@@ -1,8 +1,10 @@
 // External modules
 import { DOM } from "k-dom";
 import { Klass, View } from "k-util";
+import dayjs from "dayjs";
 
 // Local modules
+import "./ArticleItem.scss";
 import T from "./ArticleItem.html";
 
 const ArticleItem = Klass(
@@ -30,9 +32,12 @@ const ArticleItem = Klass(
 
         sync(data) {
             this.refs.anchor.href = "/articles/" + data.id;
+            this.refs.profile.style.backgroundImage = `url(${data.author_profile})`;
             this.refs.title.textContent = data.title;
             this.refs.author.textContent = data.author;
-            this.refs.pageview.textContent = data.pageview;
+            this.refs.date.textContent = dayjs(data.created_at).format(
+                "MM-DD HH:mm"
+            );
         }
     },
     View

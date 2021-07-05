@@ -11,7 +11,7 @@ import "../../components/tag.scss";
 import "../../components/feed.scss";
 import Page from "../../components/Page";
 import Navbar from "../../components/Navbar/Navbar";
-import ArticleItem from "./ArticleItem";
+import ArticleItem from "./ArticleItem/ArticleItem";
 import UserItem from "./UserItem";
 
 const Index = Klass(
@@ -22,13 +22,12 @@ const Index = Klass(
 
         constructor() {
             this.Super();
-            this.element = document.body;
             this.listen();
 
-            new Navbar($(".-navbar"));
+            new Navbar();
 
             this.refs.clearBtn = $(".search > .container > svg:last-child");
-            this.refs.clearBtn.on("click", () => this.onClearBtnClick());
+            this.refs.clearBtn.on("click", () => this.clickClearBtn());
 
             window._container.observer.observe(this.refs.ul, {
                 childList: true
@@ -43,29 +42,19 @@ const Index = Klass(
             console.log("Index.onWsMessage: ", msg);
         },
 
-        onInput: debounce(function () {
-            const {
-                input,
-                clearBtn,
-                result,
-                tipsEmpty,
-                moreResultBtn,
-                tipsAllLoaded,
-                main
-            } = this.refs;
-
-            const text = input.value.trim();
+        input: debounce(function () {
+            const text = this.refs.input.value.trim();
 
             if (text.length > 0) {
-                clearBtn.addClass("visible");
+                this.refs.clearBtn.addClass("visible");
                 this.search(text);
             } else {
-                clearBtn.removeClass("visible");
-                result.hidden = true;
-                tipsEmpty.hidden = true;
-                tipsAllLoaded.hidden = true;
-                moreResultBtn.hidden = true;
-                main.hidden = false;
+                this.refs.clearBtn.removeClass("visible");
+                this.refs.result.hidden = true;
+                this.refs.tipsEmpty.hidden = true;
+                this.refs.tipsAllLoaded.hidden = true;
+                this.refs.moreBtn.hidden = true;
+                this.refs.main.hidden = false;
             }
         }, 500),
 
@@ -77,7 +66,7 @@ const Index = Klass(
             this.refs.result.hidden = false;
             this.refs.tipsEmpty.hidden = true;
             this.refs.tipsAllLoaded.hidden = true;
-            this.refs.moreResultBtn.hidden = true;
+            this.refs.moreBtn.hidden = true;
 
             if (isEmpty(res.articles) && isEmpty(res.users)) {
                 this.refs.tipsEmpty.hidden = false;
@@ -92,18 +81,18 @@ const Index = Klass(
                 if (res.articles.length < 10 && res.users.length < 10) {
                     this.refs.tipsAllLoaded.hidden = false;
                 } else {
-                    this.refs.moreResultBtn.hidden = false;
+                    this.refs.moreBtn.hidden = false;
                 }
             }
         },
 
-        onMoreResultBtnClick() {
+        clickMoreBtn() {
             if (this.lastSearchText) {
                 this.go("/q?" + qs.stringify({ text: this.lastSearchText }));
             }
         },
 
-        onClearBtnClick() {
+        clickClearBtn() {
             this.refs.input.value = "";
             this.refs.input.dispatchEvent(new Event("input"));
         },

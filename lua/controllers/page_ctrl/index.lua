@@ -1,4 +1,6 @@
--- Local modules and aliases
+-- Local modules
+local each = require "util.each"
+local oss_path_to_url = require "util.oss_path_to_url"
 local PG = require "services.PG"
 local redis_client = require "services.redis_client"
 local tags = require "util.tags"
@@ -15,15 +17,21 @@ local function get_recommended_tags()
 end
 
 local function get_latest_articles()
-    return PG.query([[
-        select *
-        from "article"
-        order by id desc limit 20
+    local latest_articles = PG.query([[
+        select * from "article" order by id desc limit 20
     ]])
+
+    each(latest_articles, function(a)
+        a.cover = oss_path_to_url(a.cover)
+        a.author_profile = oss_path_to_url(a.author_profile)
+    end)
+
+    return latest_articles
 end
 
 local function index(app)
     local ctx = app.ctx
+
     local search_placeholder = get_search_placeholder()
     local recommended_tags = get_recommended_tags()
     local latest_articles = get_latest_articles()

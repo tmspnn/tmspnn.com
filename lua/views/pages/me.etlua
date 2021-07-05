@@ -31,6 +31,10 @@ local description = #au.description > 0
         <div class="nickname"><%= au.nickname %></div>
     </div>
     <div class="row">
+        <a href="/editor" class="button">
+            <% render("views.icons.pencil_alt") %>
+            写一篇
+        </a>
         <div class="fame">
             <% render("views.icons.flag") %>
             <span>声望 <b><%= fame %></b></span>

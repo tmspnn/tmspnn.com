@@ -1,10 +1,12 @@
--- Local modules and aliases
+-- Local modules
 local PG = require "services.PG"
+local each = require "util.each"
+local oss_path_to_url = require "util.oss_path_to_url"
 local tags = require "util.tags"
 
 local function get_user(id)
     return PG.query([[
-        select * from "user" where id = ?
+        select *, obj->'bg_image' as bg_image from "user" where id = ?
     ]], id)[1]
 end
 
@@ -21,7 +23,15 @@ local function me(app)
 
     if not user then error("user.not.exists", 0) end
 
+    user.profile = oss_path_to_url(user.profile)
+    user.bg_image = oss_path_to_url(user.bg_image)
+
     user.articles = get_articles(ctx.uid)
+
+    each(user.articles, function(a)
+        a.cover = oss_path_to_url(a.cover)
+        a.author_profile = oss_path_to_url(a.author_profile)
+    end)
 
     ctx.data = {uid = ctx.uid, user = user}
 

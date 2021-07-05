@@ -5,12 +5,10 @@ local date = require "date"
 -- Local modules
 local a = ctx.data.article
 local my_rating = a.my_rating or 0
+local rated = my_rating > 0
 local created_at = date(a.created_at):fmt("%m/%d %H:%M")
-local updated_at = date(a.updated_at):fmt("%m/%d %H:%M")
-local profile = a.author_profile == ""
-    and "url(https://cdn.pixabay.com/photo/2019/10/19/11/35/wolf-4561204__480.png)"
-    or "url(" .. a.author_profile .. ")"
-local author_url = "/users/" .. created_by
+local profile = a.author_profile
+local author_url = "/users/" .. a.created_by
 %>
 <div id="root">
     <div class="header">
@@ -31,9 +29,7 @@ local author_url = "/users/" .. created_by
         <% for _, t in ipairs(a.related_articles) do %>
         <a href="/articles/<%= t.id %>">
             <h3><%= t.title %></h3>
-            <div class="cover" <% if not t.cover or #t.cover == 0 then %>hidden<% end %>
-                style="background-image: url(<%= t.cover %>)">
-            </div>
+            <div class="cover" style="background-image: url(<%= t.cover %>)"></div>
         </a>
         <% end %>
     </div>

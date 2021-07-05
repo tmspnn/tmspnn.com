@@ -1,7 +1,7 @@
 -- External modules
 local cjson = require "cjson"
 
--- Local modules and aliases
+-- Local modules
 local fmt = string.format
 
 -- Implementation

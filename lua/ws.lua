@@ -5,7 +5,7 @@ local ngx = require "ngx"
 local PG = require "services.PG"
 local server = require "resty.websocket.server"
 
--- Local modules and aliases
+-- Local modules
 local redis_client = require "services.redis_client"
 local unescape = require "util.unescape"
 local fmt = string.format

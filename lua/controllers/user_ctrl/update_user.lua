@@ -20,9 +20,11 @@ local function update_user(app)
             profile = ?,
             nickname = ?,
             description = ?,
-            location = ?
+            location = ?,
+            ts_vector = to_tsvector(? || ?)
         where id = ?
-    ]], fmt("\"%s\"", bg_image), profile, nickname, description, location, uid)
+    ]], fmt("\"%s\"", bg_image), profile, nickname, description, location,
+                         nickname, description, uid)
 
     return {json = res}
 end

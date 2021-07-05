@@ -68,35 +68,6 @@
         background-color: var(--white);
         overflow: hidden;
 
-        li.-article-item {
-            padding: 0.5rem;
-            border-top: 1px solid var(--light-white);
-
-            .title {
-                padding: 0.3rem;
-                font-size: 1.2rem;
-                font-weight: bold;
-            }
-
-            .author-n-pageview {
-                @extend ._flex;
-
-                .author {
-                    @extend ._inline;
-                    @extend ._truncated;
-                    max-width: 10rem;
-                }
-
-                svg {
-                    &:nth-child(3) {
-                        margin-left: auto;
-                        width: 1.1em;
-                        height: 1.1rem;
-                    }
-                }
-            }
-        }
-
         li.-user-item {
             padding: 0.5rem;
             border-top: 1px solid var(--light-white);
@@ -151,5 +122,9 @@
             border-radius: 2rem;
             box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.05);
         }
+    }
+
+    .feeds {
+        padding: 0 1rem;
     }
 }

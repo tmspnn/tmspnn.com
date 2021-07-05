@@ -1,4 +1,4 @@
--- Local modules and aliases
+-- Local modules
 local tags = require "util.tags"
 
 local function sign_in(app)

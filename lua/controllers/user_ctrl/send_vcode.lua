@@ -1,5 +1,4 @@
--- External modules
--- Local modules and aliases
+-- Local modules
 local redis_client = require "services.redis_client"
 local is_mobile = require "util.is_mobile"
 local trim = require "util.trim"

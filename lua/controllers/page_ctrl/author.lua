@@ -1,4 +1,4 @@
--- Local modules and aliases
+-- Local modules
 local PG = require "services.PG"
 local tags = require "util.tags"
 

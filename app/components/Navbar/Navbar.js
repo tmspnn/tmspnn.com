@@ -1,4 +1,5 @@
 // External modules
+import { $ } from "k-dom";
 import { Klass, View } from "k-util";
 
 // Local modules
@@ -14,10 +15,9 @@ const Navbar = Klass(
          * @param {String} options.leftBtn
          * @param {String} options.rightBtn
          */
-        constructor(element, options) {
+        constructor(options) {
             this.Super();
-            this.element = element;
-            this.listen();
+            this.element = $(".-navbar");
 
             if (options && options.leftBtn) {
                 const btn = this.refs[options.leftBtn + "Btn"];
@@ -28,6 +28,8 @@ const Navbar = Klass(
                 const btn = this.refs[options.rightBtn + "Btn"];
                 if (btn) btn.hidden = false;
             }
+
+            this.listen();
         },
 
         stepBack() {

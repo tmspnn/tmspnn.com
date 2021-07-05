@@ -1,7 +1,7 @@
 -- External modules
 local respond_to = require("lapis.application").respond_to
 
--- Local modules and aliases
+-- Local modules
 local sign_in_required = require "middlewares.sign_in_required"
 local is_conv_member = require "middlewares.is_conv_member"
 local index = require "controllers.page_ctrl.index"

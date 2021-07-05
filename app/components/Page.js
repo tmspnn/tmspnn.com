@@ -4,11 +4,11 @@ import { at, parseJSON, Klass, View } from "k-util";
 import kxhr from "k-xhr";
 
 // Local modules
+import CustomSpinner from "../components/CustomSpinner";
 import immediatelyScrollTo from "../helpers/immediatelyScrollTo";
 import PageContainer from "../components/PageContainer";
-import Ws from "../components/Ws";
 import Toast from "../components/Toast/Toast";
-import CustomSpinner from "../components/CustomSpinner";
+import Ws from "../components/Ws";
 
 const assign = Object.assign;
 
@@ -16,7 +16,7 @@ const Page = Klass(
     {
         blocked: false,
 
-        scrollTop: 9,
+        scrollTop: 0,
 
         ws: null,
 
@@ -27,17 +27,14 @@ const Page = Klass(
         constructor() {
             this.Super();
 
-            if (this.data.uid) {
-                this.ws = new Ws();
-            }
-
-            new Toast();
             new CustomSpinner();
+            new Toast();
             new PageContainer();
 
             window._container.preloadStyles(document);
             window._container.captureLinks(document.body);
 
+            this.element = document.body;
             this.refs.root = $("#root");
             this.refs.root.on("scroll", (e) => {
                 this.scrollTop = e.currentTarget.scrollTop;
@@ -48,6 +45,10 @@ const Page = Klass(
                     immediatelyScrollTo(this.refs.root, this.scrollTop | 0);
                 }
             });
+
+            if (this.data.uid) {
+                this.ws = new Ws();
+            }
         },
 
         toast(text) {

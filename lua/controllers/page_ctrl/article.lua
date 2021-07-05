@@ -2,11 +2,13 @@
 local cjson = require "cjson"
 local db = require "lapis.db"
 
--- Local modules and aliases
+-- Local modules
+local at = require "util.at"
 local each = require "util.each"
 local has_value = require "util.has_value"
 local lambda = require "util.lambda"
 local map = require "util.map"
+local oss_path_to_url = require "util.oss_path_to_url"
 local PG = require "services.PG"
 local tags = require "util.tags"
 
@@ -35,13 +37,41 @@ local function get_article_by_id(id)
     ]], id)[1]
 end
 
-local function get_comments(id)
-    return PG.query([[
+local function get_comments(article_id)
+    local comments = PG.query([[
         select * from "comment"
-        where article_id = ? and id < ?
+        where article_id = ?
         order by advocators_count desc, id desc
-        limit 50
-    ]])
+        limit 20
+    ]], article_id)
+
+    each(comments, function(c)
+        c.author_profile = oss_path_to_url(c.author_profile)
+
+        if c.reference_author_profile ~= "" then
+            c.reference_author_profile = oss_path_to_url(
+                                             c.reference_author_profile)
+        end
+
+        -- c.blocks = cjson.decode(c.content).blocks
+
+        -- each(c.blocks, function(b)
+        --     if at(b, "data", "file", "url") then
+        --         b.data.file.url = oss_path_to_url(b.data.file.url)
+        --     end
+        -- end)
+
+        -- if c.reference_content ~= "" then
+        --     c.reference_blocks = cjson.decode(c.reference_content).blocks
+        --     each(c.reference_blocks, function(b)
+        --         if at(b, "data", "file", "url") then
+        --             b.data.file.url = oss_path_to_url(b.data.file.url)
+        --         end
+        --     end)
+        -- end
+    end)
+
+    return comments
 end
 
 local function get_advocated(uid, comment_ids)
@@ -79,16 +109,21 @@ local function article(app)
 
     local article_id = tonumber(app.params.article_id)
 
-    if not article_id then error("article.not.exists", 0) end
-
     local a = get_article_by_id(article_id)
 
     if not a then error("article.not.exists", 0) end
 
-    a.blocks = cjson.decode(article.content).blocks
+    a.cover = oss_path_to_url(a.cover)
+    a.author_profile = oss_path_to_url(a.author_profile)
+    a.blocks = cjson.decode(a.content).blocks
+
+    each(a.blocks, function(b)
+        if at(b, "data", "file", "url") then
+            b.data.file.url = oss_path_to_url(b.data.file.url)
+        end
+    end)
 
     a.comments = get_comments(article_id)
-
     a.related_articles = get_related(article_id)
 
     if (ctx.uid) then
@@ -103,7 +138,7 @@ local function article(app)
         a.my_rating = get_rating(ctx.uid, article_id)
     end
 
-    ctx.data = {uid = ctx.uid, article = article}
+    ctx.data = {uid = ctx.uid, article = a}
 
     ctx.page_title = a.title
     ctx.tags_in_head = {tags:css("article")}

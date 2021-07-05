@@ -1,13 +1,13 @@
 <%
-local search_placeholder = ctx.data.search_placeholder or "搜索"
-local recommended_tags = ctx.data.recommended_tags
-local latest_articles = ctx.data.latest_articles
+local placeholder = ctx.data.search_placeholder or "搜索"
+local tags = ctx.data.recommended_tags
+local articles = ctx.data.latest_articles
 %>
 <div id="root">
     <section class="search">
         <div class="container">
             <% render("views.icons.search") %>
-            <input type="text" placeholder="<%= search_placeholder %>" data-on="input: onInput" data-ref="input" />
+            <input type="text" placeholder="<%= placeholder %>" data-ref="input" data-on="input: input" />
             <% render("views.icons.x") %>
         </div>
     </section>
@@ -21,18 +21,18 @@ local latest_articles = ctx.data.latest_articles
             <% render("views.icons.emoji_happy") %>
             <b>已显示全部结果.</b>
         </div>
-        <button class="more" data-ref="moreResultBtn" data-click="onMoreResultBtnClick" hidden>
+        <button class="more" data-ref="moreBtn" data-click="clickMoreBtn" hidden>
             <% render("views.icons.chevron_double_right") %> 更多
         </button>
     </section>
     <section class="main" data-ref="main">
         <section class="recommended-tags">
-            <% for i, t in ipairs(recommended_tags) do %>
+            <% for i, t in ipairs(tags) do %>
             <% render("views.components.tag", { name = t }) %>
             <% end %>
         </section>
         <section class="feeds">
-            <% for i, fd in ipairs(latest_articles) do %>
+            <% for i, fd in ipairs(articles) do %>
             <% render("views.components.feed", fd) %>
             <% end %>
         </section>

@@ -4,9 +4,11 @@ local ngx = require "ngx"
 
 -- Local modules
 local PG = require "services.PG"
+local each = require "util.each"
+local oss_path_to_url = require "util.oss_path_to_url"
 
 local function search_article(tokens, start_id)
-    return PG.query([[
+    local articles = PG.query([[
         select
             id, created_by, author, author_profile, title, summary,
             cover, rating, created_at, wordcount, pageview
@@ -16,10 +18,15 @@ local function search_article(tokens, start_id)
             and ts_vector @@ to_tsquery(?)
         order by id desc limit 10
     ]], start_id or 2147483647, table.concat(tokens, " & "))
+
+    each(articles,
+         function(a) a.author_profile = oss_path_to_url(a.author_profile) end)
+
+    return articles
 end
 
 local function search_users(tokens, start_id)
-    return PG.query([[
+    local users = PG.query([[
         select
             id, nickname, profile, description, fame,
             articles_count, followings_count, followers_count
@@ -29,6 +36,10 @@ local function search_users(tokens, start_id)
             and ts_vector @@ to_tsquery(?)
         order by id desc limit 10
     ]], start_id or 2147483647, table.concat(tokens, " & "))
+
+    each(users, function(u) u.profile = oss_path_to_url(u.profile) end)
+
+    return users
 end
 
 local function search(app)
@@ -36,6 +47,7 @@ local function search(app)
 
     -- Tokenization
     ngx.req.set_header("Content-Type", "application/json")
+
     local tok_res = ngx.location.capture("/internal/nlp/tokenization", {
         method = ngx.HTTP_POST,
         body = cjson.encode({text = text})

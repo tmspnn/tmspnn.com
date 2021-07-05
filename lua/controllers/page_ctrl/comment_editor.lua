@@ -1,4 +1,4 @@
--- Local modules and aliases
+-- Local modules
 local PG = require "services.PG"
 local get_oss_token = require "util.get_oss_token"
 local tags = require "util.tags"

@@ -1,4 +1,4 @@
--- Local modules and aliases
+-- Local modules
 local PG = require "services.PG"
 local each = require "util.each"
 local get_conv_oss_token = require "util.get_conv_oss_token"
