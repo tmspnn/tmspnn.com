@@ -11,7 +11,7 @@
 			<% render("views/icons/eye") %>
 		</div>
 		<div class="row">
-			<button data-ref="signInBtn" data-click="submit">
+			<button class="button" data-ref="signInBtn" data-click="submit">
 				<% render("views/icons/login") %>
 				<span>登录</span>
 			</button>

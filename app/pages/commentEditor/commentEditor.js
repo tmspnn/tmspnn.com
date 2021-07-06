@@ -3,13 +3,13 @@ import { $ } from "k-dom";
 import { Klass } from "k-util";
 import { debounce } from "lodash";
 import CodeTool from "@editorjs/code";
+import ColorPlugin from "editorjs-text-color-plugin";
 import Delimiter from "@editorjs/delimiter";
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import ImageTool from "@editorjs/image";
 import InlineCode from "@editorjs/inline-code";
 import List from "@editorjs/list";
-import LinkTool from "@editorjs/link";
 import Quote from "@editorjs/quote";
 
 // Local modules
@@ -37,12 +37,6 @@ const CommentEditor = Klass(
                         }
                     },
                     list: List,
-                    linkTool: {
-                        class: LinkTool,
-                        config: {
-                            endpoint: "/api/url-meta"
-                        }
-                    },
                     image: {
                         class: ImageTool,
                         config: {
@@ -74,7 +68,35 @@ const CommentEditor = Klass(
                     code: CodeTool,
                     inlineCode: InlineCode,
                     quote: Quote,
-                    delimiter: Delimiter
+                    delimiter: Delimiter,
+                    Color: {
+                        class: ColorPlugin,
+                        config: {
+                            colorCollections: [
+                                "#FF1300",
+                                "#EC7878",
+                                "#9C27B0",
+                                "#673AB7",
+                                "#3F51B5",
+                                "#0070FF",
+                                "#03A9F4",
+                                "#00BCD4",
+                                "#4CAF50",
+                                "#8BC34A",
+                                "#CDDC39",
+                                "#FFF"
+                            ],
+                            defaultColor: "#FF1300",
+                            type: "text"
+                        }
+                    },
+                    Marker: {
+                        class: ColorPlugin,
+                        config: {
+                            defaultColor: "#FFBF00",
+                            type: "marker"
+                        }
+                    }
                 },
                 i18n: {
                     messages: {
@@ -122,16 +144,14 @@ const CommentEditor = Klass(
             });
         },
 
-        saveContent() {
-            debounce(() => {
-                this.editor.save().then((d) => {
-                    localStorage.setItem(
-                        this.storagePrefix + "commentEditor.localData",
-                        JSON.stringify(d)
-                    );
-                });
-            }, 1000);
-        },
+        saveContent: debounce(function () {
+            this.editor.save().then((d) => {
+                localStorage.setItem(
+                    this.storagePrefix + "commentEditor.localData",
+                    JSON.stringify(d)
+                );
+            });
+        }, 1000),
 
         publish() {
             this.editor

@@ -1,15 +1,14 @@
 // External modules
-import { $ } from "k-dom";
-import { Klass } from "k-util";
 import { debounce } from "lodash";
+import { parseJSON, Klass } from "k-util";
 import CodeTool from "@editorjs/code";
+import ColorPlugin from "editorjs-text-color-plugin";
 import Delimiter from "@editorjs/delimiter";
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import ImageTool from "@editorjs/image";
 import InlineCode from "@editorjs/inline-code";
 import List from "@editorjs/list";
-import LinkTool from "@editorjs/link";
 import Quote from "@editorjs/quote";
 
 // Local modules
@@ -37,15 +36,11 @@ const Editor = Klass(
                         }
                     },
                     list: List,
-                    linkTool: {
-                        class: LinkTool,
-                        config: {
-                            endpoint: "/api/url-meta"
-                        }
-                    },
                     image: {
                         class: ImageTool,
                         config: {
+                            buttonContent: "选择图片",
+                            captionPlaceholder: "添加图片描述...",
                             uploader: {
                                 uploadByFile: (file) => {
                                     return Promise.resolve(
@@ -74,7 +69,28 @@ const Editor = Klass(
                     code: CodeTool,
                     inlineCode: InlineCode,
                     quote: Quote,
-                    delimiter: Delimiter
+                    delimiter: Delimiter,
+                    Color: {
+                        class: ColorPlugin,
+                        config: {
+                            colorCollections: [
+                                "#FF1300",
+                                "#EC7878",
+                                "#9C27B0",
+                                "#673AB7",
+                                "#3F51B5",
+                                "#0070FF",
+                                "#03A9F4",
+                                "#00BCD4",
+                                "#4CAF50",
+                                "#8BC34A",
+                                "#CDDC39",
+                                "#4d4d4d"
+                            ],
+                            defaultColor: "#FF1300",
+                            type: "text"
+                        }
+                    }
                 },
                 i18n: {
                     messages: {
@@ -83,7 +99,6 @@ const Editor = Klass(
                             Text: "文本",
                             Heading: "标题",
                             List: "列表",
-                            Link: "链接",
                             Image: "图片/视频",
                             Code: "代码",
                             InlineCode: "代码",
@@ -124,29 +139,31 @@ const Editor = Klass(
             });
 
             // Child components
-            new Navbar($(".-navbar"), {
+            new Navbar({
                 leftBtn: "close",
                 rightBtn: "publish"
             });
         },
 
-        saveContent() {
-            debounce(() => {
-                this.editor.save().then((d) => {
-                    localStorage.setItem(
-                        this.storagePrefix + "editor.localData",
-                        JSON.stringify(d)
-                    );
-                });
-            }, 1000);
+        saveContent: debounce(function () {
+            this.editor.save().then((d) => {
+                localStorage.setItem(
+                    this.storagePrefix + "editor.localData",
+                    JSON.stringify(d)
+                );
+            });
+        }, 1000),
+
+        close() {
+            this.stepBack();
         },
 
         publish() {
             this.editor
                 .save()
                 .then((d) => this.postJSON("/api/articles", d))
-                .then(() => {
-                    ctrl.toast("发布成功");
+                .then((res) => {
+                    this.toast("发布成功");
                     localStorage.removeItem(
                         this.storagePrefix + "editor.localData"
                     );

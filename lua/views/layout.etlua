@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="一刻阅读 | 尊重创作的价值" />
     <% if ctx.tags_in_head then -%>
     <% for i, el in ipairs(ctx.tags_in_head) do -%>
     <% render("views.components.html_tag", el) %>

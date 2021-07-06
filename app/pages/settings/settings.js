@@ -16,7 +16,7 @@ const Settings = Klass(
             this.element = document.body;
             this.listen();
 
-            new Navbar($(".-navbar"), { leftBtn: "back" });
+            new Navbar({ leftBtn: "back" });
 
             // WebSocket
             if (this.ws) {

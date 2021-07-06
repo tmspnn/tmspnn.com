@@ -32,7 +32,7 @@ local desc = #au.description > 0
         <div class="nickname"><%= au.nickname %></div>
     </div>
     <div class="row">
-        <button class="follow" data-on="click: clickFollowBtn">
+        <button class="button follow" data-on="click: clickFollowBtn">
             <% render("views.icons.heart") %>
             <span data-:="textContent: followBtnText">
                 <%= has_followed and "已关注" or "关注" %>
@@ -71,7 +71,7 @@ local desc = #au.description > 0
     </section>
 </div>
 <% render("views.components.navbar", {title = au.nickname}) %>
-<button class="send-message" data-ref="messageBtn">
+<button class="button send-message" data-ref="messageBtn">
     <% render("views.icons.chat") %>
     发消息
 </button>

@@ -6,6 +6,7 @@ Frontend & gateway of tmspnn.com
 
 -   basexx
 -   cjson
+-   htmlparser
 -   lapis
 -   md5
 -   pgmoon

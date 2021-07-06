@@ -1,4 +1,6 @@
 import { Base64 } from "js-base64";
+import { parseJSON } from "k-util";
+import qs from "qs";
 import kxhr from "k-xhr";
 
 /**
@@ -33,5 +35,14 @@ export default function uploadFile(file, options) {
         options.ossEntry || "https://tmspnn.obs.cn-east-2.myhuaweicloud.com",
         "post",
         fd
-    ).then(() => key);
+    )
+        .then(() =>
+            kxhr(
+                `/api/users/${uid}/auth-keys?` + qs.stringify({ filepath: key })
+            )
+        )
+        .then((res) => parseJSON(res))
+        .then(
+            (res) => `https://oss.tmspnn.com/${key}?auth_key=${res.auth_key}`
+        );
 }

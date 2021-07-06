@@ -21,7 +21,7 @@ local articles = ctx.data.latest_articles
             <% render("views.icons.emoji_happy") %>
             <b>已显示全部结果.</b>
         </div>
-        <button class="more" data-ref="moreBtn" data-click="clickMoreBtn" hidden>
+        <button class="button more" data-ref="moreBtn" data-click="clickMoreBtn" hidden>
             <% render("views.icons.chevron_double_right") %> 更多
         </button>
     </section>

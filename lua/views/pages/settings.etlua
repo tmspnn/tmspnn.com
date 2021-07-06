@@ -43,7 +43,7 @@ local u = ctx.data.user
     </div>
 </div>
 <div class="submit-btn">
-    <button data-click="submit">
+    <button class="button" data-click="submit">
         <% render("views/icons/check") %>
         确定
     </button>

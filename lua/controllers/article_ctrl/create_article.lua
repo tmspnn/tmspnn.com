@@ -53,7 +53,9 @@ local function create_article(app)
                 push(sentences, item)
             end)
         elseif b.type == "image" then
-            if #a.cover == 0 then a.cover = b.data.file.url end
+            if #a.cover == 0 then
+                a.cover = b.data.file.url:match("https://oss.tmspnn.com/(.*)?")
+            end
         elseif b.type == "code" then
             a.wordcount = a.wordcount + utf8.len(b.data.code)
             push(sentences, b.data.code)
