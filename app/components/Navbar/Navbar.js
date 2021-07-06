@@ -18,6 +18,7 @@ const Navbar = Klass(
         constructor(options) {
             this.Super();
             this.element = $(".-navbar");
+            this.listen();
 
             if (options && options.leftBtn) {
                 const btn = this.refs[options.leftBtn + "Btn"];
@@ -28,8 +29,6 @@ const Navbar = Klass(
                 const btn = this.refs[options.rightBtn + "Btn"];
                 if (btn) btn.hidden = false;
             }
-
-            this.listen();
         },
 
         stepBack() {

@@ -53,22 +53,22 @@ local function get_comments(article_id)
                                              c.reference_author_profile)
         end
 
-        -- c.blocks = cjson.decode(c.content).blocks
+        c.blocks = cjson.decode(c.content).blocks
 
-        -- each(c.blocks, function(b)
-        --     if at(b, "data", "file", "url") then
-        --         b.data.file.url = oss_path_to_url(b.data.file.url)
-        --     end
-        -- end)
+        each(c.blocks, function(b)
+            if at(b, "data", "file", "url") then
+                b.data.file.url = oss_path_to_url(b.data.file.url)
+            end
+        end)
 
-        -- if c.reference_content ~= "" then
-        --     c.reference_blocks = cjson.decode(c.reference_content).blocks
-        --     each(c.reference_blocks, function(b)
-        --         if at(b, "data", "file", "url") then
-        --             b.data.file.url = oss_path_to_url(b.data.file.url)
-        --         end
-        --     end)
-        -- end
+        if c.reference_content ~= "" then
+            c.reference_blocks = cjson.decode(c.reference_content).blocks
+            each(c.reference_blocks, function(b)
+                if at(b, "data", "file", "url") then
+                    b.data.file.url = oss_path_to_url(b.data.file.url)
+                end
+            end)
+        end
     end)
 
     return comments

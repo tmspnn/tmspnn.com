@@ -1,5 +1,4 @@
 // External modules
-import { $ } from "k-dom";
 import { Klass } from "k-util";
 
 // Local modules
@@ -11,7 +10,6 @@ const SignIn = Klass(
     {
         constructor() {
             this.Super();
-            this.element = $("#root");
             this.listen();
 
             const eyeIcon = this.refs.passInput.nextElementSibling;
@@ -31,7 +29,11 @@ const SignIn = Klass(
             const password = this.refs.passInput.value.trim();
 
             this.postJSON("/api/sign-in", { mobile, password }).then(() => {
-                // location.replace(history.state.prev || "/me");
+                if (location.pathname != "/sign-in") {
+                    location.reload();
+                } else {
+                    location.replace(history.state.prev || "/me");
+                }
             });
         }
     },

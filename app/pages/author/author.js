@@ -13,11 +13,11 @@ const Author = Klass(
     {
         constructor() {
             this.Super();
-            this.element = $("#root");
-            this.setData({
-                followBtnText: this.data.author.followed ? "已关注" : "关注"
-            });
+            // this.setData({
+            //     followBtnText: this.data.author.followed ? "已关注" : "关注"
+            // });
             this.listen();
+            this.storagePrefix = `uid(${this.data.uid}):`;
 
             // Child components
             new Navbar($(".-navbar"), { leftBtn: "back" });
@@ -52,7 +52,9 @@ const Author = Klass(
                 return window._container.go("/sign-in");
             }
 
-            const localConvs = localStorage.getItem("conversations");
+            const localConvs = localStorage.getItem(
+                this.storagePrefix + "conversations"
+            );
 
             if (localConvs) {
                 const reuseableConv = parseJSON(localConvs).filter((c) => {

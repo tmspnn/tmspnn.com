@@ -16,13 +16,17 @@ const Conversations = Klass(
         constructor() {
             this.Super();
             this.listen();
+            this.storagePrefix = `uid(${this.data.uid}):`;
+
             window._container.observer.observe(this.refs.root, {
                 childList: true
             });
 
             // Local conversations
             this.data.conversations =
-                parseJSON(localStorage.getItem("conversations")) || [];
+                parseJSON(
+                    localStorage.getItem(this.storagePrefix + "conversations")
+                ) || [];
 
             if (this.data.conversations.length > 0) {
                 this.refs.root.appendChild(
@@ -72,7 +76,7 @@ const Conversations = Klass(
                     msg
                 );
                 localStorage.setItem(
-                    "conversations",
+                    this.storagePrefix + "conversations",
                     JSON.stringify(this.data.conversations)
                 );
             } else {
@@ -81,7 +85,7 @@ const Conversations = Klass(
                         this.data.conversations.unshift(res);
                         this.onNewConversation(res);
                         localStorage.setItem(
-                            "conversations",
+                            this.storagePrefix + "conversations",
                             JSON.stringify(this.data.conversations)
                         );
                     }

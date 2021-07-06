@@ -22,9 +22,8 @@ const Editor = Klass(
     {
         constructor() {
             this.Super();
-            this.element = $("#root");
-            this.setData();
             this.listen();
+            this.storagePrefix = `uid(${this.data.uid}):`;
 
             this.editor = new EditorJS({
                 holder: "editorjs",
@@ -107,7 +106,11 @@ const Editor = Klass(
                     }
                 },
                 data: this.data.data ||
-                    parseJSON(localStorage.getItem("editor.localData")) || {
+                    parseJSON(
+                        localStorage.getItem(
+                            this.storagePrefix + "editor.localData"
+                        )
+                    ) || {
                         blocks: [
                             {
                                 type: "header",
@@ -130,7 +133,10 @@ const Editor = Klass(
         saveContent() {
             debounce(() => {
                 this.editor.save().then((d) => {
-                    localStorage.setItem("editor.localData", JSON.stringify(d));
+                    localStorage.setItem(
+                        this.storagePrefix + "editor.localData",
+                        JSON.stringify(d)
+                    );
                 });
             }, 1000);
         },
@@ -141,7 +147,9 @@ const Editor = Klass(
                 .then((d) => this.postJSON("/api/articles", d))
                 .then(() => {
                     ctrl.toast("发布成功");
-                    localStorage.removeItem("editor.localData");
+                    localStorage.removeItem(
+                        this.storagePrefix + "editor.localData"
+                    );
                     setTimeout(() => {
                         location.replace("/articles/" + res.id);
                     }, 1800);

@@ -8,7 +8,7 @@
 		<div class="row">
 			<% render("views/icons/annotation") %>
 			<input type="text" placeholder="验证码" spellcheck="false" data-ref="vcodeInput">
-			<button data-ref="vcodeBtn" data-:="textContent: vcodeBtnText" data-on="click: acquireVcode">获取</button>
+			<button data-ref="vcodeBtn" data-click="acquireVcode">获取</button>
 		</div>
 		<div class="row">
 			<% render("views/icons/key") %>
@@ -16,7 +16,7 @@
 			<% render("views/icons/eye") %>
 		</div>
 		<div class="row">
-			<button data-ref="signUpBtn" data-on="click: submit">
+			<button data-ref="signUpBtn" data-click="submit">
 				<% render("views/icons/finger_print") %>
 				<span>注册</span>
 			</button>

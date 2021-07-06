@@ -1,5 +1,4 @@
 // External modules
-import { $ } from "k-dom";
 import { Klass } from "k-util";
 
 // Local modules
@@ -13,11 +12,10 @@ const Me = Klass(
     {
         constructor() {
             this.Super();
-            this.element = document.body;
             this.listen();
 
             // Child components
-            new Navbar($(".-navbar"), { rightBtn: "settings" });
+            new Navbar({ rightBtn: "settings" });
 
             // WebSocket
             if (this.ws) {

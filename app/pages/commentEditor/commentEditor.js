@@ -22,9 +22,8 @@ const CommentEditor = Klass(
     {
         constructor() {
             this.Super();
-            this.element = $("#root");
-            this.setData();
             this.listen();
+            this.storagePrefix = `uid(${this.data.uid}):`;
 
             this.editor = new EditorJS({
                 holder: "editorjs",
@@ -109,7 +108,9 @@ const CommentEditor = Klass(
                 data:
                     this.data.data ||
                     parseJSON(
-                        localStorage.getItem("commentEditor.localData")
+                        localStorage.getItem(
+                            this.storagePrefix + "commentEditor.localData"
+                        )
                     ) ||
                     {}
             });
@@ -125,7 +126,7 @@ const CommentEditor = Klass(
             debounce(() => {
                 this.editor.save().then((d) => {
                     localStorage.setItem(
-                        "commentEditor.localData",
+                        this.storagePrefix + "commentEditor.localData",
                         JSON.stringify(d)
                     );
                 });
@@ -143,7 +144,9 @@ const CommentEditor = Klass(
                 })
                 .then(() => {
                     ctrl.toast("发布成功");
-                    localStorage.removeItem("commentEditor.localData");
+                    localStorage.removeItem(
+                        this.storagePrefix + "commentEditor.localData"
+                    );
                     setTimeout(() => {
                         if (history.state.prev) {
                             location.replace(history.state.prev);

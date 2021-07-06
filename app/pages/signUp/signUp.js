@@ -1,5 +1,4 @@
 // External modules
-import { $ } from "k-dom";
 import { Klass } from "k-util";
 
 // Local modules
@@ -11,15 +10,16 @@ const SignUp = Klass(
     {
         constructor() {
             this.Super();
-            this.element = $("#root");
-            this.setData();
             this.listen();
 
-            const { mobileInput, vcodeInput, passInput } = this.refs;
+            const mobileInput = this.refs.mobileInput;
+            const vcodeInput = this.refs.vcodeInput;
+            const passInput = this.refs.passInput;
 
             // Auto completion
             const localMobile = localStorage.getItem("signUp.mobile");
             const localVcode = localStorage.getItem("signUp.vcode");
+
             if (localMobile) {
                 mobileInput.value = localMobile;
             }
@@ -28,12 +28,13 @@ const SignUp = Klass(
             }
 
             const eyeIcon = passInput.nextElementSibling;
+
             eyeIcon.on("click", () => {
                 if (eyeIcon.hasClass("light")) {
-                    this.setData({ passInputType: "password" });
+                    passInput.type = "password";
                     eyeIcon.removeClass("light");
                 } else {
-                    this.setData({ passInputType: "text" });
+                    passInput.type = "text";
                     eyeIcon.addClass("light");
                 }
             });
@@ -41,12 +42,13 @@ const SignUp = Klass(
 
         countdown() {
             this.data.countdown = 60;
+
             this.data.countdownInterval = setInterval(() => {
                 if (--this.data.countdown == 0) {
                     clearInterval(this.data.countdownInterval);
-                    this.setData({ vcodeBtnText: "获取" });
+                    this.refs.vcodeBtn.textContent = "获取";
                 } else {
-                    this.setData({ vcodeBtnText: this.data.countdown });
+                    this.refs.vcodeBtn.textContent = this.data.countdown;
                 }
             }, 1000);
         },
@@ -67,11 +69,11 @@ const SignUp = Klass(
             const vcode = this.refs.vcodeInput.value.trim();
             const password = this.refs.passInput.value.trim();
 
-            this.postJson("/api/sign-up", { mobile, vcode, password }).then(
+            this.postJSON("/api/sign-up", { mobile, vcode, password }).then(
                 () => {
                     localStorage.removeItem("signUp.mobile");
                     localStorage.removeItem("signUp.vcode");
-                    location.replace(history.state.prev || "/me");
+                    location.replace("/me");
                 }
             );
         }

@@ -18,6 +18,12 @@
             margin-top: 1rem;
         }
 
+        &:nth-child(3) {
+            button {
+                border-radius: 0 1.5rem 1.5rem 0;
+            }
+        }
+
         input {
             width: 100%;
             padding: 0.4rem 2rem;
@@ -35,7 +41,6 @@
 
         button {
             @extend ._flex;
-            justify-content: center;
             margin: 1rem auto;
             width: 16rem;
             font-size: 1.2rem;
