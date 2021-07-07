@@ -5,6 +5,7 @@ local db = require "lapis.db"
 -- Local modules
 local at = require "util.at"
 local each = require "util.each"
+local empty = require "util.empty"
 local has_value = require "util.has_value"
 local lambda = require "util.lambda"
 local map = require "util.map"
@@ -113,27 +114,21 @@ local function article(app)
 
     if not a then error("article.not.exists", 0) end
 
-    a.cover = oss_path_to_url(a.cover)
-    a.author_profile = oss_path_to_url(a.author_profile)
-    a.blocks = cjson.decode(a.content).blocks
-
-    each(a.blocks, function(b)
-        if at(b, "data", "file", "url") then
-            b.data.file.url = oss_path_to_url(b.data.file.url)
-        end
-    end)
-
     a.comments = get_comments(article_id)
     a.related_articles = get_related(article_id)
 
     if (ctx.uid) then
-        local advocated = get_advocated(ctx.uid,
-                                        map(a.comments, lambda("c", "c.id")))
-        local advocated_ids = map(advocated, lambda("c", "c.id"))
+        if not empty(a.comments) then
+            local advocated = get_advocated(ctx.uid, map(a.comments,
+                                                         lambda("c", "c.id")))
+            local advocated_ids = map(advocated, lambda("c", "c.id"))
 
-        each(a.comments, function(c)
-            if has_value(advocated_ids, c.id) then c.advocated = true end
-        end)
+            each(a.comments, function(c)
+                if has_value(advocated_ids, c.id) then
+                    c.advocated = true
+                end
+            end)
+        end
 
         a.my_rating = get_rating(ctx.uid, article_id)
     end

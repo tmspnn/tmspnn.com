@@ -1,28 +1,32 @@
 <%
+local oss_path_to_url = require "util.oss_path_to_url"
+--
 local blocks = blocks or {}
 %>
 <% for _, b in ipairs(blocks) do %>
-    <% if b.type == "header" then %>
-        <h<%= b.data.level %>><%= b.data.text %></h<%= b.data.level %>>
-    <% elseif b.type == "paragraph" then %>
-        <p><%= b.data.text %></p>
-    <% elseif b.type == "list" then %>
-        <<%= b.data.style == "ordered" and "ol" or "ul" %>>
-        <% for _, item in ipairs(b.data.items) do %>
-            <li><%= item %></li>
-        <% end %>
-        </<%= b.data.style == "ordered" and "ol" or "ul" %>>
-    <% elseif b.type == "image" then %>
-        <img src="<%= b.data.file.url %>">
-        <p class="caption"><%= b.data.caption %></p>
-    <% elseif b.type == "video" then %>
-        <video src="<%= b.data.file.url %>"></video>
-        <p class="caption"><%= b.data.caption %></p>
-    <% elseif b.type == "code" then %>
-        <pre><code><%= b.data.code %></code></pre>
-    <% elseif b.type == "quote" then %>
-        <blockquote><%= b.data.text %></blockquote>
-    <% elseif b.type == "delimiter" then %>
-        <div class="delimiter">***</div>
+<% if b.type == "header" then %>
+<h<%= b.data.level %>><%= b.data.text %></h<%= b.data.level %>>
+<% elseif b.type == "paragraph" then %>
+<p><%= b.data.text %></p>
+<% elseif b.type == "list" then %>
+<<%= b.data.style == "ordered" and "ol" or "ul" %>>
+    <% for _, item in ipairs(b.data.items) do %>
+    <li><%= item %></li>
     <% end %>
+</<%= b.data.style == "ordered" and "ol" or "ul" %>>
+<% elseif b.type == "image" then %>
+<% local filepath = b.data.file.url:match("oss.tmspnn.com/(.*)?") %>
+<img src="<%= oss_path_to_url(filepath) %>">
+<p class="caption"><%= b.data.caption %></p>
+<% elseif b.type == "video" then %>
+<% local filepath = b.data.file.url:match("oss.tmspnn.com/(.*)?") %>
+<video src="<%= oss_path_to_url(filepath) %>"></video>
+<p class="caption"><%= b.data.caption %></p>
+<% elseif b.type == "code" then %>
+<pre><code><%= b.data.code %></code></pre>
+<% elseif b.type == "quote" then %>
+<blockquote><%= b.data.text %></blockquote>
+<% elseif b.type == "delimiter" then %>
+<div class="delimiter">***</div>
+<% end %>
 <% end %>

@@ -1,5 +1,5 @@
 // External modules
-import { $ } from "k-dom";
+import { $, $$ } from "k-dom";
 import { each, Klass } from "k-util";
 import "highlight.js/styles/github.css";
 import hljs from "highlight.js";
@@ -8,23 +8,22 @@ import hljs from "highlight.js";
 import "./article.scss";
 import Page from "../../components/Page";
 import Navbar from "../../components/Navbar/Navbar";
-import RatingBar from "./RatingBar";
 import Comment from "./Comment";
 import ReportAbusePanel from "./ReportAbusePanel";
 
 const Article = Klass(
     {
+        ratingText: ["很差", "差", "一般", "好", "很好"],
+
         constructor() {
             this.Super();
-            this.setData();
             this.listen();
+            this.refs.stars = $$(".rating-bar .star");
 
             hljs.highlightAll();
 
             // Child components
-            new Navbar($(".-navbar"), { leftBtn: "back" });
-
-            new RatingBar($(".rating-bar"), { rating: this.data.my_rating });
+            new Navbar({ leftBtn: "back" });
 
             each($$(".-comment"), (el, idx) => {
                 new Comment(el, this.data.comments[idx]);
@@ -45,28 +44,41 @@ const Article = Klass(
             console.log("Article.onWsMessage: ", msg);
         },
 
+        onStarClick(e) {
+            const div = e.currentTarget;
+            const rating = 1 + (div.dataset.idx | 0);
+
+            if (this.data.rating == rating) {
+                this.data.rating = 0;
+                each(this.refs.stars, (div) => div.removeClass("active"));
+                this.refs.ratingText.textContent = "";
+            } else {
+                this.data.rating = rating;
+
+                each(this.refs.stars, (div, idx) => {
+                    +idx < this.data.rating
+                        ? div.addClass("active")
+                        : div.removeClass("active");
+                });
+
+                this.refs.ratingText.textContent =
+                    this.ratingText[this.data.rating - 1];
+            }
+        },
+
         editComment() {
             this.$container.go(
                 "/comment-editor?article_id=" + this.data.article.id
             );
         },
 
-        rateArticle(rating) {
+        rate(rating) {
             if (rating == 0) {
                 return this.toast("请给出1-5星的评价.");
             }
             this.postJSON("/api/ratings", { rating }).then(() => {
                 this.dispatch("ratingBar.onRated", rating);
             });
-        },
-
-        clickBackBtn() {
-            const from = at(history, "state.from");
-            if (from) {
-                history.back();
-            } else {
-                location.replace("/");
-            }
         },
 
         advocateComment(commentId) {

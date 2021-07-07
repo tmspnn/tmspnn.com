@@ -1,12 +1,10 @@
 <%
--- External modules
 local date = require "date"
 local utf8 = require "utf8"
-
--- Aliases
+--
+local oss_path_to_url = require "util.oss_path_to_url"
 local fmt = string.format
-
--- Data
+--
 local id = id
 local created_by = created_by
 local article_link = "/articles/" .. id
@@ -14,17 +12,16 @@ local author_link = "/users/" .. created_by
 local author = author
 local title = title
 local summary = summary
-local cover = cover
+local cover = oss_path_to_url(cover)
 local hide_cover = not cover or #cover == 0
 local rating = fmt("%.1f", rating)
 local created_at = date(created_at):fmt("%m/%d %H:%M")
 local wordcount = wordcount
 local pageview = pageview
-
--- Computed
+--
 local has_profile = author_profile and #author_profile > 0
 local profile_bg = has_profile
-    and fmt("url(%s)", author_profile)
+    and fmt("url(%s)", oss_path_to_url(author_profile))
     or "linear-gradient(135deg, var(--grey), var(--black))"
 local profile_text = has_profile and "" or utf8.sub(author, 1, 1)
 %>

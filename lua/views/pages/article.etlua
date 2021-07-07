@@ -1,25 +1,27 @@
 <%
--- External modules
+local cjson = require "cjson"
 local date = require "date"
-
--- Local modules
+--
+local oss_path_to_url = require "util.oss_path_to_url"
+--
 local a = ctx.data.article
 local my_rating = a.my_rating or 0
-local rated = my_rating > 0
+local hidden_if_rated = my_rating > 0 and "hidden" or ""
+local hidden_if_unrated = my_rating == 0 and "hidden" or ""
 local created_at = date(a.created_at):fmt("%m/%d %H:%M")
-local profile = a.author_profile
+local profile = oss_path_to_url(a.author_profile)
 local author_url = "/users/" .. a.created_by
 %>
 <div id="root">
     <div class="header">
-        <a href="<%= author_url %>" class="profile" style="background-image: <%= profile %>"></a>
+        <a href="<%= author_url %>" class="profile" style="background-image: url(<%= profile %>)"></a>
         <a href="<%= author_url %>" class="author">
             <b><%= a.author %></b>
         </a>
         <div class="date"><%= created_at %></div>
     </div>
     <div class="content">
-        <% render("views.components.editor_content", {blocks = a.blocks}) %>
+        <% render("views.components.editor_content", {blocks = cjson.decode(a.content).blocks}) %>
     </div>
     <div class="related-articles">
         <h2>
@@ -27,9 +29,19 @@ local author_url = "/users/" .. a.created_by
             <span>推荐阅读</span>
         </h2>
         <% for _, t in ipairs(a.related_articles) do %>
-        <a href="/articles/<%= t.id %>">
-            <h3><%= t.title %></h3>
-            <div class="cover" style="background-image: url(<%= t.cover %>)"></div>
+        <a href="/articles/<%= t.id %>" class="item">
+            <div class="meta">
+                <div class="row">
+                    <div class="profile" style="background-image: url(<%= oss_path_to_url(t.author_profile) %>)"></div>
+                    <div class="nickname"><%= t.author %></div>
+                </div>
+                <h3><%= t.title %></h3>
+                <div class="date">
+                    <% render("views.icons.clock") %>
+                    <%= date(t.created_at):fmt("%m/%d %H:%M") %>
+                </div>
+            </div>
+            <div class="cover" style="background-image: url(<%= oss_path_to_url(t.cover) %>)"></div>
         </a>
         <% end %>
     </div>
@@ -46,19 +58,18 @@ local author_url = "/users/" .. a.created_by
     </div>
 </div>
 <% render("views.components.navbar", {title = title}) %>
-<div class="rating-bar" data-:="@onRatingChange: rating" <% if my_rating > 0 then %>hidden<% end %>>
-    <h3 data-:="hidden: rated" <% if my_rating == 0 then %>hidden<% end %>>我的评价</h3>
+<div class="rating-bar" data-ref="ratingBar" <%= hidden_if_rated %>>
+    <h3 data-ref="ratingBarTitle" <%= hidden_if_unrated %>>我的评价</h3>
     <% for i = 1, my_rating do %>
-    <div class="active" data-idx="<%= i - 1 %>" data-on="click: onStarClick">
+    <div class="star active" data-idx="<%= i - 1 %>" data-click="onStarClick">
         <% render("views.icons.star") %>
     </div>
     <% end %>
     <% for i = 1, 5 - my_rating do %>
-    <div data-idx="<%= my_rating + i - 1 %>" data-on="click: onStarClick">
+    <div class="star" data-idx="<%= my_rating + i - 1 %>" data-click="onStarClick">
         <% render("views.icons.star") %>
     </div>
     <% end %>
-    <span data:="textContent: spanText" <% if my_rating > 0 then %>hidden<% end %>></span>
-    <button class="button" data-:="hidden: rated" data-on="click: rateArticle"
-        <% if my_rating > 0 then %>hidden<% end %>>评价</button>
+    <span data-ref="ratingText" <%= hidden_if_rated %>></span>
+    <button class="button" data-ref="ratingBtn" data-click="rate" <%= hidden_if_rated %>>评价</button>
 </div>

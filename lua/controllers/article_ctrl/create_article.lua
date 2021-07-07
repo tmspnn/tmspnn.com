@@ -94,6 +94,12 @@ local function create_article(app)
 
     local article = PG.create("article", a, "id")[1]
 
+    ngx.timer.at(0, function(premature, uid)
+        PG.query([[
+            update user set articles_count = article_count + 1 where id = ?
+        ]], uid)
+    end, user.id)
+
     return {json = article}
 end
 

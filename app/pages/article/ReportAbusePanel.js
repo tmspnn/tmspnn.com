@@ -14,7 +14,8 @@ const ReportAbusePanel = Klass(
         constructor() {
             this.Super();
             this.element = DOM(T);
-            this.setData({ selfHidden: true });
+            this.listen();
+            // this.setData({ selfHidden: true });
 
             this.refs.panel.on(
                 "click",

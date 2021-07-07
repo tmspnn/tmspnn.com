@@ -1,6 +1,5 @@
 -- Local modules
 local PG = require "services.PG"
-local each = require "util.each"
 local oss_path_to_url = require "util.oss_path_to_url"
 local tags = require "util.tags"
 
@@ -27,11 +26,6 @@ local function me(app)
     user.bg_image = oss_path_to_url(user.bg_image)
 
     user.articles = get_articles(ctx.uid)
-
-    each(user.articles, function(a)
-        a.cover = oss_path_to_url(a.cover)
-        a.author_profile = oss_path_to_url(a.author_profile)
-    end)
 
     ctx.data = {uid = ctx.uid, user = user}
 
