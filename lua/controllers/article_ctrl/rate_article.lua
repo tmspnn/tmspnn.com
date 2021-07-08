@@ -1,11 +1,9 @@
--- External modules
 local cjson = require "cjson"
 local db = require "lapis.db"
-
--- Local modules
+--
 local PG = require "services.PG"
 local fmt = string.format
-
+--
 local function get_user(uid)
     return PG.query([[
         select id, nickname, profile, fame from "user" where id = ?
@@ -19,28 +17,23 @@ local function get_article(article_id)
 end
 
 local function rate_article(app)
-    local uid = app.ctx.uid
+    local ctx = app.ctx
 
-    local rating = tonumber(app.params.rating)
+    local rating = assert(tonumber(app.params.rating), "rating.invalid")
+    assert(rating > 0 and rating < 6, ("rating.invalid"))
 
-    if not rating or rating < 1 or rating > 5 then error("rating.invalid", 0) end
+    local referrer = assert(app.req.headers["referer"], "forbidden")
+    local article_id = assert(tonumber(referrer:match("/articles/(%d+)")),
+                              "article.not.exists")
 
-    local referrer = app.req.headers["referer"]
-    local starts, ends, article_id_str =
-        string.find(referrer, "/articles/(%d+)")
-    local article_id = tonumber(article_id_str)
-
-    if not article_id then error("article.not.exists", 0) end
-
-    local user = get_user(uid)
-
+    local user = get_user(ctx.uid)
     local article = get_article(article_id)
 
-    local rating_obj = cjson.encode({
+    local obj = fmt("'%s'::jsonb", cjson.encode({
         author = user.nickname,
         author_profile = user.profile,
         article_title = article.title
-    })
+    }))
 
     assert(PG.query([[
         begin;
@@ -49,8 +42,10 @@ local function rate_article(app)
 
         select pg_advisory_xact_lock(0);
 
-        insert into rating (created_by, article_id, rating, weight, obj)
-        values (?, ?, ?, ?, ?);
+        insert into rating
+            (created_by, article_id, rating, weight, obj)
+        values
+            (?, ?, ?, ?, ?);
 
         update "article"
         set
@@ -64,11 +59,15 @@ local function rate_article(app)
             fame = fame + (? - 3) * least(greatest(1, ? / fame), 50)
         where id = ?;
 
+        update "user"
+        set
+            ratings_count = ratings_count + 1
+        where id = ?;
+
         commit;
-    ]], uid, article_id, rating, user.fame,
-                    db.raw(fmt("'%s'::jsonb", rating_obj)), rating, user.fame,
+    ]], ctx.uid, article_id, rating, user.fame, db.raw(obj), rating, user.fame,
                     user.fame, user.fame, rating, user.fame, article_id, rating,
-                    user.fame, article.created_by))
+                    user.fame, article.created_by, ctx.uid))
 
     return {status = 204}
 end

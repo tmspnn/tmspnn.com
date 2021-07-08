@@ -1,6 +1,8 @@
--- @param {boolean} options.redirect
--- @param {string} options.url
 local function sign_in_required(options)
+    --[[
+        boolean options.redirect
+        string options.url
+    --]]
     local redirect = (options and options.redirect) or false
     local url = (options and options.url) or "/sign-in"
 
@@ -10,7 +12,7 @@ local function sign_in_required(options)
         if redirect then
             app:write({redirect_to = url})
         else
-            error("not.authorized", 0)
+            error("not.authorized")
         end
     end
 end

@@ -1,19 +1,20 @@
--- External modules
 local ngx = require "ngx"
-
--- Local modules
+--
 local error_messages = require "controllers.error_messages"
-
--- Implementation
+--
 local exception = {}
 
 function exception.handle_404() return {status = 404, render = "pages.404"} end
 
--- @param {lapis.Application} app
--- @param {string} err
--- @param {string} trace
 function exception.handle_error(app, err, trace)
-    local msg = error_messages[err]
+    --[[
+        lapis.Application app
+        string err
+        string trace
+    --]]
+    local space_idx = err:find(" ")
+    local error_txt = err:sub(space_idx + 1)
+    local msg = error_messages[error_txt]
 
     if not msg then
         ngx.log(ngx.ERR, err, trace)

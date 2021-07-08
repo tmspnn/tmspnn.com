@@ -67,18 +67,21 @@ const Article = Klass(
         },
 
         editComment() {
-            this.$container.go(
-                "/comment-editor?article_id=" + this.data.article.id
-            );
+            this.go("/comment-editor?article_id=" + this.data.article.id);
         },
 
-        rate(rating) {
-            if (rating == 0) {
+        rate() {
+            if (this.data.rating == 0) {
                 return this.toast("请给出1-5星的评价.");
             }
-            this.postJSON("/api/ratings", { rating }).then(() => {
-                this.dispatch("ratingBar.onRated", rating);
-            });
+
+            this.postJSON("/api/ratings", { rating: this.data.rating }).then(
+                () => {
+                    this.toast("😀评价成功!");
+                    this.refs.ratingBarTitle.hidden = false;
+                    this.refs.ratingBtn.hidden = true;
+                }
+            );
         },
 
         advocateComment(commentId) {
