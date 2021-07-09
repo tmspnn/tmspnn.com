@@ -21,7 +21,7 @@ local author_url = "/users/" .. a.created_by
         <div class="date"><%= created_at %></div>
     </div>
     <div class="content">
-        <% render("views.components.editor_content", {blocks = cjson.decode(a.content).blocks}) %>
+        <% render("views.components.editor_content", {content = a.content}) %>
     </div>
     <div class="related-articles">
         <h2>
@@ -46,7 +46,7 @@ local author_url = "/users/" .. a.created_by
         <% end %>
     </div>
     <div class="comments">
-        <button class="button comment">
+        <button class="button comment" data-click="editComment">
             <% render("views.icons.chat") %>
             <span>有话要说</span>
         </button>

@@ -19,6 +19,7 @@ local function has_advocated(uid, article_id, comment_id)
         where
             created_by = ? and
             refer_to = ? and
+            "type" = 1 and
             obj @> '{"comment_id": ?}'
     ]], uid, article_id, comment_id)[1]
 end
@@ -62,22 +63,17 @@ local function undo_advocation(uid, article_id, comment_id)
 end
 
 local function advocate_comment(app)
-    local uid = app.ctx.uid
-
-    local comment_id = tonumber(app.params.comment_id)
-    if not comment_id then error("comment.not.exist", 0) end
-
-    local comment = get_comment(comment_id)
-    if not comment then error("comment.not.exist", 0) end
-
+    local ctx = app.ctx
+    local comment_id = assert(tonumber(app.params.comment_id),
+                              "comment.not.exist")
+    local comment = assert(get_comment(comment_id), "comment.not.exist")
     local article_id = comment.article_id
-
-    local advocated = has_advocated(uid, article_id, comment_id)
+    local advocated = has_advocated(ctx.uid, article_id, comment_id)
 
     if advocated then
-        undo_advocation(uid, article_id, comment_id)
+        undo_advocation(ctx.uid, article_id, comment_id)
     else
-        advocate(uid, article_id, comment_id)
+        advocate(ctx.uid, article_id, comment_id)
     end
 
     return {json = {advocated = not advocated}}

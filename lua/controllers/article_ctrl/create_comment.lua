@@ -1,11 +1,8 @@
--- External modules
 local ngx = require "ngx"
-local cjson = require "cjson"
 local db = require "lapis.db"
-
--- Local modules
+--
 local PG = require "services.PG"
-local fmt = string.format
+local empty = require "util.empty"
 
 local function get_user(uid)
     return PG.query([[
@@ -28,44 +25,43 @@ end
 local function create_comment(app)
     local ctx = app.ctx
 
-    local uid = ctx.uid
-    local user = get_user(uid)
-    if not user then error("user.not.exists", 0) end
+    local blocks = app.params.blocks
+    if empty(blocks) then error("empty.content") end
 
-    local article_id = tonumber(app.params.article_id)
-    if not article_id then error("article.not.exists", 0) end
-
-    local article = get_article(article_id)
-    if not article then error("article.not.exists", 0) end
-
+    local user = assert(get_user(ctx.uid), "user.not.exists")
+    local article = assert(get_article(tonumber(app.params.article_id)),
+                           "article.not.exists")
     local refer_to = tonumber(app.params.refer_to)
-    local reference = {}
-    local reference_obj = {}
+    local reference_author = ""
+    local reference_author_profile = ""
+    local reference_content = ""
+    local reference_created_at = db.raw("now()")
 
     if refer_to then
-        reference = get_comment(refer_to)
-        if reference then reference_obj = cjson.decode(reference.obj) end
+        local reference = get_comment(refer_to)
+        if reference then
+            reference_author = reference.author
+            reference_author_profile = reference.author_profile
+            reference_content = reference.content
+            reference_created_at = reference.created_at
+        end
     end
 
-    local comment_obj = cjson.encode({
-        reference_id = reference.id,
-        reference_author = reference_obj.author,
-        reference_profile = reference_obj.profile,
-        reference_content = reference_obj.content,
-        article_title = article.title,
+    local d = {
+        created_by = user.id,
         author = user.nickname,
-        profile = user.profile,
-        content = ngx.req.get_body_data()
-    })
-
-    local comment = {
-        created_by = uid,
-        article_id = article_id,
+        author_profile = user.profile,
+        article_id = article.id,
+        article_title = article.title,
         refer_to = refer_to or 0,
-        obj = db.raw(fmt("'%s'::jsonb", comment_obj))
+        reference_author = reference_author or "",
+        reference_author_profile = reference_author_profile or "",
+        reference_content = reference_content or "",
+        reference_created_at = reference_created_at,
+        content = ngx.req.get_body_data()
     }
 
-    PG.create("comment", comment, "id")
+    PG.create("comment", d)
 
     return {status = 204}
 end

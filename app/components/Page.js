@@ -1,15 +1,13 @@
-// External modules
 import { $ } from "k-dom";
 import { at, parseJSON, Klass, View } from "k-util";
 import kxhr from "k-xhr";
-
-// Local modules
+//
 import CustomSpinner from "../components/CustomSpinner";
 import immediatelyScrollTo from "../helpers/immediatelyScrollTo";
 import PageContainer from "../components/PageContainer";
 import Toast from "../components/Toast/Toast";
 import Ws from "../components/Ws";
-
+//
 const assign = Object.assign;
 
 const Page = Klass(

@@ -1,16 +1,14 @@
-// External modules
 import { $, $$ } from "k-dom";
 import { each, Klass } from "k-util";
 import "highlight.js/styles/github.css";
 import hljs from "highlight.js";
-
-// Local modules
+//
 import "./article.scss";
 import Page from "../../components/Page";
 import Navbar from "../../components/Navbar/Navbar";
-import Comment from "./Comment";
-import ReportAbusePanel from "./ReportAbusePanel";
-
+import Comment from "./Comment/Comment";
+import ReportAbusePanel from "./ReportAbusePanel/ReportAbusePanel";
+//
 const Article = Klass(
     {
         ratingText: ["很差", "差", "一般", "好", "很好"],
@@ -26,7 +24,7 @@ const Article = Klass(
             new Navbar({ leftBtn: "back" });
 
             each($$(".-comment"), (el, idx) => {
-                new Comment(el, this.data.comments[idx]);
+                new Comment(el, this.data.article.comments[idx]);
             });
 
             document.body.appendChild(new ReportAbusePanel().element);

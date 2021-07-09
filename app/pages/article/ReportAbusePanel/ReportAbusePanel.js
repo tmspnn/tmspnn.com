@@ -1,12 +1,9 @@
-// External modules
 import { $, DOM } from "k-dom";
 import { Klass, View, toArray } from "k-util";
-
-// Local modules
+//
+import "./ReportAbusePanel.scss";
 import T from "./ReportAbusePanel.html";
-
-const assign = Object.assign;
-
+//
 const ReportAbusePanel = Klass(
     {
         name: "reportAbusePanel",
@@ -15,7 +12,6 @@ const ReportAbusePanel = Klass(
             this.Super();
             this.element = DOM(T);
             this.listen();
-            // this.setData({ selfHidden: true });
 
             this.refs.panel.on(
                 "click",
@@ -27,16 +23,17 @@ const ReportAbusePanel = Klass(
         },
 
         show(comment) {
-            this.setData(assign(comment, { selfHidden: false }));
-            setTimeout(() => {
+            this.data = comment;
+            this.element.hidden = false;
+            requestAnimationFrame(() => {
                 this.refs.panel.removeClass("folded");
-            }, 50);
+            });
         },
 
         hide() {
             this.refs.panel.addClass("folded");
             setTimeout(() => {
-                this.setData("selfHidden", true);
+                this.element.hidden = true;
             }, 200);
         },
 
@@ -49,7 +46,7 @@ const ReportAbusePanel = Klass(
                 toArray(this.refs.ul.children)
                     .filter((el) => el.hasClass("active"))
                     .map((el) => el.textContent.trim())
-                    .join(" | ") + textarea.value.trim();
+                    .join(" | ") + this.refs.textarea.value.trim();
 
             this.dispatch(".reportAbuse", {
                 reason,

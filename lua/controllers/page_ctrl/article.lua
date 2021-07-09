@@ -75,11 +75,15 @@ local function get_comments(article_id)
     return comments
 end
 
-local function get_advocated(uid, comment_ids)
+local function get_advocated(uid, article_id)
     return PG.query([[
-        select id from "comment"
-        where created_by = ? and id in ?
-    ]], uid, db.list(comment_ids))
+        select obj->'comment_id' as comment_id
+        from "interaction"
+        where
+            created_by = ? and
+            refer_to = ? and
+            "type" = 1
+    ]], uid, article_id)
 end
 
 local function get_related(article_id)
@@ -119,9 +123,8 @@ local function article(app)
 
     if (ctx.uid) then
         if not empty(a.comments) then
-            local advocated = get_advocated(ctx.uid, map(a.comments,
-                                                         lambda("c", "c.id")))
-            local advocated_ids = map(advocated, lambda("c", "c.id"))
+            local advocated = get_advocated(ctx.uid, article_id)
+            local advocated_ids = map(advocated, lambda("c", "c.comment_id"))
 
             each(a.comments, function(c)
                 if has_value(advocated_ids, c.id) then
@@ -134,7 +137,6 @@ local function article(app)
     end
 
     ctx.data = {uid = ctx.uid, article = a}
-
     ctx.page_title = a.title
     ctx.tags_in_head = {tags:css("article")}
     ctx.tags_in_body = {tags:json(ctx.data), tags:js("article")}

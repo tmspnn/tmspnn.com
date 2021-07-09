@@ -1,7 +1,10 @@
 <%
+local cjson = require "cjson"
+--
 local oss_path_to_url = require "util.oss_path_to_url"
 --
-local blocks = blocks or {}
+local valid_content = #content > 0 and content or "{}"
+local blocks = cjson.decode(valid_content).blocks or {}
 %>
 <% for _, b in ipairs(blocks) do %>
 <% if b.type == "header" then %>

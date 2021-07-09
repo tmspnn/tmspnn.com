@@ -1,6 +1,5 @@
 // External modules
-import { $ } from "k-dom";
-import { Klass } from "k-util";
+import { parseJSON, Klass } from "k-util";
 import { debounce } from "lodash";
 import CodeTool from "@editorjs/code";
 import ColorPlugin from "editorjs-text-color-plugin";
@@ -40,6 +39,8 @@ const CommentEditor = Klass(
                     image: {
                         class: ImageTool,
                         config: {
+                            buttonContent: "选择图片",
+                            captionPlaceholder: "添加图片描述...",
                             uploader: {
                                 uploadByFile: (file) => {
                                     return Promise.resolve(
@@ -84,7 +85,7 @@ const CommentEditor = Klass(
                                 "#4CAF50",
                                 "#8BC34A",
                                 "#CDDC39",
-                                "#FFF"
+                                "#4d4d4d"
                             ],
                             defaultColor: "#FF1300",
                             type: "text"
@@ -138,7 +139,7 @@ const CommentEditor = Klass(
             });
 
             // Child components
-            new Navbar($(".-navbar"), {
+            new Navbar({
                 leftBtn: "close",
                 rightBtn: "publish"
             });
@@ -153,28 +154,32 @@ const CommentEditor = Klass(
             });
         }, 1000),
 
+        close() {
+            if (document.contains(this.element)) {
+                this.stepBack();
+            }
+        },
+
         publish() {
             this.editor
                 .save()
                 .then((d) => {
+                    if (this.data.refer_to) {
+                        d.refer_to = this.data.refer_to;
+                    }
+
                     this.postJSON(
                         `/api/articles/${this.data.article_id}/comments`,
                         d
                     );
                 })
                 .then(() => {
-                    ctrl.toast("发布成功");
+                    this.toast("发布成功");
                     localStorage.removeItem(
                         this.storagePrefix + "commentEditor.localData"
                     );
                     setTimeout(() => {
-                        if (history.state.prev) {
-                            location.replace(history.state.prev);
-                        } else {
-                            location.replace(
-                                "/articles/" + this.data.article_id
-                            );
-                        }
+                        location.replace("/articles/" + this.data.article_id);
                     }, 1800);
                 });
         }
