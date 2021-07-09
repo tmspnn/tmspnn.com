@@ -1,11 +1,9 @@
--- External modules
 local cjson = require "cjson"
 local db = require "lapis.db"
-
--- Local modules
+--
 local PG = require "services.PG"
 local fmt = string.format
-
+--
 local function create_abuse_report(uid, comment_id, reason)
     local obj = fmt("'%s'::jsonb", cjson.encode({reason = reason}))
     return PG.query([[

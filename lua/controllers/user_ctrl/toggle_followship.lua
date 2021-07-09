@@ -5,41 +5,61 @@ local function has_followed(uid, author_id)
     return PG.query([[
         select id from "interaction"
         where created_by = ? and refer_to = ? and type = 2
-    ]], uid, author_id)[1]
+    ]], uid, author_id)[1] ~= nil
 end
 
 local function follow(uid, author_id)
     return PG.query([[
+        begin;
+
         insert into "interaction"
             (type, created_by, refer_to)
         values
-            (2, ?, ?)
-    ]], uid, author_id)
+            (2, ?, ?);
+
+        update "user"
+        set followers_count = followers_count + 1
+        where id = ?;
+
+        update "user"
+        set followings_count = followings_count + 1
+        where id = ?;
+
+        commit;
+    ]], uid, author_id, author_id, uid)
 end
 
 local function unfollow(uid, author_id)
     return PG.query([[
+        begin;
+
         delete from "interaction"
-        where created_by = ? and refer_to = ? and type = 2
-    ]], uid, author_id)
+        where created_by = ? and refer_to = ? and type = 2;
+
+        update "user"
+        set followers_count = followers_count - 1
+        where id = ?;
+
+        update "user"
+        set followings_count = followings_count - 1
+        where id = ?;
+
+        commit;
+    ]], uid, author_id, author_id, uid)
 end
 
 local function toggle_followship(app)
-    local author_id = tonumber(app.params.user_id)
-
-    if not author_id then error("user.not.exists", 0) end
-
-    local uid = app.ctx.uid
-
-    local followed = has_followed(uid, author_id)
+    local ctx = app.ctx
+    local author_id = assert(tonumber(app.params.user_id), "user.not.exists")
+    local followed = has_followed(ctx.uid, author_id)
 
     if followed then
-        unfollow(uid, author_id)
+        unfollow(ctx.uid, author_id)
     else
-        follow(uid, author_id)
+        follow(ctx.uid, author_id)
     end
 
-    return {json = {followed = not has_followed}}
+    return {json = {followed = not followed}}
 end
 
 return toggle_followship

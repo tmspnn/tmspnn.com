@@ -1,18 +1,35 @@
--- Local modules
 local PG = require "services.PG"
 local tags = require "util.tags"
-
-local function get_user(id)
+--
+local function get_user(uid)
     return PG.query([[
-        select * from "user" where id = ?
-    ]], id)[1]
+        select
+            id,
+            mobile,
+            password,
+            nickname,
+            profile,
+            gender,
+            state,
+            description,
+            location,
+            fame,
+            email,
+            articles_count,
+            followings_count,
+            followers_count,
+            ratings_count,
+            obj->'bg_image' as bg_image
+        from "user"
+        where id = ?
+    ]], uid)[1]
 end
 
 local function has_followed(uid, author_id)
     return PG.query([[
         select id from "interaction"
-        where created_by = ? and refer_to = ? and type = ?
-    ]], uid, author_id, 2)[1] ~= nil -- 1: comment_advocation, 2: followship
+        where created_by = ? and refer_to = ? and type = 2
+    ]], uid, author_id)[1] ~= nil
 end
 
 local function get_articles(id)
@@ -24,21 +41,13 @@ end
 
 local function author(app)
     local ctx = app.ctx
-    local author_id = tonumber(app.params.author_id)
-
-    if not author_id then return {status = 404, render = "pages.404"} end
-
-    local author = get_user(author_id)
-
-    if not author then return {status = 404, render = "pages.404"} end
-
-    author.followed = has_followed(ctx.uid, author_id)
-
-    author.articles = get_articles(author_id)
-
-    ctx.data = {uid = ctx.uid, author = author}
-
-    ctx.page_title = author.nickname .. " | 一刻阅读"
+    local au = assert(get_user(tonumber(app.params.author_id)),
+                      "user.not.exists")
+    au.followed = has_followed(ctx.uid, au.id)
+    au.be_followed = has_followed(au.id, ctx.uid)
+    au.articles = get_articles(au.id)
+    ctx.data = {uid = ctx.uid, author = au}
+    ctx.page_title = au.nickname .. " | 一刻阅读"
     ctx.tags_in_head = {tags:css("author")}
     ctx.tags_in_body = {tags:json(ctx.data), tags:js("author")}
 

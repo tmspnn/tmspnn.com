@@ -1,8 +1,8 @@
 .bg {
+    @extend ._img;
     width: 100%;
     padding-bottom: 56.25%;
-    background-size: cover;
-    background-position: center;
+    background-color: var(--light-white);
 }
 
 .row {
@@ -15,13 +15,13 @@
     }
 
     .profile {
+        @extend ._img;
         position: relative;
         top: -2.5rem;
         width: 10rem;
         height: 10rem;
-        border-radius: 0.5rem;
-        background-size: cover;
-        background-position: center;
+        border-radius: 0.2rem;
+        background-color: var(--grey);
     }
 }
 
@@ -92,6 +92,10 @@ ul.btns {
             color: var(--dark-green);
         }
     }
+}
+
+.articles {
+    padding: 0 1rem;
 }
 
 .send-message {

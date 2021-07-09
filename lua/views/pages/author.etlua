@@ -1,49 +1,40 @@
 <%
--- External modules
 local cjson = require "cjson"
-
--- Local modules
+--
+local oss_path_to_url = require "util.oss_path_to_url"
 local fmt = string.format
-
--- Data
+--
 local au = ctx.data.author
-local has_followed = ctx.data.has_followed
-local articles = ctx.data.articles
 
--- Computed props
-local fame = math.floor(au.fame)
+au.profile = oss_path_to_url(au.profile)
+au.bg_image = oss_path_to_url(au.bg_image)
+au.fame = math.floor(au.fame)
 
-local bg_image = au.obj.bg_image
-    and fmt("url(%s)", au.obj.bg_image)
-    or "linear-gradient(135deg, var(--grey), var(--black))"
+if au.description == "" then
+    au.description = "这个人很懒, 什么都没有写..."
+end
 
-local profile_url = #au.profile > 0
-    and fmt("url(%s)", au.profile)
-    or "linear-gradient(135deg, var(--grey), var(--black))"
-
-local desc = #au.description > 0
-    and au.description
-    or "这个人很懒, 什么都没有写..."
+local message_btn_hidden = au.be_followed and "" or "hidden"
 %>
-<div id="#root">
-    <div class="bg" style="background-image: <%= bg_image %>"></div>
+<div id="root">
+    <div class="bg" style="background-image: url(<%= au.bg_image %>)"></div>
     <div class="row">
-        <div class="profile" style="background-image: <%= profile_url %>"></div>
+        <div class="profile" style="background-image: url(<%= au.profile %>)"></div>
         <div class="nickname"><%= au.nickname %></div>
     </div>
     <div class="row">
-        <button class="button follow" data-on="click: clickFollowBtn">
+        <button class="button follow" data-click="clickFollowBtn">
             <% render("views.icons.heart") %>
-            <span data-:="textContent: followBtnText">
-                <%= has_followed and "已关注" or "关注" %>
+            <span data-ref="followBtnText">
+                <%= au.followed and "已关注" or "关注" %>
             </span>
         </button>
         <div class="fame">
             <% render("views.icons.flag") %>
-            <span>声望 <b><%= fame %></b></span>
+            <span>声望 <b><%= au.fame %></b></span>
         </div>
     </div>
-    <blockquote><%= desc %></blockquote>
+    <blockquote><%= au.description %></blockquote>
     <ul class="btns">
         <li class="followers">
             <a href="/users/<%= au.id %>/followers">
@@ -65,13 +56,13 @@ local desc = #au.description > 0
         </li>
     </ul>
     <section class="articles">
-        <% for _, fd in ipairs(articles) do %>
+        <% for _, fd in ipairs(au.articles) do %>
         <% render("views.components.feed", fd) %>
         <% end %>
     </section>
 </div>
 <% render("views.components.navbar", {title = au.nickname}) %>
-<button class="button send-message" data-ref="messageBtn">
+<button class="button send-message" data-ref="messageBtn" <%= message_btn_hidden %>>
     <% render("views.icons.chat") %>
     发消息
 </button>

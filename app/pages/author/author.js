@@ -20,7 +20,7 @@ const Author = Klass(
             this.storagePrefix = `uid(${this.data.uid}):`;
 
             // Child components
-            new Navbar($(".-navbar"), { leftBtn: "back" });
+            new Navbar({ leftBtn: "back" });
 
             // WebSocket
             if (this.ws) {
@@ -42,9 +42,9 @@ const Author = Klass(
 
         onFollowshipChange(fl) {
             this.data.author.followed = fl.followed;
-            this.setData({
-                followBtnText: fl.followed ? "已关注" : "关注"
-            });
+            this.refs.followBtnText.textContent = fl.followed
+                ? "已关注"
+                : "关注";
         },
 
         startConversation() {

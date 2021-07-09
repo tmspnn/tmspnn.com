@@ -15,13 +15,13 @@
     }
 
     .profile {
+        @extend ._img;
         position: relative;
         top: -2.5rem;
         width: 10rem;
         height: 10rem;
-        border-radius: 0.5rem;
-        background-size: cover;
-        background-position: center;
+        border-radius: 0.2rem;
+        background-color: var(--grey);
     }
 }
 
@@ -38,6 +38,7 @@
 
 .button {
     width: 10rem;
+    line-height: 1;
 
     svg {
         position: relative;
