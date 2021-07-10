@@ -1,15 +1,13 @@
-// External modules
 import { map } from "lodash";
 import { $ } from "k-dom";
 import { Klass, parseJSON } from "k-util";
-
-// Local modules
+//
 import "./conversation.scss";
 import uploadConversationFile from "../../helpers/uploadConversationFile";
 import Page from "../../components/Page";
 import Message from "./Message";
 import Navbar from "../../components/Navbar/Navbar";
-
+//
 const Conversation = Klass(
     {
         text: "",
@@ -23,7 +21,7 @@ const Conversation = Klass(
                 this.ws.onMessage = this.onWsMessage.bind(this);
             }
 
-            new Navbar($(".-navbar"), { leftBtn: "back" });
+            new Navbar({ leftBtn: "back" });
 
             setTimeout(() => this.scrollToBottom());
 

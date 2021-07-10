@@ -1,11 +1,9 @@
-// External modules
 import { DOM } from "k-dom";
 import { Klass, View } from "k-util";
 import dayjs from "dayjs";
-
-// Local modules
+//
 import T from "./Message.html";
-
+//
 const Message = Klass(
     {
         constructor(data) {
@@ -13,9 +11,7 @@ const Message = Klass(
             this.element = DOM(T);
             this.listen();
 
-            this.refs.profile.style.backgroundImage = data.profile
-                ? `url(${data.profile})`
-                : "linear-gradient(135deg, var(--grey), var(--black))";
+            this.refs.profile.style.backgroundImage = `url(https://tmspnn.obs.cn-east-2.myhuaweicloud.com/${data.profile})`;
 
             if (data.sentBySelf) {
                 this.refs.text.addClass("to-left");
@@ -35,7 +31,7 @@ const Message = Klass(
                 this.refs.text.appendChild(DOM(`<img src="${url}">`));
             }
 
-            this.refs.date.textContent = dayjs(data.created_at).format(
+            this.refs.timestamp.textContent = dayjs(data.created_at).format(
                 "MM-DD HH:mm:ss"
             );
         }

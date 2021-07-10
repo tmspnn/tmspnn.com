@@ -1,15 +1,15 @@
--- External modules
+local ngx = require "ngx"
 local cjson = require "cjson"
 local db = require "lapis.db"
-
--- Local modules
+--
 local PG = require "services.PG"
 local redis_client = require "services.redis_client"
 local each = require "util.each"
 local push = require "util.push"
 local get_oss_auth_key = require "util.get_oss_auth_key"
+--
 local fmt = string.format
-
+--
 local function get_user(uid)
     return PG.query([[
         select id, nickname, profile from "user" where id = ?
@@ -30,15 +30,21 @@ local function offline_message(msg, members)
     ]], msg, db.list(members))
 end
 
+local function update_conv(premature, conv_id, msg)
+    return PG.query([[
+        update conversation
+        set
+            obj = jsonb_set(obj, '{latest_message}', '"?"'),
+            updated_at = now()
+        where id = ?
+    ]], db.raw(cjson.encode(msg)), conv_id)
+end
+
 local function send_message(app)
-    local user = get_user(app.ctx.uid)
-
-    if not user then error("user.not.exists", 0) end
-
+    local ctx = app.ctx
+    local user = assert(get_user(ctx.uid), "user.not.exists")
     local conversation_id = tonumber(app.params.conversation_id)
-    local conv = get_conv(conversation_id)
-
-    if not conv then error("conversation.not.exists", 0) end
+    local conv = assert(get_conv(conversation_id), "conversation.not.exists")
 
     local m = {
         conversation_id = conversation_id,
@@ -73,6 +79,8 @@ local function send_message(app)
     end)
 
     if #offline_members > 0 then offline_message(json, offline_members) end
+
+    ngx.timer.at(0, update_conv, conversation_id, msg)
 
     return {status = 204}
 end

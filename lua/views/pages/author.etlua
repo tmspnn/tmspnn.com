@@ -62,7 +62,7 @@ local message_btn_hidden = au.be_followed and "" or "hidden"
     </section>
 </div>
 <% render("views.components.navbar", {title = au.nickname}) %>
-<button class="button send-message" data-ref="messageBtn" <%= message_btn_hidden %>>
+<button class="button send-message" data-click="conversation" <%= message_btn_hidden %>>
     <% render("views.icons.chat") %>
     发消息
 </button>

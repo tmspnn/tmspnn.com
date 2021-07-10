@@ -1,4 +1,3 @@
--- Local modules
 local tags = require "util.tags"
 
 local function conversations(app)

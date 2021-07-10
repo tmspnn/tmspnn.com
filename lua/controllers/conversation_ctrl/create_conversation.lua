@@ -1,23 +1,29 @@
--- External modules
+local cjson = require "cjson"
 local db = require "lapis.db"
-
--- Local modules
+--
 local PG = require "services.PG"
-local filter = require "util.filter"
+--
+local fmt = string.format
 
 -- Has user a followed user b
--- @param {unsigned int} a
--- @param {unsigned int} b
 local function has_followed(a, b)
     return PG.query([[
         select id from "interaction"
-        where created_by = ? and refer_to = ? and type = ?
-    ]], a, b, 2)[1] ~= nil -- 1: comment_advocation, 2: followship
+        where created_by = ? and refer_to = ? and type = 2
+    ]], a, b)[1] ~= nil
 end
 
 local function get_conv_between(sender_id, recipient_id)
     return PG.query([[
-        select * from "conversation"
+        select
+            id,
+            created_by,
+            members,
+            title,
+            muted_by,
+            obj->'latest_message' as latest_message,
+            updated_at
+        from "conversation"
         where
             created_by in (?, ?) and
             array_length(members, 1) = 2 and
@@ -31,37 +37,36 @@ local function get_users(user_ids)
     ]], db.list(user_ids))
 end
 
-local function new_conversation(sender_id, recipient_id, title)
+local function new_conversation(sender_id, recipient_id, title, obj)
     return PG.query([[
         insert into "conversation"
-            (created_by, members, title)
+            (created_by, members, title, obj)
         values
-            (?, ?, ?)
-        returning *
-    ]], sender_id, db.array({sender_id, recipient_id}), title)[1]
+            (?, ?, ?, ?::jsonb)
+        returning
+            id,
+            created_by,
+            members,
+            title,
+            muted_by,
+            obj->'meta_members' as meta_members,
+            obj->'latest_message' as latest_message,
+            updated_at
+    ]], sender_id, db.array({sender_id, recipient_id}), title, obj or "{}")[1]
 end
 
 local function create_conversation(app)
     local sender_id = app.ctx.uid
-    local recipient_id = tonumber(app.params.with)
-
-    if not recipient_id then error("user.not.exists", 0) end
-
-    local conv_available = has_followed(recipient_id, sender_id)
-
-    if not conv_available then error("conversation.unavailable", 0) end
+    local recipient_id = assert(tonumber(app.params.with), "user.not.exists")
+    assert(has_followed(recipient_id, sender_id), "conversation.unavailable")
 
     local conversation = get_conv_between(sender_id, recipient_id)
 
     if not conversation then
         local users = get_users({sender_id, recipient_id})
-        local sender =
-            filter(users, function(u) return u.id == sender_id end)[1]
-        local recipient = filter(users,
-                                 function(u) return u.id == recipient_id end)[1]
-        conversation = new_conversation(sender_id, recipient_id,
-                                        sender.nickname .. ", " ..
-                                            recipient.nickname)
+        local sender, recipient = unpack(users)
+        local obj = cjson.encode({meta_members = {sender, recipient}})
+        conversation = new_conversation(sender_id, recipient_id, "", obj)
     end
 
     return {json = conversation}

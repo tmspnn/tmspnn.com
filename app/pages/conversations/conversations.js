@@ -1,16 +1,16 @@
-// External modules
-import { map } from "lodash";
+import { map, isEmpty } from "lodash";
 import { $, DocFrag } from "k-dom";
 import { find } from "lodash";
 import { Klass, parseJSON } from "k-util";
-
-// Local modules
+//
 import "./conversations.scss";
 import "../../components/tabbar.scss";
 import ConversationItem from "../../components/ConversationItem/ConversationItem";
 import Navbar from "../../components/Navbar/Navbar";
 import Page from "../../components/Page";
-
+//
+const assign = Object.assign;
+//
 const Conversations = Klass(
     {
         constructor() {
@@ -28,11 +28,15 @@ const Conversations = Klass(
                     localStorage.getItem(this.storagePrefix + "conversations")
                 ) || [];
 
-            if (this.data.conversations.length > 0) {
+            if (!isEmpty(this.data.conversations)) {
                 this.refs.root.appendChild(
                     DocFrag(
                         ...this.data.conversations.map(
-                            (conv) => new ConversationItem(null, conv).element
+                            (conv) =>
+                                new ConversationItem(
+                                    null,
+                                    assign(conv, { uid: this.data.uid })
+                                ).element
                         )
                     )
                 );
@@ -47,7 +51,10 @@ const Conversations = Klass(
         },
 
         onNewConversation(conv) {
-            const newConv = new ConversationItem(null, conv);
+            const newConv = new ConversationItem(
+                null,
+                assign(conv, { uid: this.data.uid })
+            );
             this.refs.root.insertBefore(
                 newConv.element,
                 this.refs.root.firstChild

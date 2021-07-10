@@ -73,7 +73,7 @@ const SignUp = Klass(
                 () => {
                     localStorage.removeItem("signUp.mobile");
                     localStorage.removeItem("signUp.vcode");
-                    location.replace("/me");
+                    location.replace("/settings");
                 }
             );
         }

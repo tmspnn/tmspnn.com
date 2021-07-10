@@ -40,7 +40,7 @@ create index user_search_idx on "user" using gin (ts_vector);
 create table "article" (
     id serial primary key,
     created_by integer not null,
-    rating numeric not null default 0.0,
+    rating numeric not null default 3.0,
     weight numeric not null default 1.0,
     fame numeric not null default 0.0,
     cover varchar(256) not null default '',

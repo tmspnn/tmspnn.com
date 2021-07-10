@@ -1,7 +1,6 @@
 // External modules
-import { $ } from "k-dom";
 import { includes } from "lodash";
-import { Klass } from "k-util";
+import { Klass, parseJSON } from "k-util";
 
 // Local modules
 import "./author.scss";
@@ -13,9 +12,6 @@ const Author = Klass(
     {
         constructor() {
             this.Super();
-            // this.setData({
-            //     followBtnText: this.data.author.followed ? "已关注" : "关注"
-            // });
             this.listen();
             this.storagePrefix = `uid(${this.data.uid}):`;
 
@@ -47,9 +43,9 @@ const Author = Klass(
                 : "关注";
         },
 
-        startConversation() {
+        conversation() {
             if (!this.data.uid) {
-                return window._container.go("/sign-in");
+                return this.go("/sign-in");
             }
 
             const localConvs = localStorage.getItem(
@@ -68,15 +64,21 @@ const Author = Klass(
                 })[0];
 
                 if (reuseableConv) {
-                    return window._container.go(
-                        "/conversations/" + reuseableConv.id
-                    );
+                    return this.go("/conversations/" + reuseableConv.id);
                 }
             }
 
             this.postJSON("/api/conversations", {
                 with: this.data.author.id
-            }).then((res) => window._container.go("/conversations/" + res.id));
+            }).then((conv) => {
+                const convs = parseJSON(localConvs) || [];
+                convs.unshift(conv);
+                localStorage.setItem(
+                    this.storagePrefix + "conversations",
+                    JSON.stringify(convs)
+                );
+                this.go("/conversations/" + conv.id);
+            });
         }
     },
     Page

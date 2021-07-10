@@ -1,9 +1,11 @@
-local cjson = require "cjson"
 local ngx = require "ngx"
+local cjson = require "cjson"
 --
 local PG = require "services.PG"
 local each = require "util.each"
 local oss_path_to_url = require "util.oss_path_to_url"
+local tags = require "util.tags"
+local unescape = require "util.unescape"
 --
 local function search_article(tokens, start_id)
     local articles = PG.query([[
@@ -14,7 +16,7 @@ local function search_article(tokens, start_id)
         where
             id < ?
             and ts_vector @@ to_tsquery(?)
-        order by id desc limit 10
+        order by id desc limit 20
     ]], start_id or 2147483647, table.concat(tokens, " & "))
 
     each(articles,
@@ -23,45 +25,31 @@ local function search_article(tokens, start_id)
     return articles
 end
 
-local function search_users(tokens, start_id)
-    local users = PG.query([[
-        select
-            id, nickname, profile, description, fame,
-            articles_count, followings_count, followers_count
-        from "user"
-        where
-            id < ?
-            and ts_vector @@ to_tsquery(?)
-        order by id desc limit 10
-    ]], start_id or 2147483647, table.concat(tokens, " & "))
-
-    each(users, function(u) u.profile = oss_path_to_url(u.profile) end)
-
-    return users
-end
-
-local function search(app)
-    local text = app.params.text
+local function tag(app)
+    local ctx = app.ctx
+    local tag_name = unescape(app.params.tag_name)
 
     -- Tokenization
     ngx.req.set_header("Content-Type", "application/json")
 
     local tok_res = ngx.location.capture("/internal/nlp/tokenization", {
         method = ngx.HTTP_POST,
-        body = cjson.encode({text = text})
+        body = cjson.encode({text = tag_name})
     })
 
     if tok_res.status ~= 200 then error(tok_res.body) end
 
     local tokens = cjson.decode(tok_res.body)["tok/fine"][1]
 
-    local articles = search_article(tokens)
+    local result = search_article(tokens)
 
-    local users = search_users(tokens)
+    ctx.data = {result = result}
 
-    return {json = {articles = articles, users = users}}
+    ctx.page_title = tag_name
+    ctx.tags_in_head = {tags:css("tag")}
+    ctx.tags_in_body = {tags:json(ctx.data), tags:js("tag")}
+
+    return {render = "pages.tag"}
 end
 
-local function search_controller(app) app:get("/api/search", search) end
-
-return search_controller
+return tag

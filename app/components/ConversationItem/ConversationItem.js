@@ -1,9 +1,7 @@
-// External modules
 import { clearNode, DOM } from "k-dom";
 import { each, Klass, View } from "k-util";
 import dayjs from "dayjs";
-
-// Local modules
+//
 import T from "./ConversationItem.html";
 import "./ConversationItem.scss";
 
@@ -21,24 +19,34 @@ const ConversationItem = Klass(
         sync(data) {
             this.element.href = "/conversations/" + data.id;
             clearNode(this.refs.profiles);
-            each(data.profiles, (p) => {
-                const img = DOM(`<img src="${p.profile}">`);
+            each(data.meta_members, (m) => {
+                if (m.id == data.uid) return;
+                const img = DOM(
+                    `<img src="https://tmspnn.obs.cn-east-2.myhuaweicloud.com/${m.profile}">`
+                );
                 this.refs.profiles.appendChild(img);
             });
-            this.refs.title.textContent = data.title;
-            this.refs.lastMessage.textContent =
-                data.latest_messages[data.latest_messages.length - 1].text ||
-                "...";
-            this.refs.lastUpdated.textContent = dayjs(data.created_at).format(
+            this.refs.title.textContent =
+                data.title ||
+                data.meta_members.filter((x) => x.id != data.uid)[0].nickname;
+
+            if (data.latest_message) {
+                this.refs.latestMessage.textContent =
+                    data.latest_message.nickname +
+                    ": " +
+                    data.latest_message.text;
+            }
+
+            this.refs.lastUpdated.textContent = dayjs(data.updated_at).format(
                 "MM-DD HH:mm"
             );
         },
 
         onMessage(msg) {
-            this.data.latest_messages[this.data.latest_messages.length - 1] =
-                msg;
+            this.data.latest_message = msg;
             this.refs.dot.hidden = false;
-            this.refs.lastMessage.textContent = msg.text;
+            this.refs.latestMessage.textContent =
+                msg.nickname + ": " + msg.text;
             this.refs.lastUpdated.textContent = dayjs(msg.created_at).format(
                 "MM-DD HH:mm"
             );
