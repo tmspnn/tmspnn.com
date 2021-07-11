@@ -10,7 +10,7 @@ const Followers = Klass(
             this.Super();
             this.listen();
 
-            new Navbar();
+            new Navbar({ leftBtn: "back" });
 
             // WebSocket
             if (this.ws) {
