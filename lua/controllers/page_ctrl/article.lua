@@ -1,4 +1,4 @@
--- External modules
+local ngx = require "ngx"
 local cjson = require "cjson"
 local db = require "lapis.db"
 
@@ -109,6 +109,12 @@ local function get_rating(uid, article_id)
     return rating and rating.rating
 end
 
+local function update_pageview(premature, article_id)
+    return PG.query([[
+        update "article" set pageview = pageview + 1 where id = ?;
+    ]], article_id)
+end
+
 local function article(app)
     local ctx = app.ctx
 
@@ -140,6 +146,8 @@ local function article(app)
     ctx.page_title = a.title
     ctx.tags_in_head = {tags:css("article")}
     ctx.tags_in_body = {tags:json(ctx.data), tags:js("article")}
+
+    ngx.timer.at(0, update_pageview, article_id)
 
     return {render = "pages.article"}
 end
