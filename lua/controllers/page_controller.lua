@@ -17,6 +17,8 @@ local editor = require "controllers.page_ctrl.editor"
 local comment_editor = require "controllers.page_ctrl.comment_editor"
 local settings = require "controllers.page_ctrl.settings"
 local tag = require "controllers.page_ctrl.tag"
+local followings = require("controllers.page_ctrl.followings")
+local followers = require("controllers.page_ctrl.followers")
 
 local function page_controller(app)
     -- L1 pages
@@ -39,6 +41,9 @@ local function page_controller(app)
     app:get("/users/:author_id", author)
 
     app:get("/tags/:tag_name", tag)
+
+    app:get("/users/:user_id/followings", followings)
+    app:get("/users/:user_id/followers", followers)
 
     app:match("/conversations/:conversation_id", respond_to(
                   {

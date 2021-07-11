@@ -1,4 +1,3 @@
-import { $ } from "k-dom";
 import { Klass } from "k-util";
 //
 import "./tag.scss";

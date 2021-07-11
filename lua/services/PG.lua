@@ -1,4 +1,3 @@
--- External modules
 -- https://leafo.net/lapis/reference/database.html
 local db = require "lapis.db"
 

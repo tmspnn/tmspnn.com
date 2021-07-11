@@ -19,9 +19,6 @@ local function search_article(tokens, start_id)
         order by id desc limit 20
     ]], start_id or 2147483647, table.concat(tokens, " & "))
 
-    each(articles,
-         function(a) a.author_profile = oss_path_to_url(a.author_profile) end)
-
     return articles
 end
 

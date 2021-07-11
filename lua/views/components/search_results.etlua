@@ -1,5 +1,0 @@
-<ul>
-    <% for _, d in ipairs(ctx.data) do -%>
-    <% render("views/components/search_item", {data = d, ctx = ctx}) %>
-    <% end -%>
-</ul>

@@ -1,13 +1,10 @@
 import { Klass } from "k-util";
 //
-import "./trending.scss";
-import "../../components/tabbar.scss";
-import "../../components/feed.scss";
-import "../../components/authorCard.scss";
+import "./followers.scss";
 import Page from "../../components/Page";
 import Navbar from "../../components/Navbar/Navbar";
-
-const Trending = Klass(
+//
+const Followers = Klass(
     {
         constructor() {
             this.Super();
@@ -22,10 +19,11 @@ const Trending = Klass(
         },
 
         onWsMessage(msg) {
-            console.log("Trending.onWsMessage: ", msg);
+            console.log("Followers.onWsMessage: ", msg);
         }
     },
+
     Page
 );
 
-new Trending();
+new Followers();
