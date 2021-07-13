@@ -1,50 +1,59 @@
 .tabbar {
-    @extend ._flex;
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
     height: 3.5rem;
-    padding: 0 2rem;
-    justify-content: space-between;
     background-color: var(--white);
-    box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 0.1rem 0 rgba(0, 0, 0, 0.05);
     user-select: none;
 
-    &:before {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        transform: scaleY(0.5);
-        content: "";
-        background-color: var(--light-white);
-    }
-
-    .tab {
+    > .container {
         @extend ._flex;
-        justify-content: center;
-        width: 3.5rem;
-        height: 3.5rem;
+        width: 100%;
+        max-width: 1024px;
+        margin: 0 auto;
+        justify-content: space-around;
 
-        &.active {
+        > a {
+            @extend ._flex;
+            justify-content: center;
+            width: 3.5rem;
+            height: 3.5rem;
+
+            &.active {
+                svg {
+                    color: var(--blue);
+                }
+            }
+
             svg {
-                color: var(--blue);
+                width: 2rem;
+                height: 2rem;
+                color: var(--black);
             }
         }
+    }
+}
 
-        svg {
-            width: 2rem;
-            height: 2rem;
-            color: var(--black);
+/* Tablet */
+@media screen and (min-width: 768px) and (max-width: 1023.9px) {
+}
+
+/* Desktop */
+@media screen and (min-width: 1024px) {
+    .tabbar {
+        > .container {
+            > a {
+                cursor: pointer;
+            }
         }
     }
 }
 
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
-    .-tabbar {
+    .tabbar {
         color: var(--white);
     }
 }
