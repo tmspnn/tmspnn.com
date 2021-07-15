@@ -1,5 +1,4 @@
 import { map } from "lodash";
-import { $ } from "k-dom";
 import { Klass, parseJSON } from "k-util";
 //
 import "./conversation.scss";
@@ -14,12 +13,7 @@ const Conversation = Klass(
 
         constructor() {
             this.Super();
-            this.element = $("body");
             this.listen();
-
-            if (this.ws) {
-                this.ws.onMessage = this.onWsMessage.bind(this);
-            }
 
             new Navbar({ leftBtn: "back" });
 
@@ -28,6 +22,10 @@ const Conversation = Klass(
             document.documentElement.on("pageshow", () => {
                 setTimeout(() => this.scrollToBottom(), 50);
             });
+
+            if (this.ws) {
+                this.ws.onMessage = this.onWsMessage.bind(this);
+            }
         },
 
         onWsMessage(msg) {
@@ -55,6 +53,12 @@ const Conversation = Klass(
             }, 50);
         },
 
+        clickRoot() {
+            if (this.refs.shortcuts.hasClass("visible")) {
+                this.shortcut();
+            }
+        },
+
         scrollToBottom() {
             this.refs.root.scrollTop = Math.max(
                 0,
@@ -64,7 +68,6 @@ const Conversation = Klass(
 
         shortcut() {
             this.refs.shortcuts.toggleClass("visible");
-            this.refs.shortcutBtn.toggleClass("active");
             this.refs.input.focus();
         },
 

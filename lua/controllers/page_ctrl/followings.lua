@@ -2,6 +2,8 @@ local db = require "lapis.db"
 --
 local PG = require "services.PG"
 local empty = require "util.empty"
+local map = require "util.map"
+local lambda = require "util.lambda"
 local tags = require "util.tags"
 
 local function get_user(uid)
@@ -19,9 +21,9 @@ local function get_followings(uid)
     if empty(fl_ids) then return {} end
 
     return PG.query([[
-        select id, profile, nickname, fame from "user"
+        select id, profile, nickname, description, fame from "user"
         where id in ?;
-    ]], db.list(fl_ids))
+    ]], db.list(map(fl_ids, lambda("x", "x.refer_to"))))
 end
 
 local function followings(app)

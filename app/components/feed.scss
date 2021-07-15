@@ -102,3 +102,31 @@
         }
     }
 }
+
+/* Tablet */
+@media screen and (min-width: 768px) and (max-width: 1023.9px) {
+}
+
+/* Desktop */
+@media screen and (min-width: 1024px) {
+    .-feed {
+        display: flex;
+        flex-direction: row-reverse;
+
+        > .cover {
+            width: 16rem;
+            padding-bottom: 9rem;
+        }
+
+        > .content {
+            flex: 1;
+        }
+    }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .-feed {
+        color: var(--white);
+    }
+}

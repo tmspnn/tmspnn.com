@@ -6,11 +6,16 @@ const CustomSpinner = Klass(
     {
         name: "customSpinner",
 
-        spinner: new Spinner({ color: "rgba(0, 0, 0, 0.4)", lines: 10 }),
+        spinner: null,
 
         constructor() {
             this.Super();
             this.listen();
+
+            this.spinner = new Spinner({
+                color: "rgba(0, 0, 0, 0.4)",
+                lines: 10
+            });
         },
 
         show() {
@@ -21,6 +26,7 @@ const CustomSpinner = Klass(
             this.spinner.stop();
         }
     },
+
     View
 );
 

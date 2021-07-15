@@ -1,10 +1,8 @@
-// External modules
 import { $, DocFrag } from "k-dom";
 import { Klass } from "k-util";
 import { isEmpty, debounce } from "lodash";
 import qs from "qs";
-
-// Local modules
+/* Local modules */
 import "./index.scss";
 import "../../components/tabbar.scss";
 import "../../components/tag.scss";

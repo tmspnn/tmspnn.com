@@ -1,5 +1,6 @@
 <%
 local oss_path_to_url = require "util.oss_path_to_url"
+local fmt = string.format
 --
 local followings = ctx.data.followings
 %>
@@ -13,7 +14,7 @@ local followings = ctx.data.followings
         </div>
         <div class="fame">
             <% render("views.icons.flag") %>
-            <span>声望 <b><%= fl.fame %></b></span>
+            <span>声望 <b><%= fmt("%d", fl.fame) %></b></span>
         </div>
     </a>
     <% end %>
