@@ -1,8 +1,6 @@
--- External modules
 local date = require "date"
 local lapis = require "lapis"
-
--- Local Modules
+--
 local context = require "middlewares.context"
 local CORS = require "middlewares.CORS"
 local exception = require "middlewares.exception"
@@ -12,7 +10,11 @@ local article_controller = require "controllers.article_controller"
 local search_controller = require "controllers.search_controller"
 local conversation_controller = require "controllers.conversation_controller"
 
--- Initialization
+--[[
+    Entry of requests.
+
+    lapis.Application app
+--]]
 local app = lapis.Application()
 app.handle_404 = exception.handle_404
 app.handle_error = exception.handle_error

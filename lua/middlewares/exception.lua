@@ -1,7 +1,14 @@
 local ngx = require "ngx"
 --
 local error_messages = require "controllers.error_messages"
---
+
+--[[
+    table exception
+
+    {int status, string render} extension.handle_404()
+
+    {int status, table json} exception.handle_error()
+--]]
 local exception = {}
 
 function exception.handle_404() return {status = 404, render = "pages.404"} end

@@ -1,7 +1,5 @@
--- External modules
 local respond_to = require("lapis.application").respond_to
-
--- Local modules
+--
 local sign_in_required = require "middlewares.sign_in_required"
 local is_conv_member = require "middlewares.is_conv_member"
 local index = require "controllers.page_ctrl.index"
@@ -17,8 +15,13 @@ local editor = require "controllers.page_ctrl.editor"
 local comment_editor = require "controllers.page_ctrl.comment_editor"
 local settings = require "controllers.page_ctrl.settings"
 local tag = require "controllers.page_ctrl.tag"
-local followings = require("controllers.page_ctrl.followings")
-local followers = require("controllers.page_ctrl.followers")
+local followings = require "controllers.page_ctrl.followings"
+local followers = require "controllers.page_ctrl.followers"
+local navigation = require "controllers.page_ctrl.navigation"
+
+--[[
+    void page_controller(lapis.Application app)
+--]]
 
 local function page_controller(app)
     -- L1 pages
@@ -34,6 +37,8 @@ local function page_controller(app)
 
     app:match("/me", respond_to(
                   {before = sign_in_required({redirect = true}), GET = me}))
+
+    app:get("/navigation", navigation)
 
     -- L2 pages
     app:get("/articles/:article_id", article)

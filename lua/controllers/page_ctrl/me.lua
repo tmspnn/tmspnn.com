@@ -1,18 +1,22 @@
--- Local modules
+--
 local PG = require "services.PG"
 local oss_path_to_url = require "util.oss_path_to_url"
 local tags = require "util.tags"
 
+--[[
+    {string render} me(lapis.Application)
+--]]
+
 local function get_user(id)
     return PG.query([[
-        select *, obj->'bg_image' as bg_image from "user" where id = ?
+        select *, obj->'bg_image' as bg_image from "user" where id = ?;
     ]], id)[1]
 end
 
 local function get_articles(id)
     return PG.query([[
         select * from "article" where created_by = ?
-        order by id desc limit 50
+        order by id desc limit 50;
     ]], id)
 end
 
@@ -20,7 +24,7 @@ local function me(app)
     local ctx = app.ctx
     local user = get_user(ctx.uid)
 
-    if not user then error("user.not.exists", 0) end
+    if not user then error("user.not.exists") end
 
     user.profile = oss_path_to_url(user.profile)
     user.bg_image = oss_path_to_url(user.bg_image)
