@@ -24,7 +24,12 @@ local function get_latest_articles()
         select * from "article" order by id desc limit 20;
     ]])
 
-    each(articles, function(a) a.cover = oss_path_to_url(a.cover) end)
+    each(articles, function(a)
+        a.cover = oss_path_to_url(a.cover)
+        a.author_profile = oss_path_to_url(a.author_profile)
+    end)
+
+    articles[1].is_headline = true
 
     return articles
 end

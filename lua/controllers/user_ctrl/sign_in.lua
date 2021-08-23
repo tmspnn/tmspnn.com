@@ -25,18 +25,18 @@ local function sign_in(app)
     local mobile = trim(app.params.mobile)
     local password = trim(app.params.password)
 
-    if not is_mobile(mobile) then error("mobile.invalid", 0) end
+    if not is_mobile(mobile) then error("mobile.invalid") end
 
-    if #password < 6 then error("password.invalid", 0) end
+    if #password < 6 then error("password.invalid") end
 
     local user_in_db = PG.query([[
         select id, mobile, password from "user" where mobile = ?
     ]], mobile)[1]
 
-    if not user_in_db then error("mobile.not.registered", 0) end
+    if not user_in_db then error("mobile.not.registered") end
 
     if not bcrypt.verify(password, user_in_db.password) then
-        error("password.not.match", 0)
+        error("password.not.match")
     end
 
     if app.cookies.user_token then remove_token(app.cookies.user_token) end
