@@ -44,6 +44,8 @@ local function conversation(app)
         oss_signature = signature
     }
 
+    if app.params.data_only then return {json = ctx.data} end
+
     if conv.title == "" then
         --[[
             Title is empty string if there're only two members

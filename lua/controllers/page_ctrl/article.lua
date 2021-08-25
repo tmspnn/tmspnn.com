@@ -149,6 +149,8 @@ local function article(app)
 
     ngx.timer.at(0, update_pageview, article_id)
 
+    if app.params.data_only then return {json = ctx.data} end
+
     return {render = "pages.article"}
 end
 
