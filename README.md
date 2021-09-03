@@ -19,12 +19,13 @@ Frontend & gateway of tmspnn.com
 
 ## Redis Cache
 
-| Key                            | Type       | Description                             |
-| ------------------------------ | ---------- | --------------------------------------- |
-| page(index):search_placeholder | String     | Placeholder of search input in homepage |
-| page(index):recommended_tags   | Sorted Set | Recommended tags in homepage            |
-| user_token(%s):uid             | String     |
-| mobile(%s):vcode               | String     |
+| Key                          | Type   | Description                             |
+| ---------------------------- | ------ | --------------------------------------- |
+| page(index):carousel_items   | List   | Carousel in homepage                    |
+| page(index):recommended_tags | List   | Recommended tags in homepage            |
+| page(search):placeholder     | String | Placeholder of text field in searchpage |
+| user_token(%s):uid           | String |
+| mobile(%s):vcode             | String |
 
 ## Postgres Advisory Locks
 

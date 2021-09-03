@@ -17,7 +17,7 @@ local settings = require "controllers.page_ctrl.settings"
 local tag = require "controllers.page_ctrl.tag"
 local followings = require "controllers.page_ctrl.followings"
 local followers = require "controllers.page_ctrl.followers"
-local navigation = require "controllers.page_ctrl.navigation"
+local app_homepage = require "controllers.page_ctrl.app_homepage"
 
 --[[
     void page_controller(lapis.Application app)
@@ -38,7 +38,7 @@ local function page_controller(app)
     app:match("/me", respond_to(
                   {before = sign_in_required({redirect = true}), GET = me}))
 
-    app:get("/navigation", navigation)
+    app:get("/app", app_homepage)
 
     -- L2 pages
     app:get("/articles/:article_id", article)

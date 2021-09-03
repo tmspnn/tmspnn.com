@@ -25,13 +25,13 @@ local function index(app)
     local ctx = app.ctx
 
     local search_placeholder = get_search_placeholder()
-    local recommended_tags = get_recommended_tags()
+    -- local recommended_tags = get_recommended_tags()
     local latest_articles = get_latest_articles()
 
     ctx.data = {
         uid = ctx.uid,
         search_placeholder = search_placeholder,
-        recommended_tags = recommended_tags,
+        recommended_tags = {"Postgres", "OpenResty", "Lua", "JavaScript"},
         latest_articles = latest_articles
     }
 

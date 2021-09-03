@@ -1,10 +1,9 @@
---
 local PG = require "services.PG"
 local oss_path_to_url = require "util.oss_path_to_url"
 local tags = require "util.tags"
 
 --[[
-    {string render} me(lapis.Application)
+    lapis.RenderOptions me(lapis.Application app)
 --]]
 
 local function get_user(id)

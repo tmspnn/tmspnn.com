@@ -10,11 +10,7 @@ local article_controller = require "controllers.article_controller"
 local search_controller = require "controllers.search_controller"
 local conversation_controller = require "controllers.conversation_controller"
 
---[[
-    Entry of requests.
-
-    lapis.Application app
---]]
+-- Entry of requests
 local app = lapis.Application()
 app.handle_404 = exception.handle_404
 app.handle_error = exception.handle_error
