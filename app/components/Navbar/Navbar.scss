@@ -1,21 +1,19 @@
 .-navbar {
-    position: absolute;
+    position: fixed;
     left: 0;
     right: 0;
     top: 0;
-    height: 3.5rem;
+    height: 3rem;
     z-index: 100;
     background-color: var(--white);
-    box-shadow: 0 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.05);
     color: var(--black);
     user-select: none;
 
     > .container {
-        @extend ._flex;
-        @extend ._with-icon;
+        @extend .flex;
         position: relative;
         width: 100%;
-        max-width: 1024px;
         margin: 0 auto;
 
         > .left,
@@ -28,15 +26,14 @@
             flex: 1;
             text-align: center;
             line-height: 3.5rem;
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             font-weight: bold;
             color: var(--black);
             overflow: hidden;
         }
 
-        .btn {
-            @extend ._flex;
-            justify-content: center;
+        button {
+            appearance: none;
             height: 3.5rem;
             color: var(--black);
 
@@ -84,14 +81,19 @@
 
 /* Tablet */
 @media screen and (min-width: 768px) and (max-width: 1023.9px) {
+    > .container {
+        max-width: 1024px;
+    }
 }
 
 /* Desktop */
 @media screen and (min-width: 1024px) {
     .-navbar {
-        button,
-        .button,
-        .btn {
+        > .container {
+            max-width: 1280px;
+        }
+
+        button {
             cursor: pointer;
         }
     }

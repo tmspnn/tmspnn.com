@@ -1,130 +1,48 @@
-.search {
-    @extend ._with-icon;
-    padding: 1.5rem 1rem 0;
+.swiper {
+    width: 100%;
+    padding-top: 3.5rem;
+    padding-bottom: 2rem;
+}
 
-    .container {
-        position: relative;
+.swiper-slide {
+    @extend .image-container;
+    width: 80%;
+    padding-bottom: 50%;
+    border-radius: 0.5rem;
 
-        input {
-            width: 100%;
-            height: 2.8rem;
-            line-height: 2.8rem;
-            padding: 0 3.2rem;
-            background: var(--white);
-            color: var(--black);
-            font-size: 1.4rem;
-            font-weight: bold;
-            border-radius: 2rem;
-            box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.05);
-
-            &::placeholder {
-                color: var(--grey-white);
-            }
-        }
-
-        svg {
-            position: absolute;
-            top: 0.5rem;
-            width: 1.8rem;
-            height: 1.8rem;
-
-            &:first-child {
-                left: 1rem;
-                color: var(--grey-white);
-            }
-
-            &:last-child {
-                display: none;
-                right: 0.8rem;
-                color: var(--black-grey);
-
-                &.visible {
-                    display: initial;
-                }
-            }
-        }
+    h1 {
+        position: absolute;
+        margin: 0;
+        left: 0.5rem;
+        bottom: 0.5rem;
+        right: 0.5rem;
+        color: var(--white);
+        font-size: 1.25rem;
+        font-weight: normal;
     }
 }
 
-.result {
-    @extend ._with-icon;
+.swiper-pagination-bullet-active {
+    background-color: var(--black);
+}
 
-    .tips-empty,
-    .tips-all-loaded {
-        padding-top: 2rem;
-        font-size: 1.3rem;
-        text-align: center;
+.recommended-tags {
+    @extend .flex;
+    flex-wrap: wrap;
 
-        svg {
-            position: relative;
-            top: -0.2rem;
-            vertical-align: middle;
-        }
-    }
-
-    ul {
-        margin: 0 1rem;
-        border-radius: 0.5rem;
-        background-color: var(--white);
-        overflow: hidden;
-
-        li.-user-item {
-            padding: 0.5rem;
-            border-top: 1px solid var(--light-white);
-
-            a {
-                @extend ._flex;
-            }
-
-            .profile {
-                width: 3rem;
-                min-width: 3rem;
-                height: 3rem;
-                border-radius: 50%;
-                background-size: cover;
-                background-position: center;
-                box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.05);
-            }
-
-            .meta {
-                padding: 0.5rem;
-
-                .nickname {
-                    @extend ._truncated;
-                    max-width: 15rem;
-                    font-size: 1.1rem;
-                    font-weight: bold;
-                }
-
-                .description {
-                    @extend ._truncated;
-                    max-width: 15rem;
-                    color: var(--grey);
-                }
-            }
-        }
-    }
-
-    .more {
-        margin: 0 auto 100vh;
+    .tag {
+        @extend .line-clamp;
+        -webkit-line-clamp: 1;
+        max-width: 9rem;
+        margin: 0.3rem 0.5rem;
+        padding: 0.2rem 0.8rem;
+        color: var(--white);
+        font-size: 1rem;
+        border-radius: 1rem;
     }
 }
 
-.main {
-    .recommended-tags {
-        @extend ._horizontal-scrolling;
-        padding: 1.5rem 1rem;
-
-        .-tag {
-            padding: 0.3rem 0.8rem;
-            font-size: 1.2rem;
-            background-color: var(--white);
-            border-radius: 2rem;
-            box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.05);
-        }
-    }
-
-    .feeds {
-        padding: 0 1rem;
-    }
+.latest-authors {
+    @extend .horizontal-scrolling;
+    padding: 1rem 0;
 }

@@ -1,58 +1,20 @@
 <%
-local date = require "date"
-local utf8 = require "utf8"
---
-local oss_path_to_url = require "util.oss_path_to_url"
-local fmt = string.format
---
 local id = id
-local created_by = created_by
-local article_link = "/articles/" .. id
-local author_link = "/users/" .. created_by
-local author = author
 local title = title
-local summary = summary
-local cover = oss_path_to_url(cover)
-local hide_cover = not cover or #cover == 0
-local rating = fmt("%.1f", rating)
-local created_at = date(created_at):fmt("%m/%d %H:%M")
-local wordcount = wordcount
-local pageview = pageview
---
-local has_profile = author_profile and #author_profile > 0
-local profile_bg = has_profile
-    and fmt("url(%s)", oss_path_to_url(author_profile))
-    or "linear-gradient(135deg, var(--grey), var(--black))"
-local profile_text = has_profile and "" or utf8.sub(author, 1, 1)
+local author = author
+local cover = cover
+local rating = rating
+local minutes = minutes
 %>
-<section class="-feed">
-    <a href="<%= article_link %>" class="cover" style="background-image: url(<%= cover %>)"
-        <% if hide_cover then %>hidden<% end %>>
-    </a>
+<a href="/articles/<%= id %>" class="feed">
     <div class="content">
-        <div class="head">
-            <a href="<%= author_link %>">
-                <div class="profile" style="background-image: <%= profile_bg %>">
-                    <%= profile_text %>
-                </div>
-            </a>
-            <a href="<%= author_link %>" class="author">
-                <%= author %>
-            </a>
-            <div class="date">
-                <% render("views.icons.clock") %>
-                <%= created_at %>
-            </div>
-        </div>
-        <h1>
-            <a href="<%= article_link %>"><%= title %></a>
-        </h1>
-        <div class="summary"><a href="<%= article_link %>"><%= summary %></a></div>
-        <div class="meta">
-            <% render("views.icons.star") %>
-            <span><%= rating %></span>
-            <% render("views.icons.eye") %>
-            <span><%= pageview %></span>
+        <h1><%= title %></h1>
+        <div class="footer">
+            <div class="nickname"><%= author %></div>
+            <% render("views/icons/star") %>
+            <span><%= string.format("%.1f", rating) %></span>
+            <div class="minutes">阅读需<%= minutes %>分钟</div>
         </div>
     </div>
-</section>
+    <div class="cover" style="background-image: url(<%= cover %>);"></div>
+</a>

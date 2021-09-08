@@ -1,13 +1,15 @@
--- External modules
 local bcrypt = require "bcrypt"
-
--- Local modules
+--
 local PG = require "services.PG"
 local redis_client = require "services.redis_client"
 local generate_user_token = require "util.generate_user_token"
 local is_mobile = require "util.is_mobile"
 local trim = require "util.trim"
 local fmt = string.format
+
+--[[
+    lapis.renderOptions sign_in(lapis.Application app)
+--]]
 
 local TOKEN_TTL = 60 * 60 * 24 * 14 -- two weeks
 
@@ -45,7 +47,7 @@ local function sign_in(app)
     set_token(user_token, user_in_db.id)
     app.cookies.user_token = user_token
 
-    return {status = 204}
+    return {json = {uid = user_in_db.id}}
 end
 
 return sign_in

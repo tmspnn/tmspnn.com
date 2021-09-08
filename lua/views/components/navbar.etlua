@@ -2,25 +2,25 @@
 <nav class="-navbar">
     <div class="container">
         <div class="left">
-            <div class="btn back" data-ref="backBtn" data-click="stepBack" hidden>
+            <button class="back" data-ref="backBtn" data-click="stepBack" hidden>
                 <% render("views/icons/chevron_left") %>
-            </div>
-            <div class="btn close" data-ref="closeBtn" data-click="close" hidden>
+            </button>
+            <button class="close" data-ref="closeBtn" data-click="close" hidden>
                 <% render("views/icons/x") %>
-            </div>
+            </button>
         </div>
         <div class="center"><%= title %></div>
         <div class="right">
-            <div class="btn share" data-ref="shareBtn" data-click="share" hidden>
+            <button class="share" data-ref="shareBtn" data-click="share" hidden>
                 <% render("views/icons/share") %>
-            </div>
-            <div class="btn settings" data-ref="settingsBtn" data-click="settings" hidden>
+            </button>
+            <button class="settings" data-ref="settingsBtn" data-click="settings" hidden>
                 <% render("views/icons/cog") %>
-            </div>
-            <div class="btn publish" data-ref="publishBtn" data-click="publish" hidden>
+            </button>
+            <button class="publish" data-ref="publishBtn" data-click="publish" hidden>
                 <% render("views/icons/upload") %>
                 <span>发布</span>
-            </div>
+            </button>
         </div>
     </div>
 </nav>

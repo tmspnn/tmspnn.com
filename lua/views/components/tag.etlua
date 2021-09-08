@@ -1,4 +1,7 @@
-<% local name = name or "??" %>
-<a href="/tags/<%= name %>" class="-tag">
-    <%= name %>
+<%
+local text = text or "???"
+local color = color or "#0052d4"
+%>
+<a href="/tags/<%= text %>" class="tag" style="background-color: <%= color %>;">
+    <%= text %>
 </a>

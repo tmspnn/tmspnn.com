@@ -1,41 +1,40 @@
 <%
-local placeholder = ctx.data.search_placeholder or "搜索"
-local tags = ctx.data.recommended_tags
-local articles = ctx.data.latest_articles
+local carousel_items = ctx.data.carousel_items
+local recommended_tags = ctx.data.recommended_tags
+local latest_authors = ctx.data.latest_authors
+local latest_articles = ctx.data.latest_articles
 %>
 <div id="root">
-    <section class="search">
-        <div class="container">
-            <% render("views.icons.search") %>
-            <input type="text" placeholder="<%= placeholder %>" data-ref="input" data-on="input: input" />
-            <% render("views.icons.x") %>
-        </div>
-    </section>
-    <section class="result" data-ref="result" hidden>
-        <div class="tips-empty" data-ref="tipsEmpty" hidden>
-            <% render("views.icons.emoji_sad") %>
-            <b>搜不到任何东西...</b>
-        </div>
-        <ul data-ref="ul"></ul>
-        <div class="tips-all-loaded" data-ref="tipsAllLoaded" hidden>
-            <% render("views.icons.emoji_happy") %>
-            <b>已显示全部结果.</b>
-        </div>
-        <button class="button more" data-ref="moreBtn" data-click="clickMoreBtn" hidden>
-            <% render("views.icons.chevron_double_right") %> 更多
-        </button>
-    </section>
-    <section class="main" data-ref="main">
-        <section class="recommended-tags">
-            <% for i, t in ipairs(tags) do %>
-            <% render("views.components.tag", { name = t }) %>
+    <section class="swiper">
+        <div class="swiper-wrapper">
+            <% for i, t in ipairs(carousel_items) do %>
+            <div class="swiper-slide" style="background-image: url(<%= t.image_url %>);">
+                <h1><%= t.text %></h1>
+                <div class="carousel-tag" style="background-color: <%= t.label_color or transparent %>;">
+                    <%= t.label %>
+                </div>
+            </div>
             <% end %>
-        </section>
-        <section class="feeds">
-            <% for i, fd in ipairs(articles) do %>
-            <% render("views.components.feed", fd) %>
-            <% end %>
-        </section>
+        </div>
+        <div class="swiper-pagination"></div>
+    </section>
+
+    <section class="recommended-tags">
+        <% for i, t in ipairs(recommended_tags) do %>
+        <% render("views/components/tag", t) %>
+        <% end %>
+    </section>
+
+    <section class="latest-authors">
+        <% for i, t in ipairs(latest_authors) do %>
+        <% render("views/components/author", t) %>
+        <% end %>
+    </section>
+
+    <section class="latest-articles">
+        <% for i, t in ipairs(latest_articles) do %>
+        <% render("views/components/feed", t) %>
+        <% end %>
     </section>
 </div>
 <% render("views.components.navbar", {title = ctx.page_title}) %>

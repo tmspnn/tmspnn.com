@@ -68,8 +68,8 @@ function createDocument(html) {
     };
 }
 
-const PageContainer = Klass({
-    name: "pageContainer",
+const containerProto = {
+    name: "container",
 
     cache: {},
 
@@ -252,6 +252,6 @@ const PageContainer = Klass({
         this.currentUrl = this.nextUrl;
         this.nextUrl = null;
     }
-});
+};
 
-export default PageContainer;
+export default Klass(containerProto);

@@ -31,10 +31,12 @@
         "normalize.css": "^8.0.1",
         "qs": "^6.10.1",
         "spin.js": "^4.1.0",
+        "swiper": "^7.0.3",
         "validator": "^13.6.0",
         "video.js": "^7.13.3"
     },
     "devDependencies": {
+        "@types/swiper": "^5.4.3",
         "ava": "^3.15.0",
         "css-loader": "^6.0.0",
         "html-loader": "^2.1.2",

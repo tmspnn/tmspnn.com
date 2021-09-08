@@ -2,28 +2,28 @@ local respond_to = require("lapis.application").respond_to
 --
 local sign_in_required = require "middlewares.sign_in_required"
 local is_conv_member = require "middlewares.is_conv_member"
-local index = require "controllers.page_ctrl.index"
-local trending = require "controllers.page_ctrl.trending"
-local article = require "controllers.page_ctrl.article"
-local author = require "controllers.page_ctrl.author"
-local conversations = require "controllers.page_ctrl.conversations"
-local conversation = require "controllers.page_ctrl.conversation"
-local me = require "controllers.page_ctrl.me"
-local sign_in = require "controllers.page_ctrl.sign_in"
-local sign_up = require "controllers.page_ctrl.sign_up"
-local editor = require "controllers.page_ctrl.editor"
-local comment_editor = require "controllers.page_ctrl.comment_editor"
-local settings = require "controllers.page_ctrl.settings"
-local tag = require "controllers.page_ctrl.tag"
-local followings = require "controllers.page_ctrl.followings"
-local followers = require "controllers.page_ctrl.followers"
-local app_homepage = require "controllers.page_ctrl.app_homepage"
+local index = require "controllers.rendering_ctrl.index"
+local trending = require "controllers.rendering_ctrl.trending"
+local article = require "controllers.rendering_ctrl.article"
+local author = require "controllers.rendering_ctrl.author"
+local conversations = require "controllers.rendering_ctrl.conversations"
+local conversation = require "controllers.rendering_ctrl.conversation"
+local me = require "controllers.rendering_ctrl.me"
+local sign_in = require "controllers.rendering_ctrl.sign_in"
+local sign_up = require "controllers.rendering_ctrl.sign_up"
+local editor = require "controllers.rendering_ctrl.editor"
+local comment_editor = require "controllers.rendering_ctrl.comment_editor"
+local settings = require "controllers.rendering_ctrl.settings"
+local tag = require "controllers.rendering_ctrl.tag"
+local followings = require "controllers.rendering_ctrl.followings"
+local followers = require "controllers.rendering_ctrl.followers"
+local app_homepage = require "controllers.rendering_ctrl.app_homepage"
 
 --[[
-    void page_controller(lapis.Application app)
+    void rendering_controller(lapis.Application app)
 --]]
 
-local function page_controller(app)
+local function rendering_controller(app)
     -- L1 pages
     app:get("/", index)
 
@@ -74,4 +74,4 @@ local function page_controller(app)
         }))
 end
 
-return page_controller
+return rendering_controller

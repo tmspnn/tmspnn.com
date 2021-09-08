@@ -1,10 +1,29 @@
--- External modules
 local cjson = require "cjson"
-
--- Local modules
 local fmt = string.format
 
--- Implementation
+--[[
+    {
+        string ASSETS_PREFIX,
+        string MAINLINE_VERSION,
+
+        {
+            string tag,
+            { string type, string rel, string href } attributes
+        } css,
+
+        {
+            string tag,
+            { string type, string src } attributes
+        } js,
+
+        {
+            string tag,
+            string inner_html,
+            { string type } attributes
+        } json
+    } tags
+--]]
+
 local tags = {ASSETS_PREFIX = "", MAINLINE_VERSION = "1.0.0"}
 
 function tags:css(filename, version)

@@ -1,7 +1,7 @@
 <%
 local active_tab = active_tab or "home"
 local home_active = active_tab == "home" and "active" or ""
-local trending_active = active_tab == "trending" and "active" or ""
+local search_active = active_tab == "search" and "active" or ""
 local conversations_active = active_tab == "conversations" and "active" or ""
 local me_active = active_tab == "me" and "active" or ""
 %>
@@ -9,15 +9,19 @@ local me_active = active_tab == "me" and "active" or ""
     <div class="container">
         <a href="/" class="<%= home_active %>" data-nopush>
             <% render("views/icons/home") %>
+            <div>首页</div>
         </a>
-        <a href="/trending" class="<%= trending_active %>" data-nopush>
-            <% render("views/icons/trending_up") %>
+        <a href="/search" class="<%= search_active %>" data-nopush>
+            <% render("views/icons/search") %>
+            <div>搜索</div>
         </a>
         <a href="/conversations" class="<%= conversations_active %>" data-nopush>
             <% render("views/icons/chat") %>
+            <div>消息</div>
         </a>
         <a href="/me" class="<%= me_active %>" data-nopush>
             <% render("views/icons/user") %>
+            <div>我的</div>
         </a>
     </div>
 </nav>

@@ -4,7 +4,7 @@ local lapis = require "lapis"
 local context = require "middlewares.context"
 local CORS = require "middlewares.CORS"
 local exception = require "middlewares.exception"
-local page_controller = require "controllers.page_controller"
+local rendering_controller = require "controllers.rendering_controller"
 local user_controller = require "controllers.user_controller"
 local article_controller = require "controllers.article_controller"
 local search_controller = require "controllers.search_controller"
@@ -30,7 +30,7 @@ app:before_filter(CORS)
 app:before_filter(context)
 
 -- Controllers
-page_controller(app)
+rendering_controller(app)
 user_controller(app)
 article_controller(app)
 search_controller(app)

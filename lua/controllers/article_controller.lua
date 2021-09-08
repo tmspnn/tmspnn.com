@@ -7,6 +7,7 @@ local rate_article = require "controllers.article_ctrl.rate_article"
 local create_comment = require "controllers.article_ctrl.create_comment"
 local advocate_comment = require "controllers.article_ctrl.advocate_comment"
 local report_abuse = require "controllers.article_ctrl.report_abuse"
+local get_article = require "controllers.article_ctrl.get_article"
 
 local function article_controller(app)
     app:match("/api/articles", respond_to(
@@ -14,6 +15,8 @@ local function article_controller(app)
             before = sign_in_required(),
             POST = json_params(create_article)
         }))
+
+    app:get("/api/articles/:article_id", get_article)
 
     app:match("/api/ratings", respond_to(
                   {

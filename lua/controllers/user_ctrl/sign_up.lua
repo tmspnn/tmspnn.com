@@ -84,7 +84,7 @@ local function sign_up(app)
 
     remove_vcode(mobile)
 
-    return {status = 204}
+    return {json = {uid = user.id}}
 end
 
 return sign_up

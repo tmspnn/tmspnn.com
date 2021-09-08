@@ -2,7 +2,7 @@ import { Klass, parseJSON } from "k-util";
 
 const { CONNECTING, OPEN } = WebSocket;
 
-const Ws = Klass({
+const wsProto = {
     origin: location.origin,
 
     url: "wss://tmspnn.com/ws/",
@@ -145,6 +145,6 @@ const Ws = Klass({
             clearInterval(this.intervalId);
         };
     }
-});
+};
 
-export default Ws;
+export default Klass(wsProto);

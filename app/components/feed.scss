@@ -1,132 +1,51 @@
-.-feed {
-    position: relative;
-    margin-bottom: 1rem;
-    background: var(--white);
-    box-shadow: 0 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.05);
-    border-radius: 0.2rem;
-    overflow: hidden;
+.feed {
+    @extend .flex;
+    padding: 0.5rem;
+    border-top: 1px solid #eee;
 
-    .cover {
-        @extend ._img;
-        display: block;
-        width: 100%;
-        padding-bottom: 56.25%; /* 16:9 */
-    }
-
-    .content {
-        padding: 0 1rem;
-
-        .head {
-            @extend ._flex;
-            padding: 0.5rem 0;
-
-            .profile {
-                @extend ._img;
-                width: 1.8rem;
-                height: 1.8rem;
-                border-radius: 50%;
-                margin-right: 0.5rem;
-                text-align: center;
-                color: var(--white);
-                font-size: 1.8rem;
-                line-height: 1.6rem;
-                box-shadow: 0.1rem 0.1rem 0.1rem 0 rgba(0, 0, 0, 5%);
-            }
-
-            .author {
-                @extend ._truncated;
-                max-width: 11rem;
-                font-weight: bold;
-            }
-
-            .date {
-                @extend ._flex;
-                @extend ._with-icon;
-                margin-left: auto;
-                color: var(--grey);
-
-                svg {
-                    position: relative;
-                    top: -1px;
-                }
-            }
-        }
+    > .content {
+        position: relative;
+        flex: 1;
+        height: 6rem;
 
         h1 {
-            @extend ._line-clamp;
-            margin: 0;
-            padding: 0;
-            font-size: 2.2rem;
-            line-height: 1.4;
-            word-break: break-all;
-            color: var(--black);
+            @extend .line-clamp;
+            margin: 0 0.5rem 0 0;
+            font-size: 1.25rem;
         }
 
-        .summary {
-            @extend ._line-clamp;
-            -webkit-line-clamp: 2;
-            line-height: 1.5;
-            margin: 0.5rem 0;
-            font-size: 1.1rem;
+        .footer {
+            @extend .flex;
+            position: absolute;
+            left: 0;
+            right: 0.5rem;
+            bottom: 0;
+            font-size: 0.9rem;
             color: var(--grey);
-        }
-
-        .meta {
-            @extend ._flex;
-            @extend ._with-icon;
-            font-size: 1.2rem;
-            padding-bottom: 0.5rem;
 
             svg {
-                position: relative;
-                top: -1px;
-            }
-
-            svg:first-child {
-                width: 1.6rem;
-                height: 1.6rem;
-            }
-
-            svg:not(:first-child) {
                 margin-left: auto;
                 width: 1.3rem;
                 height: 1.3rem;
-                color: var(--grey);
+                color: var(--yellow);
             }
 
-            span:last-child {
-                padding-left: 0.4rem;
-                text-align: right;
-                color: var(--grey);
+            .nickname {
+                @extend .line-clamp;
+                -webkit-line-clamp: 1;
+                max-width: 8rem;
+            }
+
+            .minutes {
+                margin-left: 1rem;
             }
         }
     }
-}
 
-/* Tablet */
-@media screen and (min-width: 768px) and (max-width: 1023.9px) {
-}
-
-/* Desktop */
-@media screen and (min-width: 1024px) {
-    .-feed {
-        display: flex;
-        flex-direction: row-reverse;
-
-        > .cover {
-            width: 16rem;
-            padding-bottom: 9rem;
-        }
-
-        > .content {
-            flex: 1;
-        }
-    }
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-    .-feed {
-        color: var(--white);
+    > .cover {
+        @extend .image-container;
+        width: 6rem;
+        height: 6rem;
+        border-radius: 0.5rem;
     }
 }
