@@ -93,9 +93,7 @@ local function index(app)
 
     ctx.page_title = "首页"
     ctx.tags_in_head = {tags:css("index")}
-    ctx.tags_in_body = {
-        tags:json(ctx.data), tags:js("shared"), tags:js("index")
-    }
+    ctx.tags_in_body = {tags:json(ctx.data), tags:js("index")}
 
     return {render = "pages.index"}
 end
