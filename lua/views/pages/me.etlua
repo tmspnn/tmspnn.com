@@ -55,7 +55,9 @@
     </ul>
 
     <section>
-        <button><% render("views.icons.document_add") %>写一篇</button>
+        <a href="/editor">
+            <button><% render("views.icons.document_add") %>写一篇</button>
+        </a>
     </section>
 
 </div>

@@ -1,4 +1,32 @@
 <div id="root" data-on="input: saveContent">
     <div id="editorjs" spellcheck="false" oncontextmenu="return false;"></div>
 </div>
+<div class="publish-options" data-ref="publishOptions" data-click="hideOptionsPanel" hidden>
+    <div class="options-panel" data-ref="optionsPanel">
+        <div class="row">
+            <label for="cover-input">设置封面</label>
+            <div class="cover-container" data-click="clickCover"></div>
+        </div>
+        <div class="row">
+            <label for="tag-input1">标签1</label>
+            <input type="text" id="tag-input1" class="tag">
+        </div>
+        <div class="row">
+            <label for="tag-input2">标签2</label>
+            <input type="text" id="tag-input2" class="tag">
+        </div>
+        <div class="row">
+            <label for="tag-input3">标签3</label>
+            <input type="text" id="tag-input3" class="tag">
+        </div>
+        <div class="row">
+            <label for="private-input">仅自己可见</label>
+            <div id="private-input" data-ref="privateInput" data-click="checkPrivateOption">
+                <% render("views.icons.check_circle") %>
+            </div>
+        </div>
+        <button class="submit">发布</button>
+    </div>
+    <input id="cover-input" type="file">
+</div>
 <% render("views/components/navbar", {title = ctx.page_title}) %>

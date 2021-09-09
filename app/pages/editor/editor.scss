@@ -1,5 +1,5 @@
-button {
-    background-image: none;
+#root {
+    padding: 3rem 0 0;
 }
 
 #editorjs {
@@ -13,49 +13,74 @@ button {
     display: none;
 }
 
-.page-container {
-    padding: 3.5rem 0 0;
-}
-
-.header {
-    @extend ._flex;
-    user-select: none;
-    position: absolute;
+.publish-options {
+    position: fixed;
     left: 0;
     right: 0;
     top: 0;
-    height: 3.5rem;
-    z-index: 1;
-    color: var(--black);
-    background-color: var(--white);
-    box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.02);
+    bottom: 0;
+    z-index: 101;
+    background: rgba(0, 0, 0, 0.4);
 
-    > * {
-        @extend ._flex;
-        @extend ._with-icon;
-        justify-content: center;
-        height: 100%;
-    }
+    .options-panel {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: var(--white);
+        transition: transform 200ms;
+        border-radius: 1.5rem 1.5rem 0 0;
+        padding: 1.5rem;
 
-    .close-btn {
-        width: 3.5rem;
-
-        svg {
-            font-size: 1.5rem;
+        &.visible {
+            transform: translate3d(0, -100%, 0);
         }
-    }
 
-    .publish-btn {
-        margin-left: auto;
-        padding: 0 1rem;
-        color: var(--dark-green);
+        .row {
+            @extend .flex;
+            padding: 1rem 0;
 
-        span {
+            label {
+                min-width: 10rem;
+            }
+
+            input {
+                padding: 0.2rem 0;
+                width: 8rem;
+                border-bottom: 2px solid grey;
+                &:focus {
+                    border-bottom: 2px solid var(--primary);
+                }
+            }
+
+            .cover-container {
+                @extend .image-container;
+                width: 8rem;
+                height: 6rem;
+                background-color: var(--light-white);
+                border-radius: 1rem;
+            }
+        }
+
+        #private-input {
+            &.checked svg {
+                color: var(--primary);
+            }
+
+            svg {
+                width: 2rem;
+                height: 2rem;
+                color: var(--grey-white);
+            }
+        }
+
+        button.submit {
+            display: block;
+            width: 15rem;
+            height: 2.4rem;
+            margin: 1rem auto;
             font-size: 1.1rem;
-        }
-
-        svg {
-            font-size: 1.2rem;
+            font-weight: bold;
         }
     }
 }
