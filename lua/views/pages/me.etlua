@@ -1,71 +1,63 @@
-<%
--- External modules
-local cjson = require "cjson"
-
--- Aliases
-local fmt = string.format
-
--- Data
-local au = ctx.data.user
-local articles = ctx.data.articles
-
--- Computed props
-local fame = math.floor(au.fame)
-
-local bg_image = au.bg_image
-    and fmt("url(%s)", au.bg_image)
-    or "linear-gradient(135deg, var(--grey), var(--black))"
-
-local profile_url = #au.profile > 0
-    and fmt("url(%s)", au.profile)
-    or "linear-gradient(135deg, var(--grey), var(--black))"
-
-local description = #au.description > 0
-    and au.description
-    or "这个人很懒, 什么都没有写..."
-%>
+<% local me = ctx.data.user %>
 <div id="root">
-    <div class="bg" style="background-image: <%= bg_image %>"></div>
-    <div class="row">
-        <div class="profile" style="background-image: <%= profile_url %>"></div>
-        <div class="nickname"><%= au.nickname %></div>
-    </div>
-    <div class="row">
-        <a href="/editor" class="button">
-            <% render("views.icons.pencil_alt") %>
-            写一篇
-        </a>
-        <div class="fame">
-            <% render("views.icons.flag") %>
-            <span>声望 <b><%= fame %></b></span>
+
+    <srction class="header">
+        <div class="profile" style="background-image: url(<%= me.profile %>);"></div>
+        <div class="center">
+            <div class="nickname"><%= me.nickname %></div>
+            <div class="name-card">
+                <% render("views.icons.qrcode") %>
+                <span>我的名片</span>
+            </div>
         </div>
-    </div>
-    <blockquote><%= description %></blockquote>
-    <ul class="btns">
-        <li class="followers">
-            <a href="/users/<%= au.id %>/followers">
-                <% render("views.icons.users") %>
-                粉丝<b> <%= au.followers_count %></b>
-            </a>
-        </li>
-        <li class="followings">
-            <a href="/users/<%= au.id %>/followings">
+        <div class="arrow">
+            <span>个人主页</span>
+            <% render("views.icons.chevron_right") %>
+        </div>
+    </srction>
+
+    <ul>
+        <li>
+            <a href="/authors/<%= me.id %>/followings">
                 <% render("views.icons.heart") %>
-                关注<b> <%= au.followings_count %></b>
+                <span><%= me.followings_count %>关注</span>
+                <% render("views.icons.chevron_right") %>
             </a>
         </li>
-        <li class="ratings">
-            <a href="/users/<%= au.id %>/ratings">
+        <li>
+            <a href="/authors/<%= me.id %>/followers">
+                <% render("views.icons.users") %>
+                <span><%= me.followers_count %>粉丝</span>
+                <% render("views.icons.chevron_right") %>
+            </a>
+        </li>
+        <li>
+            <a href="/authors/<%= me.id %>/ratings">
                 <% render("views.icons.star") %>
-                评价<b> <%= au.ratings_count %></b>
+                <span><%= me.ratings_count %>评价</span>
+                <% render("views.icons.chevron_right") %>
+            </a>
+        </li>
+        <li>
+            <a href="/authors/<%= me.id %>/articles">
+                <% render("views.icons.document_text") %>
+                <span><%= me.articles_count %>文章</span>
+                <% render("views.icons.chevron_right") %>
+            </a>
+        </li>
+        <li>
+            <a href="/settings">
+                <% render("views.icons.cog") %>
+                <span><%= me.articles_count %>设置</span>
+                <% render("views.icons.chevron_right") %>
             </a>
         </li>
     </ul>
-    <section class="articles">
-        <% for _, fd in ipairs(au.articles) do %>
-        <% render("views.components.feed", fd) %>
-        <% end %>
+
+    <section>
+        <button><% render("views.icons.document_add") %>写一篇</button>
     </section>
+
 </div>
 <% render("views.components.navbar", {title = ctx.page_title}) %>
 <% render("views.components.tabbar", {active_tab = "me"}) %>

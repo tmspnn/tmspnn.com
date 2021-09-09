@@ -17,6 +17,7 @@ const searchProto = {
         this.refs.searchIcon = $(".search-bar > svg:nth-child(2)");
         this.refs.searchIcon.addClass("visible");
         this.refs.xIcon = $(".search-bar > svg:last-child");
+        this.refs.xIcon.on("click", () => this.clearInput());
     },
 
     onInput(e) {
@@ -29,7 +30,12 @@ const searchProto = {
             this.refs.searchIcon.addClass("visible");
             this.refs.xIcon.removeClass("visible");
         }
+    },
+
+    clearInput() {
+        this.refs.searchInput.value = "";
+        this.onInput({ currentTarget: this.refs.searchInput });
     }
 };
 
-window.search = new (Klass(searchProto, Page))();
+new (Klass(searchProto, Page))();

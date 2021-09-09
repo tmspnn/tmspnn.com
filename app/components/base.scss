@@ -43,9 +43,11 @@ button {
     align-items: center;
     justify-content: center;
     padding: 0.5rem 1em;
+    border: none;
     border-radius: 1.5rem;
     background-image: linear-gradient(150deg, var(--primary), var(--blue));
     color: var(--white);
+    user-select: none;
 }
 
 img {

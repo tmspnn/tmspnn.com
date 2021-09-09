@@ -8,7 +8,8 @@ local user = ctx.data.user
 %>
 <div id="root">
     <section class="search-bar">
-        <input type="text" spellcheck="false" placeholder="<%= search_placeholder or "搜索" %>" data-on="input:onInput">
+        <input type="text" spellcheck="false" placeholder="<%= search_placeholder or "搜索" %>" data-ref="searchInput"
+            data-on="input:onInput">
         <% render("views/icons/search") %>
         <% render("views/icons/x") %>
     </section>

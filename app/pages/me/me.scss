@@ -1,100 +1,90 @@
-.bg {
-    @extend ._img;
-    width: 100%;
-    padding-bottom: 56.25%;
-    background-color: var(--light-white);
+#root {
+    padding: 3rem 0 3.5rem;
 }
 
-.row {
-    @extend ._flex;
-    @extend ._with-icon;
-    padding: 1rem;
+.header,
+li {
+    @extend .flex;
+    border-bottom: 1px solid var(--light-white);
+}
 
-    &:nth-child(2) {
-        height: 5rem;
-    }
-
+.header {
     .profile {
-        @extend ._img;
-        position: relative;
-        top: -2.5rem;
-        width: 10rem;
-        height: 10rem;
-        border-radius: 0.2rem;
-        background-color: var(--grey);
-    }
-}
-
-.nickname {
-    @extend ._line-clamp;
-    align-self: flex-start;
-    margin-left: auto;
-    max-width: 10.5rem;
-    -webkit-line-clamp: 2;
-    font-size: 1.6rem;
-    font-weight: bold;
-    color: var(--black);
-}
-
-.button {
-    width: 10rem;
-    line-height: 1;
-
-    svg {
-        position: relative;
-        top: -1px;
-    }
-}
-
-.fame {
-    @extend ._flex;
-    margin-left: auto;
-
-    svg {
-        color: var(--red);
+        @extend .image-container;
+        margin: 1rem;
+        width: 6rem;
+        height: 6rem;
+        border-radius: 1rem;
     }
 
-    span {
-        @extend ._inline;
-        @extend ._truncated;
+    .center {
+        .nickname {
+            @extend .line-clamp;
+            -webkit-line-clamp: 1;
+            max-width: 8rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .name-card {
+            @extend .flex;
+            position: relative;
+            left: -0.2rem;
+
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--grey);
+
+            svg {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
     }
-}
 
-blockquote {
-    padding: 2rem;
-    background-color: var(--light-white);
-    border-radius: 0;
-    font-style: italic;
-    font-size: 1.1rem;
-}
-
-ul.btns {
-    @extend ._flex;
-    margin: 2rem 0;
-
-    li {
-        @extend ._flex;
-        @extend ._with-icon;
-
-        flex: 1;
-        justify-content: center;
-        font-size: 1.1rem;
+    .arrow {
+        @extend .flex;
+        margin: 0 1rem 0 auto;
+        font-size: 0.9rem;
 
         svg {
-            margin: 0;
-            vertical-align: middle;
-            position: relative;
-            top: -2px;
-        }
-
-        b {
-            @extend ._inline;
-            padding-left: 0.5rem;
-            color: var(--dark-green);
+            width: 1.6rem;
+            height: 1.6rem;
         }
     }
 }
 
-.articles {
-    padding: 0 1rem;
+li > a {
+    @extend .flex;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1.1rem;
+
+    svg {
+        position: relative;
+        top: -0.1rem;
+        width: 1.3rem;
+        height: 1.3rem;
+
+        &:first-child {
+            margin-right: 0.5rem;
+        }
+
+        &:last-child {
+            margin-left: auto;
+        }
+    }
+}
+
+button {
+    margin: 1.5rem auto 0;
+    width: 15rem;
+    font-weight: bold;
+
+    svg {
+        position: relative;
+        top: -0.1rem;
+        width: 1.5rem;
+        height: 1.5rem;
+    }
 }
