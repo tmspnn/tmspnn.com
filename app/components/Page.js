@@ -13,6 +13,8 @@ const assign = Object.assign;
 const pageProto = {
     blocked: false,
 
+    scrollingElement: null,
+
     scrollTop: 0,
 
     ws: null,
@@ -22,7 +24,6 @@ const pageProto = {
 
     constructor() {
         this.Super();
-
         new Spinner();
         new Toast();
         new Container();
@@ -31,16 +32,17 @@ const pageProto = {
         window._container.captureLinks(document.body);
 
         this.element = document.body;
+        this.scrollingElement = document.scrollingElement;
         this.refs.root = $("#root");
 
         document.on("scroll", () => {
-            this.scrollTop = document.scrollingElement.scrollTop;
+            if (document.scrollingElement == this.scrollingElement) {
+                this.scrollTop = this.scrollingElement.scrollTop;
+            }
         });
 
         document.documentElement.on("pageshow", () => {
-            if (this.scrollTop > 0) {
-                immediatelyScrollTo(this.refs.root, this.scrollTop | 0);
-            }
+            immediatelyScrollTo(this.scrollingElement, this.scrollTop | 0);
         });
 
         if (this.data.uid) {

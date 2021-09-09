@@ -3,7 +3,7 @@ local respond_to = require("lapis.application").respond_to
 local sign_in_required = require "middlewares.sign_in_required"
 local is_conv_member = require "middlewares.is_conv_member"
 local index = require "controllers.rendering_ctrl.index"
-local trending = require "controllers.rendering_ctrl.trending"
+local search = require "controllers.rendering_ctrl.search"
 local article = require "controllers.rendering_ctrl.article"
 local author = require "controllers.rendering_ctrl.author"
 local conversations = require "controllers.rendering_ctrl.conversations"
@@ -27,7 +27,7 @@ local function rendering_controller(app)
     -- L1 pages
     app:get("/", index)
 
-    app:get("/trending", trending)
+    app:get("/search", search)
 
     app:match("/conversations", respond_to(
                   {

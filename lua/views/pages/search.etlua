@@ -1,0 +1,41 @@
+<%
+local search_placeholder = ctx.data.search_placeholder
+local latest_followings = ctx.data.latest_followings
+local latest_feeds = ctx.data.latest_feeds
+local authors_of_the_week = ctx.data.authors_of_the_week
+local articles_of_the_week = ctx.data.articles_of_the_week
+local user = ctx.data.user
+%>
+<div id="root">
+    <section class="search-bar">
+        <input type="text" spellcheck="false" placeholder="<%= search_placeholder or "搜索" %>" data-on="input:onInput">
+        <% render("views/icons/search") %>
+        <% render("views/icons/x") %>
+    </section>
+
+    <section class="latest-followings">
+        <% for i, t in ipairs(latest_followings) do %>
+        <% render("views/components/author", t) %>
+        <% end %>
+    </section>
+
+    <section class="latest-feeds">
+        <% for i, t in ipairs(latest_feeds) do %>
+        <% render("views/components/feed", t) %>
+        <% end %>
+    </section>
+
+    <section class="authors-of-the-week">
+        <% for i, t in ipairs(authors_of_the_week) do %>
+        <% render("views/components/author", t) %>
+        <% end %>
+    </section>
+
+    <section class="articles-of-the-week">
+        <% for i, t in ipairs(articles_of_the_week) do %>
+        <% render("views/components/feed", t) %>
+        <% end %>
+    </section>
+</div>
+<% render("views.components.navbar", {title = ctx.page_title}) %>
+<% render("views.components.tabbar", {active_tab = "search"}) %>

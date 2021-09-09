@@ -39,6 +39,4 @@ const indexProto = {
     onSlideClick(idx) {}
 };
 
-const Index = Klass(indexProto, Page);
-
-new Index();
+window.index = new (Klass(indexProto, Page))();

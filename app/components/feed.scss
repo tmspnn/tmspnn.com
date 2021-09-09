@@ -6,7 +6,7 @@
     > .content {
         position: relative;
         flex: 1;
-        height: 6rem;
+        height: 5.5rem;
 
         h1 {
             @extend .line-clamp;
@@ -33,7 +33,7 @@
             .nickname {
                 @extend .line-clamp;
                 -webkit-line-clamp: 1;
-                max-width: 8rem;
+                max-width: 6rem;
             }
 
             .minutes {

@@ -1,0 +1,44 @@
+#root {
+    padding: 3rem 0 3.5rem;
+}
+
+.search-bar {
+    position: relative;
+    margin: 1.2rem 1rem;
+
+    input {
+        width: 100%;
+        padding: 0.5rem 1.5rem;
+        background: #f5f5f5;
+        border-radius: 1rem;
+        font-size: 1.1rem;
+    }
+
+    svg {
+        display: none;
+        position: absolute;
+        right: 1rem;
+        top: 0.5rem;
+        width: 1.3rem;
+        height: 1.3rem;
+        color: var(--grey-white);
+
+        &:last-child {
+            color: var(--grey);
+        }
+
+        &.visible {
+            display: initial;
+        }
+    }
+}
+
+.latest-followings,
+.authors-of-the-week {
+    @extend .horizontal-scrolling;
+    margin-bottom: 1rem;
+}
+
+.authors-of-the-week {
+    margin-top: 1rem;
+}
