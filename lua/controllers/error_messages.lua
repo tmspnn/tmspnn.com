@@ -83,7 +83,7 @@ local error_messages = {
         status = 400,
         message = "请输入50字以上的内容."
     },
-    ["wordcount.too.big"] = {
+    ["wordcount.too.large"] = {
         status = 400,
         message = "请输入一万字以内的内容."
     },

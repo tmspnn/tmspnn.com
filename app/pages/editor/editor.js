@@ -1,5 +1,4 @@
 import { debounce } from "lodash";
-import { $ } from "k-dom";
 import { parseJSON, Klass } from "k-util";
 import CodeTool from "@editorjs/code";
 import ColorPlugin from "editorjs-text-color-plugin";
@@ -17,6 +16,16 @@ import Navbar from "../../components/Navbar/Navbar";
 import uploadFile from "../../helpers/uploadFile";
 
 const editorProto = {
+    cover: null,
+
+    tag1: "",
+
+    tag2: "",
+
+    tag3: "",
+
+    isPrivate: false,
+
     navbar: new Navbar({
         leftBtn: "close",
         rightBtn: "publish"
@@ -158,19 +167,6 @@ const editorProto = {
         requestAnimationFrame(() => {
             this.refs.optionsPanel.addClass("visible");
         });
-
-        // this.editor
-        //     .save()
-        //     .then((d) => this.postJSON("/api/articles", d))
-        //     .then((res) => {
-        //         this.toast("发布成功");
-        //         localStorage.removeItem(
-        //             this.storagePrefix + "editor.localData"
-        //         );
-        //         setTimeout(() => {
-        //             location.replace("/articles/" + res.id);
-        //         }, 1800);
-        //     });
     },
 
     hideOptionsPanel(e) {
@@ -185,11 +181,50 @@ const editorProto = {
     },
 
     clickCover() {
-        $("#cover-input").click();
+        this.refs.coverInput.click();
     },
 
     checkPrivateOption(e) {
         e.currentTarget.toggleClass("checked");
+        this.isPrivate = e.currentTarget.hasClass("checked");
+    },
+
+    setCover(e) {
+        const file = e.currentTarget.files[0];
+        uploadFile(file, {
+            uid: this.data.uid,
+            ossPolicy: this.data.oss_policy,
+            ossSignature: this.data.oss_signature
+        }).then((url) => {
+            this.cover = url;
+            this.refs.coverContainer.style.backgroundImage = `url(${url})`;
+        });
+    },
+
+    submit() {
+        const tags = [this.tag1, this.tag2, this.tag3].filter(
+            (t) => t.trim().length > 0
+        );
+
+        this.editor
+            .save()
+            .then((d) =>
+                this.postJSON("/api/articles", {
+                    cover: this.cover,
+                    tags,
+                    isPrivate: this.isPrivate,
+                    editorjs: d
+                })
+            )
+            .then((res) => {
+                this.toast("发布成功");
+                localStorage.removeItem(
+                    this.storagePrefix + "editor.localData"
+                );
+                setTimeout(() => {
+                    location.replace("/articles/" + res.id);
+                }, 1800);
+            });
     }
 };
 

@@ -1,50 +1,91 @@
--- External modules
 local ngx = require "ngx"
 local cjson = require "cjson"
 local db = require "lapis.db"
 local utf8 = require "utf8"
-
--- Local modules
+local fmt = string.format
+--
 local PG = require "services.PG"
 local each = require "util.each"
 local push = require "util.push"
-local fmt = string.format
 
 local function get_user(uid)
     return PG.query([[
-        select id, nickname, profile from "user" where id = ?
+        select id, nickname, profile, followers_count from "user" where id = ?;
     ]], uid)[1]
+end
+
+local function update_articles_count(uid)
+    PG.query([[
+        update "user" set articles_count = articles_count + 1 where id = ?;
+    ]], uid)
+end
+
+local function append_feeds(article_id, follower_ids)
+    PG.query([[
+        update "user" set feed_ids = array_append(feed_ids, ?) where id in ?;
+    ]], article_id, db.list(follower_ids))
+end
+
+local function add_feeds(user, article_id)
+    local step = 100
+    local rounds = math.ceil(user.followers_count / step)
+
+    if rounds == 1 then
+        local follower_ids = PG.query([[
+            select follower_ids from "user" where id = ?;
+        ]], user.id)[1].follower_ids
+
+        append_feeds(article_id, follower_ids)
+    else
+        for i = 1, rounds do
+            local follower_ids = PG.query([[
+                select follower_ids[array_upper(follower_ids, 1) - ? : ?]
+                from "user" where id = ?;
+            ]], i * step - 1, i == 1 and PG.MAX_INT or i * (step - 1), user.id)[1]
+                                     .follower_ids
+
+            append_feeds(article_id, follower_ids)
+        end
+    end
+end
+
+local function on_created(premature, user, article_id)
+    update_articles_count(user.id)
+    add_feeds(user, article_id)
 end
 
 local function create_article(app)
     local ctx = app.ctx
 
     local user = get_user(ctx.uid)
+    if not user then error("user.not.exists") end
 
-    if not user then error("user.not.exists", 0) end
-
-    local blocks = app.params.blocks
+    local tags = app.params.tags or {}
+    local tags_str = table.concat(tags, " ")
+    local is_private = app.params.isPrivate
+    local blocks = app.params.editorjs.blocks
 
     local a = {
         title = "",
         created_by = ctx.uid,
         author = user.nickname,
         author_profile = user.profile,
-        cover = "",
+        cover = app.params.cover or "",
         summary = "",
         content = ngx.req.get_body_data(),
+        state = is_private and 1 or 0,
         wordcount = 0,
-        obj = {tags = {}, ratings_count = 0, comments_count = 0}
+        obj = {tags = tags, ratings_count = 0, comments_count = 0}
     }
-    local sentences = {user.nickname}
+    local sentences = {tags_str, user.nickname}
 
     each(blocks, function(b)
         if b.type == "header" then
-            if #a.title == 0 then a.title = b.data.text end
+            if a.title == "" then a.title = b.data.text end
             a.wordcount = a.wordcount + utf8.len(b.data.text)
             push(sentences, b.data.text)
         elseif b.type == "paragraph" or b.type == "quote" then
-            if #a.summary == 0 then a.summary = b.data.text end
+            if a.title == "" then a.title = b.data.text end
             a.wordcount = a.wordcount + utf8.len(b.data.text)
             push(sentences, b.data.text)
         elseif b.type == "list" then
@@ -53,9 +94,7 @@ local function create_article(app)
                 push(sentences, item)
             end)
         elseif b.type == "image" then
-            if #a.cover == 0 then
-                a.cover = b.data.file.url:match("https://oss.tmspnn.com/(.*)?")
-            end
+            if a.cover == "" then a.cover = b.data.file.url end
         elseif b.type == "code" then
             a.wordcount = a.wordcount + utf8.len(b.data.code)
             push(sentences, b.data.code)
@@ -63,12 +102,12 @@ local function create_article(app)
     end)
 
     -- Validation
-    if #a.title == 0 then
-        error("title.required", 0)
+    if a.title == "" then
+        error("title.required")
     elseif a.wordcount < 50 then
-        error("wordcount.too.small", 0)
+        error("wordcount.too.small")
     elseif a.wordcount > 1e4 then
-        error("wordcount.too.big", 0)
+        error("wordcount.too.large")
     end
 
     -- Tokenization
@@ -77,7 +116,7 @@ local function create_article(app)
         body = cjson.encode({text = sentences})
     })
 
-    if tok_res.status ~= 200 then error("NLP.tok." .. tok_res.status, 0) end
+    if tok_res.status ~= 200 then error("NLP.tok." .. tok_res.status) end
 
     local tok_fine = cjson.decode(tok_res.body)["tok/fine"]
     local tokens_hash = {}
@@ -94,11 +133,7 @@ local function create_article(app)
 
     local article = PG.create("article", a, "id")[1]
 
-    ngx.timer.at(0, function(premature, uid)
-        PG.query([[
-            update user set articles_count = article_count + 1 where id = ?
-        ]], uid)
-    end, user.id)
+    ngx.timer.at(0, on_created, user, article.id)
 
     return {json = article}
 end

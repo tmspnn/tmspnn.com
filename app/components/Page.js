@@ -80,7 +80,7 @@ const pageProto = {
             url,
             "post",
             JSON.stringify(data),
-            assign({ contentType: "application/json" }, options)
+            assign({ contentType: "application/json; charset=utf-8" }, options)
         )
             .then((res) => parseJSON(res))
             .catch((e) => this.handleException(e))

@@ -35,14 +35,5 @@ export default function uploadFile(file, options) {
         options.ossEntry || "https://tmspnn.obs.cn-east-2.myhuaweicloud.com",
         "post",
         fd
-    )
-        .then(() =>
-            kxhr(
-                `/api/users/${uid}/auth-keys?` + qs.stringify({ filepath: key })
-            )
-        )
-        .then((res) => parseJSON(res))
-        .then(
-            (res) => `https://oss.tmspnn.com/${key}?auth_key=${res.auth_key}`
-        );
+    ).then(() => "https://tmspnn.obs.cn-east-2.myhuaweicloud.com/" + key);
 }
