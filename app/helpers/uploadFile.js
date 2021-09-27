@@ -1,6 +1,4 @@
 import { Base64 } from "js-base64";
-import { parseJSON } from "k-util";
-import qs from "qs";
 import kxhr from "k-xhr";
 
 /**

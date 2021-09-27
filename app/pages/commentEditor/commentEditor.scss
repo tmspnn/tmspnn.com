@@ -1,5 +1,5 @@
-button {
-    background-image: none;
+#root {
+    padding: 3rem 0 0;
 }
 
 #editorjs {
@@ -11,8 +11,4 @@ button {
 .ce-inline-tool--link,
 .ce-toolbox__button[data-tool="paragraph"] {
     display: none;
-}
-
-#root {
-    padding: 3.5rem 0 0;
 }

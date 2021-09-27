@@ -1,15 +1,15 @@
 local redis_client = require "services.redis_client"
 local fmt = string.format
 
--- @param {string} user_token
--- @returns {int}
 local function get_uid_by_token(user_token)
+    --[[ string user_token --]]
     local client = redis_client:new()
     local uid = client:run("get", fmt("user_token(%s):uid", user_token))
     return tonumber(uid)
 end
 
 local function context(app)
+    --[[ lapis.Application app --]]
     local ctx = {
         os = "Unknown",
         is_mobile = false,
@@ -37,7 +37,9 @@ local function context(app)
         end
     end
 
-    if ctx.user_token then ctx.uid = get_uid_by_token(ctx.user_token) end
+    if ctx.user_token then
+        ctx.uid = get_uid_by_token(ctx.user_token)
+    end
 
     app.ctx = ctx
 end

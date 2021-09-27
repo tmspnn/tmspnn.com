@@ -16,6 +16,8 @@ import Navbar from "../../components/Navbar/Navbar";
 import uploadFile from "../../helpers/uploadFile";
 
 const editorProto = {
+    isInApp: /tmspnn/.test(navigator.userAgent),
+
     cover: null,
 
     tag1: "",
@@ -157,10 +159,29 @@ const editorProto = {
     }, 1000),
 
     close() {
+        if (this.isInApp) {
+            return window.messageHandler.postMessage(
+                JSON.stringify({ method: "closeWebview" })
+            );
+        }
+
         this.stepBack();
     },
 
     publish() {
+        if (this.isInApp) {
+            return this.editor.save().then((d) => {
+                window.messageHandler.postMessage(
+                    JSON.stringify({
+                        method: "showPublishOptions",
+                        editorjs: d,
+                        ossPolicy: this.data.oss_policy,
+                        ossSignature: this.data.oss_signature
+                    })
+                );
+            });
+        }
+
         this.refs.publishOptions.hidden = false;
         document.documentElement.style.overflow = "hidden";
 

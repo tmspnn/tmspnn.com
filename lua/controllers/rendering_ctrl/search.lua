@@ -1,3 +1,4 @@
+local cjson = require "cjson"
 local db = require "lapis.db"
 --
 local empty = require "util.empty"
@@ -5,28 +6,27 @@ local PG = require "services.PG"
 local redis_client = require "services.redis_client"
 local tags = require "util.tags"
 
---[[
-    lapis.RenderOptions search(lapis.Application)
---]]
-
 local function get_search_placeholder()
     local client = redis_client:new()
     local placeholder = client:run("get", "page(search):placeholder")
-    --[[
-        string | nil placeholder
-    --]]
+    --[[ string | nil placeholder --]]
     return placeholder
 end
 
 local function get_latest_followings(uid)
-    if uid == nil then return {} end
+    if uid == nil then
+        return cjson.empty_array
+    end
 
     local following_ids = PG.query([[
-        select following_ids[array_upper(following_ids, 1) - 19 : ?]
+        select
+            following_ids[array_upper(following_ids, 1) - 19 : ?]
         from "user" where id = ?;
     ]], PG.MAX_INT, uid)[1].following_ids
 
-    if empty(following_ids) then return {} end
+    if #following_ids == 0 then
+        return cjson.empty_array
+    end
 
     local followings = PG.query([[
         select id, profile, nickname from "user" where id in ?;
@@ -38,21 +38,27 @@ local function get_latest_followings(uid)
             string nickname
         } followings[]
     --]]
-    return followings
+    return #followings == 0 and cjson.empty_array or followings
 end
 
 local function get_latest_feeds(uid)
-    if uid == nil then return {} end
+    if uid == nil then
+        return cjson.empty_array
+    end
 
     local feed_ids = PG.query([[
-        select feed_ids[array_upper(feed_ids, 1) - 19 : ?] from "user"
-        where id = ?;
+        select
+            feed_ids[array_upper(feed_ids, 1) - 19 : ?]
+        from "user" where id = ?;
     ]], PG.MAX_INT, uid)[1].feed_ids
 
-    if empty(feed_ids) then return {} end
+    if #feed_ids == 0 then
+        return cjson.empty_array
+    end
 
     local feeds = PG.query([[
-        select id, title, author, cover, rating,
+        select
+            id, title, author, cover, rating,
             ceil(wordcount::float / 500) as minutes
         from "article" where id in ?;
     ]], db.list(feed_ids))
@@ -86,7 +92,8 @@ end
 
 local function get_articles_of_the_week()
     local famous_articles = PG.query([[
-        select id, title, author, cover, rating,
+        select
+            id, title, author, cover, rating,
             ceil(wordcount::float / 500) as minutes
         from "article" order by fame desc limit 20;
     ]])
@@ -105,10 +112,13 @@ local function get_articles_of_the_week()
 end
 
 local function get_user(uid)
-    if uid == nil then return end
+    if not uid then
+        return
+    end
 
     local user = PG.query([[
-        select id, nickname, profile, followings_count,
+        select
+            id, nickname, profile, followings_count,
             followers_count, articles_count, ratings_count
         from "user" where id = ?;
     ]], uid)[1]
@@ -128,7 +138,6 @@ end
 
 local function search(app)
     local ctx = app.ctx
-
     local search_placeholder = get_search_placeholder()
     local latest_followings = get_latest_followings(ctx.uid)
     local latest_feeds = get_latest_feeds(ctx.uid)
@@ -149,7 +158,9 @@ local function search(app)
     ctx.tags_in_head = {tags:css("search")}
     ctx.tags_in_body = {tags:json(ctx.data), tags:js("search")}
 
-    return {render = "pages.search"}
+    return {
+        render = "pages.search"
+    }
 end
 
 return search

@@ -10,8 +10,11 @@ local send_vcode = require "controllers.user_ctrl.send_vcode"
 local toggle_followship = require "controllers.user_ctrl.toggle_followship"
 local get_auth_key = require "controllers.user_ctrl.get_auth_key"
 local update_user = require "controllers.user_ctrl.update_user"
+local get_author = require "controllers.user_ctrl.get_author"
 
 local function user_controller(app)
+    app:get("/api/authors/:author_id", get_author)
+
     app:post("/api/sign-up", json_params(sign_up))
 
     app:post("/api/sign-in", json_params(sign_in))

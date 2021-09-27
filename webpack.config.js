@@ -10,7 +10,7 @@ const _ = require("lodash");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 // Entries
-const pages = ["editor"] || fs.readdirSync("./app/pages");
+const pages = fs.readdirSync("./app/pages");
 
 module.exports = {
     context: __dirname + "/app",
