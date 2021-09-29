@@ -1,6 +1,7 @@
 import { $ } from "k-dom";
 import { Klass } from "k-util";
-
+import { debounce } from "lodash";
+//
 import "./search.scss";
 import "../../components/tabbar.scss";
 import "../../components/author.scss";
@@ -25,7 +26,7 @@ const searchProto = {
         if (text.length > 0) {
             this.refs.searchIcon.removeClass("visible");
             this.refs.xIcon.addClass("visible");
-            console.log("search keyword: " + text);
+            this.search(text);
         } else {
             this.refs.searchIcon.addClass("visible");
             this.refs.xIcon.removeClass("visible");
@@ -35,7 +36,13 @@ const searchProto = {
     clearInput() {
         this.refs.searchInput.value = "";
         this.onInput({ currentTarget: this.refs.searchInput });
-    }
+    },
+
+    search: debounce(function (text) {
+        this.getJSON("/api/search?text=" + encodeURIComponent(text)).then(
+            (res) => console.log(res)
+        );
+    }, 500)
 };
 
 new (Klass(searchProto, Page))();

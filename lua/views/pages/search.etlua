@@ -2,8 +2,6 @@
 local search_placeholder = ctx.data.search_placeholder
 local latest_followings = ctx.data.latest_followings
 local latest_feeds = ctx.data.latest_feeds
-local authors_of_the_week = ctx.data.authors_of_the_week
-local articles_of_the_week = ctx.data.articles_of_the_week
 local user = ctx.data.user
 %>
 <div id="root">
@@ -22,18 +20,6 @@ local user = ctx.data.user
 
     <section class="latest-feeds">
         <% for i, t in ipairs(latest_feeds) do %>
-        <% render("views/components/feed", t) %>
-        <% end %>
-    </section>
-
-    <section class="authors-of-the-week">
-        <% for i, t in ipairs(authors_of_the_week) do %>
-        <% render("views/components/author", t) %>
-        <% end %>
-    </section>
-
-    <section class="articles-of-the-week">
-        <% for i, t in ipairs(articles_of_the_week) do %>
         <% render("views/components/feed", t) %>
         <% end %>
     </section>

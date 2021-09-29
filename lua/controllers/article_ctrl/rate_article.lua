@@ -3,7 +3,7 @@ local db = require "lapis.db"
 --
 local PG = require "services.PG"
 local fmt = string.format
---
+
 local function get_user(uid)
     return PG.query([[
         select id, nickname, profile, fame from "user" where id = ?
@@ -18,24 +18,19 @@ end
 
 local function rate_article(app)
     local ctx = app.ctx
-
-    local rating = assert(tonumber(app.params.rating), "rating.invalid")
-    assert(rating > 0 and rating < 6, ("rating.invalid"))
-
-    local referrer = assert(app.req.headers["referer"], "forbidden")
-    local article_id = assert(tonumber(referrer:match("/articles/(%d+)")),
-                              "article.not.exists")
-
     local user = get_user(ctx.uid)
-    local article = get_article(article_id)
-
-    local obj = fmt("'%s'::jsonb", cjson.encode({
+    local rating = assert(tonumber(app.params.rating), "rating.invalid")
+    assert(rating > 0 and rating < 6, "rating.invalid")
+    local article_id = assert(tpnumber(app.params.article_id), "article.not.exists")
+    local article = assert(get_article(article_id), "article.not.exists")
+    local obj = fmt("'%s'::jsonb", cjson.encode {
         author = user.nickname,
         author_profile = user.profile,
+        article_id = article_id,
         article_title = article.title
-    }))
+    })
 
-    assert(PG.query([[
+    PG.query([[
         begin;
 
         set local lock_timeout = '1s';
@@ -65,11 +60,12 @@ local function rate_article(app)
         where id = ?;
 
         commit;
-    ]], ctx.uid, article_id, rating, user.fame, db.raw(obj), rating, user.fame,
-                    user.fame, user.fame, rating, user.fame, article_id, rating,
-                    user.fame, article.created_by, ctx.uid))
+    ]], ctx.uid, article_id, rating, user.fame, db.raw(obj), rating, user.fame, user.fame, user.fame, rating, user.fame,
+        article_id, rating, user.fame, article.created_by, ctx.uid)
 
-    return {status = 204}
+    return {
+        status = 204
+    }
 end
 
 return rate_article

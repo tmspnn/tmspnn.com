@@ -3,12 +3,10 @@ local db = require "lapis.db"
 --
 local each = require "util.each"
 local empty = require "util.empty"
+local map = require "util.map"
+local has_value = require "util.has_value"
 local PG = require "services.PG"
 local redis_client = require "services.redis_client"
-
---[[
-    lapis.RenderOptions get_article(lapis.Application app)
---]]
 
 local function get_article_by_id(id)
     local article = PG.query([[
@@ -36,40 +34,47 @@ local function get_article_by_id(id)
     return article
 end
 
-local function get_comments(article_id)
+local function get_comments(article_id, uid)
     local comments = PG.query([[
-        select * from "comment" where article_id = ?
+        select * from "comment" where article_id = ? and state = 0
         order by advocators_count desc, id desc limit 20;
     ]], article_id);
-    if empty(comments) then comments = cjson.empty_array end
-    --[[
-        {init.sql.comment}[] comments
-    --]]
+
+    if empty(comments) then
+        return cjson.empty_array
+    end
+
+    if uid then
+        local advocated = PG.query([[
+            select refer_to from "interaction"
+            where created_by = ? and id in ? and type = 1;
+        ]], uid, db.list(map(comments, function(c)
+            return c.id
+        end)))
+
+        local advocated_ids = map(advocated, function(itrct)
+            return itrct.refer_to
+        end)
+
+        each(comments, function(c)
+            if has_value(advocated_ids, c.id) then
+                c.advocared = true
+            end
+        end)
+    end
+
     return comments
 end
 
 local function check_my_rating(uid, article_id)
-    --[[
-        int uid,
-        int article_id
-    --]]
     local rating_record = PG.query([[
         select id from "rating" where created_by = ? and article_id = ?;
     ]], uid, article_id)[1]
-    local has_rated = rating_record ~= nil
-    --[[
-        bool has_rated
-    --]]
-    return has_rated
+    return rating_record ~= nil
 end
 
 local function get_author(id, follower_id)
-    --[[
-        int id,
-        int follower_id
-    --]]
-
-    if follower_id == nil then
+    if not follower_id then
         return PG.query([[
             select
                 id, nickname, profile, fame, articles_count, false as followed
@@ -87,22 +92,20 @@ end
 
 local function get_article(app)
     local ctx = app.ctx
-
-    local article_id = tonumber(app.params.article_id)
-
-    if article_id == nil then error('article.not.exists') end
-
-    local article = get_article_by_id(article_id)
-
-    if article == nil or article.state ~= 0 then error('article.not.exists') end
-
-    article.comments = get_comments(article_id)
-    article.has_rated = false
+    local article_id = assert(tonumber(app.params.article_id), "article.not.exists")
+    local article = assert(get_article_by_id(article_id), "article.not.exists")
+    assert(article.state == 0, "forbidden")
+    article.comments = get_comments(article_id, ctx.uid)
     article.creator = get_author(article.created_by, ctx.uid)
+    article.has_rated = false
 
-    if ctx.uid then article.has_rated = check_my_rating(ctx.uid, article_id) end
+    if ctx.uid then
+        article.has_rated = check_my_rating(ctx.uid, article_id)
+    end
 
-    return {json = article}
+    return {
+        json = article
+    }
 end
 
 return get_article

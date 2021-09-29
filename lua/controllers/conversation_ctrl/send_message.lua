@@ -1,15 +1,16 @@
 local ngx = require "ngx"
 local cjson = require "cjson"
 local db = require "lapis.db"
+local uuid = require "resty.jit-uuid"
+uuid.seed()
 --
 local PG = require "services.PG"
 local redis_client = require "services.redis_client"
 local each = require "util.each"
 local push = require "util.push"
 local get_oss_auth_key = require "util.get_oss_auth_key"
---
 local fmt = string.format
---
+
 local function get_user(uid)
     return PG.query([[
         select id, nickname, profile from "user" where id = ?
@@ -22,31 +23,79 @@ local function get_conv(conv_id)
     ]], conv_id)[1]
 end
 
-local function create_message(m) return PG.create("message", m)[1] end
-
 local function offline_message(msg, members)
     return PG.query([[
         update "user" set inbox = array_append(inbox, ?) where id in ?
     ]], msg, db.list(members))
 end
 
-local function update_conv(premature, conv_id, msg)
-    return PG.query([[
-        update conversation
-        set
-            obj = jsonb_set(obj, '{latest_message}', '"?"'),
-            updated_at = now()
-        where id = ?
-    ]], db.raw(cjson.encode(msg)), conv_id)
+local function broadcast(json_str, members)
+    local client = redis_client:new()
+    return client:run("eval", [[
+        local res = {}
+        for _, v in ipairs(ARGV) do
+            res[#res + 1] = redis.call("publish",
+                string.format("uid(%s):inbox", v), KEYS[1])
+        end
+        return res
+    ]], 1, json_str, unpack(members))
+end
+
+local function write_messages()
+    local client = redis_client:new()
+    local messages = {}
+
+    repeat
+        messages = client:run("eval", [[
+            local res = {}
+            for i = 1, 100 do
+                local msg = redis.call("lpop", "messages")
+                if msg == nil then
+                    break
+                end
+                res[#res + 1] = msg
+            end
+            return res
+        ]])
+
+        local escaped_message_strings = map(messages, function(str)
+            local m = cjson.decode(escaped_messages)
+            each(m, function(v, k)
+                m[k] = db.escape_literal(v)
+            end)
+            return fmt("(%s, %d, %d, %s, %s, %d, %s, %s)", m.uuid, m.conversation_id, m.created_by, m.nickname,
+                m.profile, m.type, m.text, m.file)
+        end)
+
+        local values_str = table.concat(escaped_message_strings, ",")
+
+        PG.query([[
+            insert into "message"
+                (uuid, conversation_id, created_by, nickname, profile, type,
+                    text, file)
+            values
+        ]] .. values_str)
+    until (#messages == 0)
+
+    client:run("del", "writing_messages")
+end
+
+local function push_into_persisitance_queue(msg_str)
+    local client = redis_client:new()
+    client:run("rpush", "messages", msg_str)
+    local set_res = client:run("sexnx", "writing_messages", 1)
+    if set_res == 1 then
+        write_messages()
+    end
 end
 
 local function send_message(app)
-    local ctx = app.ctx
-    local user = assert(get_user(ctx.uid), "user.not.exists")
-    local conversation_id = tonumber(app.params.conversation_id)
+    local user = assert(get_user(app.ctx.uid), "user.not.exists")
+    local conv_id = assert(tonumber(app.params.conversation_id), "conversation.not.exists")
     local conv = assert(get_conv(conversation_id), "conversation.not.exists")
 
     local m = {
+        uuid = uuid(),
         conversation_id = conversation_id,
         created_by = user.id,
         nickname = user.nickname,
@@ -54,35 +103,29 @@ local function send_message(app)
         type = tonumber(app.params.type) or 0,
         text = app.params.text or "",
         file = app.params.file or "",
-        obj = db.raw(fmt("'%s'::jsonb", cjson.encode(app.params.data or {})))
+        auth_key = app.params.type == 0 and "" or get_oss_auth_key(app.params.file)
     }
 
-    local msg = create_message(m)
-
-    if msg.type ~= 0 then msg.auth_key = get_oss_auth_key(msg.file) end
-
-    local json = cjson.encode(msg)
-
-    local client = redis_client:new()
-    local res = client:run("eval", [[
-        local res = {}
-        for _, v in ipairs(ARGV) do
-            res[#res + 1] = redis.call("publish",
-                string.format("uid(%s):inbox", v), KEYS[1])
-        end
-        return res
-    ]], 1, json, unpack(conv.members))
-
+    local json = cjson.encode(m)
+    local broadcast_res = broadcast(json, conv.members)
     local offline_members = {}
-    each(res, function(ok, idx)
-        if ok ~= 1 then push(offline_members, conv.members[idx]) end
+
+    each(broadcast_res, function(ok, idx)
+        if ok ~= 1 then
+            push(offline_members, conv.members[idx])
+        end
     end)
 
-    if #offline_members > 0 then offline_message(json, offline_members) end
+    if #offline_members > 0 then
+        offline_message(json, offline_members)
+    end
 
-    ngx.timer.at(0, update_conv, conversation_id, msg)
+    m.auth_key = nil
+    push_into_persisitance_queue(json.encode(m))
 
-    return {status = 204}
+    return {
+        status = 204
+    }
 end
 
 return send_message

@@ -89,8 +89,10 @@ web_sanitize
 | page(index):carousel_items   | List   | Carousel in homepage                    |
 | page(index):recommended_tags | List   | Recommended tags in homepage            |
 | page(search):placeholder     | String | Placeholder of text field in searchpage |
-| user_token(%s):uid           | String |
-| mobile(%s):vcode             | String |
+| user_token(%s):uid           | String |                                         |
+| mobile(%s):vcode             | String |                                         |
+| conv(%d):members             | Set    | Member IDs of conversation              |
+| messages                     | List   | Messages need to write into DB          |
 
 ## Postgres Advisory Locks
 

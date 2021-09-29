@@ -3,7 +3,6 @@ create database tmspnn;
 -- User
 create table "user" (
     id serial primary key,
-    uuid varchar(256) unique not null,
     mobile varchar(64) unique not null,
     password text not null,
     nickname varchar(256) unique not null,
@@ -30,6 +29,8 @@ create table "user" (
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now()
 );
+
+create unique index user_nickname_uniq_idx on "user" (nickname);
 
 create index user_fame_idx on "user" (fame);
 
@@ -147,6 +148,7 @@ create index conversation_members_idx on "conversation" using gin (members jsonb
 -- Message
 create table "message" (
     id serial primary key,
+    "uuid" uuid not null,
     created_by integer not null,
     nickname varchar(256) not null,
     profile varchar(256) not null,
@@ -160,6 +162,8 @@ create table "message" (
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now()
 );
+
+create index uuid_idx on "message" ("uuid");
 
 create index message_created_by_idx on "message" (created_by);
 

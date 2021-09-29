@@ -72,7 +72,7 @@ local function get_latest_feeds(uid)
             int minutes
         } feeds[]
     --]]
-    return feeds
+    return #feeds == 0 and cjson.empty_array or feeds
 end
 
 local function get_authors_of_the_week()
@@ -138,19 +138,15 @@ end
 
 local function search(app)
     local ctx = app.ctx
-    local search_placeholder = get_search_placeholder()
-    local latest_followings = get_latest_followings(ctx.uid)
-    local latest_feeds = get_latest_feeds(ctx.uid)
-    local authors_of_the_week = get_authors_of_the_week()
-    local articles_of_the_week = get_articles_of_the_week()
     local user = get_user(ctx.uid)
+    local search_placeholder = get_search_placeholder()
+    local latest_followings = user == nil and get_authors_of_the_week() or get_latest_followings(ctx.uid)
+    local latest_feeds = user == nil and get_articles_of_the_week() or get_latest_feeds(ctx.uid)
 
     ctx.data = {
         search_placeholder = search_placeholder,
         latest_followings = latest_followings,
         latest_feeds = latest_feeds,
-        authors_of_the_week = authors_of_the_week,
-        articles_of_the_week = articles_of_the_week,
         user = user
     }
 

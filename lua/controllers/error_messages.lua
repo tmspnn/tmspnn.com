@@ -134,6 +134,26 @@ local error_messages = {
     ["conversation.unavailable"] = {
         status = 403,
         message = "对方未关注你, 无法发起对话."
+    },
+    ["fame.required"] = {
+        status = 400,
+        message = "fame字段必传, 类型double."
+    },
+    ["id.required"] = {
+        status = 400,
+        message = "id字段必传, 类型int."
+    },
+    ["user_id.required"] = {
+        status = 400,
+        message = "Url中user_id字段必传."
+    },
+    ["offset.required"] = {
+        status = 400,
+        message = "offset字段必传, 类型double."
+    },
+    ["sign_in.required"] = {
+        status = 401,
+        message = "请先登录."
     }
 }
 

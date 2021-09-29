@@ -63,7 +63,7 @@ local function get_latest_articles()
         select
             id, title, author, cover, rating, obj->'tags' as tags,
             ceil(wordcount::float / 500) as minutes
-        from "article" order by id desc limit 20;
+        from "article" where state = 0 order by id desc limit 20;
     ]])
     --[[
         {

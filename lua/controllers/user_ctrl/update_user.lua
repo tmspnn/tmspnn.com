@@ -5,7 +5,9 @@ local function update_user(app)
     local ctx = app.ctx
     local uid = tonumber(app.params.user_id)
 
-    if (uid ~= ctx.uid) then error("forbidden", 0) end
+    if (uid ~= ctx.uid) then
+        error("forbidden", 0)
+    end
 
     local bg_image = app.params.bgImage or ""
     local profile = app.params.profile or ""
@@ -21,12 +23,13 @@ local function update_user(app)
             nickname = ?,
             description = ?,
             location = ?,
-            ts_vector = to_tsvector(? || ?)
+            ts_vector = to_tsvector(? & ?)
         where id = ?
-    ]], fmt("\"%s\"", bg_image), profile, nickname, description, location,
-                         nickname, description, uid)
+    ]], fmt("\"%s\"", bg_image), profile, nickname, description, location, nickname, description, uid)
 
-    return {json = res}
+    return {
+        json = res
+    }
 end
 
 return update_user
