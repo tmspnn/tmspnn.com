@@ -23,12 +23,6 @@ local function get_conv(conv_id)
     ]], conv_id)[1]
 end
 
-local function offline_message(msg, members)
-    return PG.query([[
-        update "user" set inbox = array_append(inbox, ?) where id in ?
-    ]], msg, db.list(members))
-end
-
 local function broadcast(json_str, members)
     local client = redis_client:new()
     return client:run("eval", [[
@@ -80,11 +74,18 @@ local function write_messages()
     client:run("del", "writing_messages")
 end
 
-local function push_into_persisitance_queue(msg_str)
+local function persistent(premature, offline_members, msg_str)
+    if #offline_members > 0 then
+        PG.query([[
+            update "user" set inbox = array_append(inbox, ?) where id in ?;
+        ]], msg_str, db.list(members))
+    end
+
     local client = redis_client:new()
     client:run("rpush", "messages", msg_str)
-    local set_res = client:run("sexnx", "writing_messages", 1)
-    if set_res == 1 then
+    local idle = client:run("sexnx", "writing_messages", 1)
+
+    if idle == 1 then
         write_messages()
     end
 end
@@ -115,13 +116,9 @@ local function send_message(app)
             push(offline_members, conv.members[idx])
         end
     end)
-
-    if #offline_members > 0 then
-        offline_message(json, offline_members)
-    end
-
     m.auth_key = nil
-    push_into_persisitance_queue(json.encode(m))
+
+    ngx.timer.at(0, persistent, offline_members, cjson.encode(m))
 
     return {
         status = 204

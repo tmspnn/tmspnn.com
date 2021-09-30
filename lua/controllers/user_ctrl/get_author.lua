@@ -32,11 +32,12 @@ end
 local function get_author(app)
     local ctx = app.ctx
     local author_id = assert(tonumber(app.params.author_id), "user.not.exists")
-
     local author = assert(get_user(author_id, ctx.uid), "user.not.exists")
     author.articles = get_articles(author.id)
 
-    return {json = author}
+    return {
+        json = author
+    }
 end
 
 return get_author

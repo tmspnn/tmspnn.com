@@ -7,10 +7,6 @@ local is_mobile = require "util.is_mobile"
 local trim = require "util.trim"
 local fmt = string.format
 
---[[
-    lapis.renderOptions sign_in(lapis.Application app)
---]]
-
 local TOKEN_TTL = 60 * 60 * 24 * 14 -- two weeks
 
 local function remove_token(token)
@@ -27,27 +23,28 @@ local function sign_in(app)
     local mobile = trim(app.params.mobile)
     local password = trim(app.params.password)
 
-    if not is_mobile(mobile) then error("mobile.invalid") end
+    assert(is_mobile(mobile), "mobile.invalid")
+    assert(#password >= 6, "password.invalid")
 
-    if #password < 6 then error("password.invalid") end
-
-    local user_in_db = PG.query([[
+    local user_in_db = assert(PG.query([[
         select id, mobile, password from "user" where mobile = ?
-    ]], mobile)[1]
+    ]], mobile)[1], "mobile.not.registered")
 
-    if not user_in_db then error("mobile.not.registered") end
+    assert(bcrypt.verify(password, user_in_db.password), "password.not.match")
 
-    if not bcrypt.verify(password, user_in_db.password) then
-        error("password.not.match")
+    if app.cookies.user_token then
+        remove_token(app.cookies.user_token)
     end
-
-    if app.cookies.user_token then remove_token(app.cookies.user_token) end
 
     local user_token = generate_user_token(user_in_db.id)
     set_token(user_token, user_in_db.id)
     app.cookies.user_token = user_token
 
-    return {json = {uid = user_in_db.id}}
+    return {
+        json = {
+            uid = user_in_db.id
+        }
+    }
 end
 
 return sign_in

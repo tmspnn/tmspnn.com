@@ -18,12 +18,9 @@ create table "user" (
     identity_no varchar(64) unique not null,
     articles_count integer not null default 0,
     followings_count integer not null default 0,
-    following_ids integer [] not null default '{}',
     followers_count integer not null default 0,
-    follower_ids integer [] not null default '{}',
     ratings_count integer not null default 0,
     inbox text [] not null default '{}',
-    feed_ids integer [] not null default '{}',
     obj jsonb not null default '{}' :: jsonb,
     ts_vector tsvector not null default to_tsvector(''),
     created_at timestamp with time zone not null default now(),
@@ -117,7 +114,6 @@ create index comment_article_id_idx on "comment" (article_id);
 -- Interaction
 create table "interaction" (
     id serial primary key,
-    -- 1: comment_advocation, 2: followship, 3: abuse_report
     "type" smallint not null,
     created_by integer not null,
     refer_to integer not null,

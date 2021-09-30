@@ -1,51 +1,50 @@
--- Local modules
 local PG = require "services.PG"
+local redis_client = require "services.redis_client"
+local fmt = string.format
 
 local function has_followed(uid, author_id)
-    return PG.query([[
-        select id from "interaction"
-        where created_by = ? and refer_to = ? and type = 2
-    ]], uid, author_id)[1] ~= nil
+    local client = redis_client:new()
+    return client:run("zscore", fmt("uid(%d):followings", uid), author_id) ~= nil
 end
 
 local function follow(uid, author_id)
-    return PG.query([[
+    local client = redis_client:new()
+    client:run("zadd", fmt("uid(%d):followings", uid), author_id)
+    client:run("zadd", fmt("uid(%d):followers", author_id), uid)
+
+    PG.query([[
         begin;
 
-        insert into "interaction"
-            (type, created_by, refer_to)
-        values
-            (2, ?, ?);
-
-        update "user"
-        set followers_count = followers_count + 1
+        update "user" set
+            followers_count = followers_count + 1
         where id = ?;
 
-        update "user"
-        set followings_count = followings_count + 1
+        update "user" set
+            followings_count = followings_count + 1
         where id = ?;
 
         commit;
-    ]], uid, author_id, author_id, uid)
+    ]], author_id, uid)
 end
 
 local function unfollow(uid, author_id)
+    local client = redis_client:new()
+    client:run("zrem", fmt("uid(%d):followings", uid), author_id)
+    client:run("zrem", fmt("uid(%d):followers", author_id), uid)
+
     return PG.query([[
         begin;
 
-        delete from "interaction"
-        where created_by = ? and refer_to = ? and type = 2;
-
-        update "user"
-        set followers_count = followers_count - 1
+        update "user" set
+            followers_count = followers_count - 1
         where id = ?;
 
-        update "user"
-        set followings_count = followings_count - 1
+        update "user" set
+            followings_count = followings_count - 1
         where id = ?;
 
         commit;
-    ]], uid, author_id, author_id, uid)
+    ]], author_id, uid)
 end
 
 local function toggle_followship(app)
@@ -59,7 +58,11 @@ local function toggle_followship(app)
         follow(ctx.uid, author_id)
     end
 
-    return {json = {followed = not followed}}
+    return {
+        json = {
+            followed = not followed
+        }
+    }
 end
 
 return toggle_followship

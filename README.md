@@ -84,15 +84,22 @@ web_sanitize
 
 ## Redis Cache
 
-| Key                          | Type   | Description                             |
-| ---------------------------- | ------ | --------------------------------------- |
-| page(index):carousel_items   | List   | Carousel in homepage                    |
-| page(index):recommended_tags | List   | Recommended tags in homepage            |
-| page(search):placeholder     | String | Placeholder of text field in searchpage |
-| user_token(%s):uid           | String |                                         |
-| mobile(%s):vcode             | String |                                         |
-| conv(%d):members             | Set    | Member IDs of conversation              |
-| messages                     | List   | Messages need to write into DB          |
+| Key                          | Type       | Description                                         |
+| ---------------------------- | ---------- | --------------------------------------------------- |
+| page(index):carousel_items   | List       | Carousel in homepage                                |
+| page(index):recommended_tags | List       | Recommended tags in homepage                        |
+| page(search):placeholder     | String     | Placeholder of text field in searchpage             |
+| user_token(%s):uid           | String     |                                                     |
+| mobile(%s):vcode             | String     |                                                     |
+| conv(%d):members             | Set        | Member IDs of conversation                          |
+| messages                     | List       | Messages need to write into DB                      |
+| uid(%d):inbox                | Channel    | Key: uid, Score: timestamp(in seconds)              |
+| uid(%d):feeds                | Sorted Set | Key: uid, Score: timestamp(in seconds)              |
+| uid(%d):followers            | Sorted Set | Key: uid, Score: timestamp(in seconds)              |
+| uid(%d):followings           | Sorted Set | Key: uid, Score: timestamp(in seconds)              |
+| writing_messages             | Integer    | flag of whether it's writing messages into Postgres |
+| comment(%d):advocators       | Sorted Set | Key: uid, Score: timestamp(in seconds)              |
+| uid(%d):advocated_comments   | Sorted Set | Key: comment_id, Score: timestamp(in seconds)       |
 
 ## Postgres Advisory Locks
 

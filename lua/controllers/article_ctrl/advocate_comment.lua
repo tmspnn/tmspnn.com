@@ -2,6 +2,7 @@ local cjson = require "cjson"
 local db = require "lapis.db"
 --
 local PG = require "services.PG"
+local redis_client = require "services.redis_client"
 local fmt = string.format
 
 local function get_comment(comment_id)
@@ -11,18 +12,17 @@ local function get_comment(comment_id)
 end
 
 local function has_advocated(uid, comment_id)
-    return PG.query([[
-        select id from "interaction"
-        where created_by = ? and refer_to = ? and "type" = 1;
-    ]], uid, comment_id)[1]
+    local client = redis_client:new()
+    return client:run("zscore", fmt("uid(%d):advocated_comments", uid), comment_id) ~= nil
 end
 
 local function advocate(uid, comment_id, created_by)
-    return PG.query([[
-        begin;
+    local client = redis_client:new()
+    client:run("zadd", fmt("uid(%d):advocated_comments", uid), comment_id)
+    client:run("zadd", fmt("comment(%d):advocators", comment_id), uid)
 
-        insert into "interaction" ("type", created_by, refer_to)
-        values (1, ?, ?);
+    PG.query([[
+        begin;
 
         update "comment"
             set advocators_count = advocators_count + 1
@@ -35,11 +35,11 @@ local function advocate(uid, comment_id, created_by)
 end
 
 local function undo_advocation(uid, comment_id, created_by)
+    client:run("zrem", fmt("uid(%d):advocated_comments", uid), comment_id)
+    client:run("zrem", fmt("comment(%d):advocators", comment_id), uid)
+
     return PG.query([[
         begin;
-
-        delete from "interaction"
-        where created_by = ? and refer_to = ? and "type" = 1;
 
         update "comment"
             set advocators_count = advocators_count - 1

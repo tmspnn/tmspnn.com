@@ -4,13 +4,14 @@ local db = require "lapis.db"
 local utf8 = require "utf8"
 --
 local PG = require "services.PG"
+local redis_client = require "services.redis_client"
 local each = require "util.each"
 local fmt = string.format
 local push = require "util.push"
 
 local function get_user(uid)
     return PG.query([[
-        select id, nickname, profile, followers_count from "user" where id = ?;
+        select id, nickname, profile, fame from "user" where id = ?;
     ]], uid)[1]
 end
 
@@ -20,44 +21,27 @@ local function update_articles_count(uid)
     ]], uid)
 end
 
-local function append_feeds(article_id, follower_ids)
-    PG.query([[
-        update "user" set feed_ids = array_append(feed_ids, ?) where id in ?;
-    ]], article_id, db.list(follower_ids))
-end
-
-local function add_feeds(user, article_id)
-    local step = 100
-    local rounds = math.ceil(user.followers_count / step)
-
-    if rounds == 1 then
-        local follower_ids = PG.query([[
-            select follower_ids from "user" where id = ?;
-        ]], user.id)[1].follower_ids
-
-        append_feeds(article_id, follower_ids)
-    else
-        for i = 1, rounds do
-            local follower_ids = PG.query([[
-                select follower_ids[array_upper(follower_ids, 1) - ? : ?]
-                from "user" where id = ?;
-            ]], i * step - 1, i == 1 and PG.MAX_INT or i * (step - 1), user.id)[1].follower_ids
-
-            append_feeds(article_id, follower_ids)
-        end
-    end
-end
-
 local function on_created(premature, user, article_id, article_state)
     update_articles_count(user.id)
+
     if article_state == 0 then
-        add_feeds(user, article_id)
+        local client = redis_client:new()
+        client:run("eval", [[
+            local cursor, key_score_pairs
+            repeat
+                cursor, key_score_pairs = redis.call("zscan", string.format("uid(%d):followers", KEYS[1]))
+                for i = 1, #key_score_pairs / 2 do
+                    local follower_id = key_score_pairs[2 * i - 1]
+                    redis.call("zadd", string.format("uid(%d):feeds", follower_id), os.time(), KEYS[2])
+                end
+            until(cursor == 0)
+        ]], 2, user.id, article_id)
     end
 end
 
 local function create_article(app)
-    local ctx = app.ctx
-    local user = assert(get_user(ctx.uid), "user.not.exists")
+    local user = assert(get_user(app.ctx.uid), "user.not.exists")
+    assert(user.fame > 0, "fame.too.low")
     local tags = app.params.tags or {}
     local tags_str = table.concat(tags, " ")
     local is_private = app.params.isPrivate
@@ -126,10 +110,7 @@ local function create_article(app)
         })
     })
 
-    if tok_res.status ~= 200 then
-        error("NLP.tok." .. tok_res.status)
-    end
-
+    assert(tok_res == 200, "NLP.tok." .. tok_res.status)
     local tok_fine = cjson.decode(tok_res.body)["tok/fine"]
     local tokens_hash = {}
     local tokens = {}
@@ -147,7 +128,6 @@ local function create_article(app)
 
     a.obj = db.raw(fmt("'%s'::jsonb", cjson.encode(a.obj)))
     a.ts_vector = db.raw(fmt("to_tsvector('%s')", table.concat(tokens, " ")))
-
     local article = PG.create("article", a, "id")[1]
 
     ngx.timer.at(0, on_created, user, article.id, article.state)
