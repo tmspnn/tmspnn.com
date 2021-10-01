@@ -3,10 +3,10 @@ local cjson = require "cjson"
 local PG = require "services.PG"
 local redis_client = require "services.redis_client"
 local at = require "util.at"
-local tags = require "util.tags"
 local each = require "util.each"
 local empty = require "util.empty"
 local push = require "util.push"
+local tags = require "util.tags"
 
 local function get_carousel_items()
     local client = redis_client:new()
@@ -61,9 +61,9 @@ end
 local function get_latest_articles()
     local articles = PG.query([[
         select
-            id, title, author, cover, rating, obj->'tags' as tags,
-            ceil(wordcount::float / 500) as minutes
-        from "article" where state = 0 order by id desc limit 20;
+            id, title, author, cover, round(rating, 1) as rating,
+            obj->'tags' as tags, ceil(wordcount::float / 500) as minutes
+        from "article" where state = 0 order by id desc limit 10;
     ]])
     --[[
         {

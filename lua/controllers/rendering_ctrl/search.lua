@@ -4,7 +4,9 @@ local db = require "lapis.db"
 local empty = require "util.empty"
 local PG = require "services.PG"
 local redis_client = require "services.redis_client"
+local empty = require "util.empty"
 local tags = require "util.tags"
+local fmt = string.format
 
 local function get_search_placeholder()
     local client = redis_client:new()
@@ -15,17 +17,14 @@ end
 
 local function get_latest_followings(uid)
     if uid == nil then
-        return cjson.empty_array
+        return {}
     end
 
-    local following_ids = PG.query([[
-        select
-            following_ids[array_upper(following_ids, 1) - 19 : ?]
-        from "user" where id = ?;
-    ]], PG.MAX_INT, uid)[1].following_ids
+    local client = redis_client:new()
+    local following_ids = client:run("zrevrange", fmt("uid(%d):followings", uid), 0, 19)
 
     if #following_ids == 0 then
-        return cjson.empty_array
+        return {}
     end
 
     local followings = PG.query([[
@@ -38,22 +37,19 @@ local function get_latest_followings(uid)
             string nickname
         } followings[]
     --]]
-    return #followings == 0 and cjson.empty_array or followings
+    return followings
 end
 
 local function get_latest_feeds(uid)
     if uid == nil then
-        return cjson.empty_array
+        return {}
     end
 
-    local feed_ids = PG.query([[
-        select
-            feed_ids[array_upper(feed_ids, 1) - 19 : ?]
-        from "user" where id = ?;
-    ]], PG.MAX_INT, uid)[1].feed_ids
+    local client = redis_client:new()
+    local feed_ids = client:run("zrevrange", fmt("uid(%d):feeds", uid), 0, 19)
 
     if #feed_ids == 0 then
-        return cjson.empty_array
+        return {}
     end
 
     local feeds = PG.query([[
@@ -72,7 +68,7 @@ local function get_latest_feeds(uid)
             int minutes
         } feeds[]
     --]]
-    return #feeds == 0 and cjson.empty_array or feeds
+    return feeds
 end
 
 local function get_authors_of_the_week()
@@ -138,16 +134,32 @@ end
 
 local function search(app)
     local ctx = app.ctx
-    local user = get_user(ctx.uid)
+    local uid = ctx.uid
     local search_placeholder = get_search_placeholder()
-    local latest_followings = user == nil and get_authors_of_the_week() or get_latest_followings(ctx.uid)
-    local latest_feeds = user == nil and get_articles_of_the_week() or get_latest_feeds(ctx.uid)
+    local latest_followings
+    local latest_feeds
+
+    if not uid then
+        latest_followings = get_authors_of_the_week()
+        latest_feeds = get_articles_of_the_week()
+    else
+        latest_followings = get_latest_followings(uid)
+        latest_feeds = get_latest_feeds(uid)
+
+        if empty(latest_followings) then
+            latest_followings = get_authors_of_the_week()
+        end
+
+        if empty(latest_feeds) then
+            latest_feeds = get_articles_of_the_week()
+        end
+    end
 
     ctx.data = {
+        uid = uid,
         search_placeholder = search_placeholder,
         latest_followings = latest_followings,
-        latest_feeds = latest_feeds,
-        user = user
+        latest_feeds = latest_feeds
     }
 
     ctx.page_title = "搜索"

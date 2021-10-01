@@ -5,6 +5,7 @@ local latest_authors = ctx.data.latest_authors
 local latest_articles = ctx.data.latest_articles
 %>
 <div id="root">
+
     <section class="swiper">
         <div class="swiper-wrapper">
             <% for i, t in ipairs(carousel_items) do %>
@@ -31,11 +32,12 @@ local latest_articles = ctx.data.latest_articles
         <% end %>
     </section>
 
-    <section class="latest-articles">
+    <section class="latest-articles" data-ref="articlesSection">
         <% for i, t in ipairs(latest_articles) do %>
         <% render("views/components/feed", t) %>
         <% end %>
     </section>
+
 </div>
 <% render("views.components.navbar", {title = ctx.page_title}) %>
 <% render("views.components.tabbar", {active_tab = "home"}) %>

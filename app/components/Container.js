@@ -1,4 +1,3 @@
-// External modules
 import { $$, clearNode, replaceNode } from "k-dom";
 import { each, Klass } from "k-util";
 import kxhr from "k-xhr";

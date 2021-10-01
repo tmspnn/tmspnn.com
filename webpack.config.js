@@ -15,7 +15,7 @@ const pages = fs.readdirSync("./app/pages");
 module.exports = {
     context: __dirname + "/app",
     mode: isProduction ? "production" : "development",
-    entry: _(["search"] || pages)
+    entry: _(["index"] || pages)
         .keyBy()
         .mapValues((p) => `/pages/${p}/${p}.js`)
         .value(),
@@ -26,10 +26,6 @@ module.exports = {
     },
     module: {
         rules: [
-            {
-                test: /\.html$/,
-                loader: "html-loader"
-            },
             {
                 test: /\.s?[ac]ss$/,
                 use: [

@@ -13,6 +13,8 @@ const assign = Object.assign;
 const pageProto = {
     blocked: false,
 
+    documentElement: null,
+
     scrollingElement: null,
 
     scrollTop: 0,
@@ -48,6 +50,8 @@ const pageProto = {
         if (this.data.uid) {
             this.ws = new Ws();
         }
+
+        this.documentElement = document.documentElement;
     },
 
     toast(text) {
@@ -65,7 +69,7 @@ const pageProto = {
     },
 
     getJSON(url) {
-        if (this.blocked) return;
+        if (this.blocked) return Promise.resolve(null);
         this.block();
         return kxhr(url)
             .then((res) => parseJSON(res))
@@ -74,7 +78,7 @@ const pageProto = {
     },
 
     postJSON(url, data, options) {
-        if (this.blocked) return;
+        if (this.blocked) return Promise.resolve(null);
         this.block();
         return kxhr(
             url,
@@ -88,7 +92,7 @@ const pageProto = {
     },
 
     putJSON(url, data, options) {
-        if (this.blocked) return;
+        if (this.blocked) return Promise.resolve(null);
         this.block();
         return kxhr(
             url,
@@ -102,7 +106,7 @@ const pageProto = {
     },
 
     del(url) {
-        if (this.blocked) return;
+        if (this.blocked) return Promise.resolve(null);
         this.block();
         return kxhr(url, "delete")
             .then((res) => parseJSON(res))

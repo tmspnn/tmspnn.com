@@ -1,8 +1,13 @@
 import { Klass, View } from "k-util";
 import { DOM } from "k-dom";
-
+//
 import "./Toast.scss";
-import T from "./Toast.html";
+
+const T = `
+<div class="-toast" hidden>
+    <div class="text invisible" data-on="transitionend: onTextTransitionEnd" data-ref="textDiv"></div>
+</div>
+`;
 
 const toastProto = {
     name: "toast",

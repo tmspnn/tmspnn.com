@@ -96,7 +96,7 @@ select:-webkit-autofill:focus {
 p,
 div {
     line-height: 1.5;
-    color: var(--black-grey);
+    color: inherit;
     word-break: break-all;
 }
 

@@ -2,7 +2,6 @@
 local search_placeholder = ctx.data.search_placeholder
 local latest_followings = ctx.data.latest_followings
 local latest_feeds = ctx.data.latest_feeds
-local user = ctx.data.user
 %>
 <div id="root">
     <section class="search-bar">
