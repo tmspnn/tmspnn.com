@@ -1,5 +1,5 @@
 import { $$, clearNode, replaceNode } from "k-dom";
-import { each, Klass } from "k-util";
+import { each, View } from "k-util";
 import kxhr from "k-xhr";
 
 function isSameOrigin(url1, url2) {
@@ -67,29 +67,34 @@ function createDocument(html) {
     };
 }
 
-const containerProto = {
-    name: "container",
-
-    cache: {},
-
-    prevUrl: null,
-
-    currentUrl: location.pathname,
-
-    nextUrl: null,
-
-    pushState: false,
-
-    ee: window._ee,
-
-    observer: null,
-
+export default class Container extends View {
     constructor() {
+        super();
+        this.namespace = "global";
+        this.name = "container";
+        this.cache = {};
+        this.prevUrl = null;
+        this.currentUrl = location.pathname;
+        this.nextUrl = null;
+        this.pushState = false;
+
         if (!window._container) {
+            this.observer = new MutationObserver((mutationsList) => {
+                each(mutationsList, (mutation) => {
+                    each(mutation.addedNodes, this.captureLinks);
+                });
+            });
+
+            this.observer.observe(document, {
+                childList: true,
+                subtree: true
+            });
+
             this.cache[location.href] = {
                 documentElement: document.documentElement,
                 loaded: true
             };
+
             history.replaceState(
                 {
                     url: this.currentUrl,
@@ -97,34 +102,26 @@ const containerProto = {
                 },
                 ""
             );
-            window.on("popstate", this._onPopState.bind(this));
+
+            window.on("popstate", this.onPopState.bind(this));
             window._container = this;
         }
-
-        this.observer = new MutationObserver((mutationsList) => {
-            each(mutationsList, (mutation) => {
-                each(mutation.addedNodes, (node) => this.captureLinks(node));
-            });
-        });
-
-        this.observer.observe(document.body, { childList: true });
-    },
+    }
 
     captureLinks(el) {
-        if (!(el instanceof Element)) return;
-
         const container = window._container;
         const links = $$("a[href]", el || document.body);
 
-        if (el instanceof HTMLAnchorElement && el.hasAttribute("href"))
+        if (el instanceof HTMLAnchorElement && el.hasAttribute("href")) {
             links.push(el);
+        }
 
         each(links, (link) => {
             link.setAttribute("data-href", link.href);
             link.removeAttribute("href");
-            link.on("click", container._onLinkClick.bind(container));
+            link.on("click", container.onLinkClick.bind(container));
         });
-    },
+    }
 
     preloadStyles(doc) {
         const stylesToLoad = $$('link[rel="stylesheet"]', doc.documentElement);
@@ -138,7 +135,7 @@ const containerProto = {
                 });
             })
         ).then(() => doc);
-    },
+    }
 
     go(path, pushState = true) {
         const url = new URL(path, location.href).href;
@@ -151,61 +148,47 @@ const containerProto = {
 
         this.nextUrl = url;
         this.pushState = pushState;
-        this._switchPage();
-    },
+        this.switchPage();
+    }
 
-    _onLinkClick(e) {
+    onLinkClick(e) {
         const link = e.currentTarget;
         const url = link.getAttribute("data-href");
         const pushState = !link.hasAttribute("data-nopush");
         this.go(url, pushState);
-    },
+    }
 
-    _onPopState(e) {
+    onPopState(e) {
         this.nextUrl = e.state.url;
         this.pushState = false;
-        this._switchPage();
-    },
+        this.switchPage();
+    }
 
-    _switchPage() {
+    switchPage() {
         if (this.nextUrl in this.cache) {
-            this._replaceDocument();
+            this.replaceDocument();
         } else {
-            this._loadPage(this.nextUrl).then(() => {
-                this._replaceDocument();
+            this.loadPage(this.nextUrl).then(() => {
+                this.replaceDocument();
             });
         }
-    },
+    }
 
-    _loadPage(url) {
-        this.ee.emit("global", this.name + ".loading", url);
-
-        return kxhr(url, "get", null, {
-            onProgress: (e) => {
-                const loaded = e.loaded;
-                const total = e.total;
-                const progress = loaded < total ? loaded / total : 1;
-                this.ee.emit("global", this.name + ".progress", progress);
-            }
-        })
+    loadPage(url) {
+        return kxhr(url)
             .then((response) => {
                 const doc = createDocument(response);
                 return this.preloadStyles(doc);
             })
             .then((doc) => {
                 this.cache[url] = doc;
-                this.ee.emit("global", this.name + ".loaded");
             })
             .catch((e) => {
-                this.ee.emit("global", this.name + ".failed", e);
                 this.nextUrl = null;
-            })
-            .finally(() => {
-                this.ee.emit("global", this.name + ".completed");
             });
-    },
+    }
 
-    _replaceDocument() {
+    replaceDocument() {
         const doc = this.cache[this.nextUrl];
 
         if (doc && doc.documentElement != document.documentElement) {
@@ -242,15 +225,13 @@ const containerProto = {
             docToHide.dispatchEvent(ePageHide);
             docToShow.dispatchEvent(ePageShow);
 
-            this._cleanUp();
+            this.cleanUp();
         }
-    },
+    }
 
-    _cleanUp() {
+    cleanUp() {
         this.prevUrl = this.currentUrl;
         this.currentUrl = this.nextUrl;
         this.nextUrl = null;
     }
-};
-
-export default Klass(containerProto);
+}

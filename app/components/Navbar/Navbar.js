@@ -1,51 +1,43 @@
-import { Klass, View } from "k-util";
+import { at, View } from "k-util";
 import { $ } from "k-dom";
-
 import "./Navbar.scss";
 
-const navbarProto = {
-    name: "navbar",
-
-    /**
-     * @param {Object} options
-     * @param {String} options.leftBtn
-     * @param {String} options.rightBtn
-     */
+export default class Navbar extends View {
     constructor(options) {
-        this.Super();
+        super();
+        this.name = "navbar";
         this.element = $(".-navbar");
-        this.listen();
 
-        if (options && options.leftBtn) {
-            const btn = this.refs[options.leftBtn + "Btn"];
-            if (btn) btn.hidden = false;
+        const leftBtn = at(options, "leftBtn");
+
+        if (leftBtn) {
+            this.refs[options.leftBtn + "Btn"].hidden = false;
         }
 
-        if (options && options.rightBtn) {
-            const btn = this.refs[options.rightBtn + "Btn"];
-            if (btn) btn.hidden = false;
+        const rightBtn = at(options, "rightBtn");
+
+        if (rightBtn) {
+            this.refs[options.rightBtn + "Btn"].hidden = false;
         }
-    },
+    }
 
     stepBack() {
         this.dispatch(".stepBack");
-    },
+    }
 
     share() {
         this.dispatch(".share");
-    },
+    }
 
     close() {
         this.dispatch(".close");
-    },
+    }
 
     settings() {
         this.dispatch(".settings");
-    },
+    }
 
     publish() {
         this.dispatch(".publish");
     }
-};
-
-export default Klass(navbarProto, View);
+}

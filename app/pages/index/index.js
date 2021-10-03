@@ -1,30 +1,24 @@
 import { last, template } from "lodash";
 import { DOM } from "k-dom";
-import { Klass } from "k-util";
 import Swiper from "swiper/bundle";
 import "swiper/css/bundle";
-
 import "./index.scss";
 import "../../components/tabbar.scss";
 import "../../components/author.scss";
 import "../../components/feed.scss";
 import Page from "../../components/Page";
 import Navbar from "../../components/Navbar/Navbar";
-import FeedHtml from "./Feed";
+import FeedT from "./Feed.html";
 
-const indexProto = {
-    navbar: new Navbar(),
-
-    swiper: null, // Swiper has recursive reference to self
-
-    allArticlesLoaded: false,
-
-    feedT: template(FeedHtml),
-
+class Index extends Page {
     constructor() {
-        this.Super();
-        this.listen();
-        this.swiper = new Swiper(".swiper", {
+        super();
+        this.allArticlesLoaded = false;
+        this.feedT = template(FeedT);
+
+        new Navbar();
+
+        const swiper = new Swiper(".swiper", {
             effect: "coverflow",
             grabCursor: true,
             centeredSlides: true,
@@ -43,14 +37,10 @@ const indexProto = {
             }
         });
 
-        this.swiper.on("click", (s) => this.onSlideClick(s.clickedIndex));
-
-        window.addEventListener("scroll", this.onScroll.bind(this));
-        window.addEventListener("touchmove", this.onScroll.bind(this));
-        window._container.observer.observe(this.refs.articlesSection, {
-            childList: true
-        });
-    },
+        swiper.on("click", (s) => this.onSlideClick(s.clickedIndex));
+        window.on("scroll", this.onScroll.bind(this));
+        window.on("touchmove", this.onScroll.bind(this));
+    }
 
     onSlideClick(idx) {
         const items = this.data.carousel_items;
@@ -67,7 +57,7 @@ const indexProto = {
                 location.href = clickedItem.url;
                 break;
         }
-    },
+    }
 
     onScroll() {
         if (
@@ -82,13 +72,11 @@ const indexProto = {
                 const last_article = last(this.data.latest_articles);
                 this.getJSON("/api/articles?lt=" + last_article.id).then(
                     (res) => {
-                        if (!res) return;
                         if (res.length > 0) {
                             this.data.latest_articles.push(...res);
                             const nodes = res.map((a) => DOM(this.feedT(a)));
                             const docFrag = document.createDocumentFragment();
                             nodes.forEach((node) => docFrag.appendChild(node));
-                            window.s = this.refs.articlesSection;
                             this.refs.articlesSection.appendChild(docFrag);
                         } else {
                             this.allArticlesLoaded = true;
@@ -98,6 +86,6 @@ const indexProto = {
             }
         }
     }
-};
+}
 
-new (Klass(indexProto, Page))();
+new Index();

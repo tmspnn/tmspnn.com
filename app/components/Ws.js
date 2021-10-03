@@ -1,23 +1,14 @@
-import { Klass, parseJSON } from "k-util";
-
 const { CONNECTING, OPEN } = WebSocket;
 
-const wsProto = {
-    origin: location.origin,
-
-    url: "wss://tmspnn.com/ws/",
-
-    stata: null, // syncing | connecting | online | offline
-
-    message: null,
-
-    timeoutId: null,
-
-    intervalId: null,
-
-    createdAt: Date.now(),
-
+export default class Ws {
     constructor() {
+        this.origin = location.origin;
+        this.url = "wss://tmspnn.com/ws/";
+        this.state = null;
+        this.message = null;
+        this.timeoutId = null;
+        this.intervalId = null;
+
         // Process messages from other tabs and documents.
         window.addEventListener("storage", () => {
             const state = localStorage.getItem("ws.state");
@@ -31,7 +22,7 @@ const wsProto = {
                 message != this.message &&
                 typeof this.onMessage == "function"
             ) {
-                this.onMessage(parseJSON(message));
+                this.onMessage(message);
                 this.message = message;
             }
         });
@@ -39,8 +30,8 @@ const wsProto = {
         this.sync();
 
         // Synchronize state every minute
-        setInterval(() => this.sync(), 60000);
-    },
+        this.intervalId = setInterval(() => this.sync(), 60000);
+    }
 
     sync() {
         /**
@@ -48,27 +39,21 @@ const wsProto = {
          * Could be cancelled if there is any active connection in other tabs.
          */
         if (!this.isOnline() && navigator.onLine) {
-            this.timeoutId = setTimeout(() => this.connect(), 1000);
+            this.timeoutId = setTimeout(() => this.connect(), 3000);
             this.state = "syncing";
             this.broadcastState("syncing");
         }
-    },
+    }
 
-    /**
-     * @param {string} msg
-     */
     broadcast(msg) {
         localStorage.setItem("ws.message", msg);
         window.dispatchEvent(new Event("storage"));
-    },
+    }
 
-    /**
-     * @param {string} state
-     */
     broadcastState(state) {
         localStorage.setItem("ws.state", state);
         window.dispatchEvent(new Event("storage"));
-    },
+    }
 
     isOnline() {
         return (
@@ -76,16 +61,10 @@ const wsProto = {
             (window._ws.readyState == CONNECTING ||
                 window._ws.readyState == OPEN)
         );
-    },
+    }
 
     onState(state) {
         switch (state) {
-            case "syncing":
-                if (this.isOnline()) {
-                    this.state = "online";
-                    this.broadcastState("online");
-                }
-                break;
             case "connecting":
                 clearTimeout(this.timeoutId);
                 break;
@@ -93,13 +72,10 @@ const wsProto = {
                 this.state = "online";
                 clearTimeout(this.timeoutId);
                 break;
-            case "offline":
-                this.state = "offline";
-                break;
             default:
                 break;
         }
-    },
+    }
 
     connect() {
         if (this.isOnline()) return;
@@ -135,8 +111,8 @@ const wsProto = {
         };
 
         window._ws.onerror = (e) => {
-            if (typeof this.onError == "function") {
-                this.onError(e);
+            if (typeof this.onWsError == "function") {
+                this.onWsError(e);
             }
         };
 
@@ -145,6 +121,4 @@ const wsProto = {
             clearInterval(this.intervalId);
         };
     }
-};
-
-export default Klass(wsProto);
+}

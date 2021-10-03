@@ -1,29 +1,22 @@
-import { Klass, View } from "k-util";
-import { Spinner } from "spin.js";
 import "spin.js/spin.css";
+import { Spinner as SpinJS } from "spin.js";
+import { View } from "k-util";
 
-const spinnerProto = {
-    name: "spinner",
-
-    spinner: null,
-
+export default class Spinner extends View {
     constructor() {
-        this.Super();
-        this.listen();
-
-        this.spinner = new Spinner({
+        super();
+        this.name = "spinner";
+        this.spinner = new SpinJS({
             color: "rgba(0, 0, 0, 0.4)",
             lines: 10
         });
-    },
+    }
 
     show() {
         this.spinner.spin(document.body);
-    },
+    }
 
     hide() {
         this.spinner.stop();
     }
-};
-
-export default Klass(spinnerProto, View);
+}
