@@ -109,18 +109,20 @@ export default class Container extends View {
     }
 
     captureLinks(el) {
-        const container = window._container;
-        const links = $$("a[href]", el || document.body);
+        if (el instanceof HTMLElement) {
+            const container = window._container;
+            const links = $$("a[href]", el || document.body);
 
-        if (el instanceof HTMLAnchorElement && el.hasAttribute("href")) {
-            links.push(el);
+            if (el instanceof HTMLAnchorElement && el.hasAttribute("href")) {
+                links.push(el);
+            }
+
+            each(links, (link) => {
+                link.setAttribute("data-href", link.href);
+                link.removeAttribute("href");
+                link.on("click", container.onLinkClick.bind(container));
+            });
         }
-
-        each(links, (link) => {
-            link.setAttribute("data-href", link.href);
-            link.removeAttribute("href");
-            link.on("click", container.onLinkClick.bind(container));
-        });
     }
 
     preloadStyles(doc) {

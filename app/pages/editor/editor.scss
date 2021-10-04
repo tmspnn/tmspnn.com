@@ -56,7 +56,7 @@
             }
 
             .cover-container {
-                @extend .image-container;
+                @extend .img;
                 width: 8rem;
                 height: 6rem;
                 background-color: var(--light-white);

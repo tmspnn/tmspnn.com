@@ -1,5 +1,5 @@
 <% local title = title or "" %>
-<nav class="-navbar">
+<nav class="navbar" data-view>
     <div class="container">
         <div class="left">
             <button class="back" data-ref="backBtn" data-click="stepBack" hidden>

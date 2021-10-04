@@ -10,7 +10,7 @@ li {
 
 .header {
     .profile {
-        @extend .image-container;
+        @extend .img;
         margin: 1rem;
         width: 6rem;
         height: 6rem;

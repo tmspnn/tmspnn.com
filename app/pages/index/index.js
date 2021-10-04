@@ -37,6 +37,10 @@ class Index extends Page {
             }
         });
 
+        if (+localStorage.getItem("darkMode") == 1) {
+            document.body.addClass("dark");
+        }
+
         swiper.on("click", (s) => this.onSlideClick(s.clickedIndex));
         window.on("scroll", this.onScroll.bind(this));
         window.on("touchmove", this.onScroll.bind(this));
@@ -70,8 +74,8 @@ class Index extends Page {
                 1.5 * window.innerHeight
             ) {
                 const last_article = last(this.data.latest_articles);
-                this.getJSON("/api/articles?lt=" + last_article.id).then(
-                    (res) => {
+                this.getJSON("/api/articles?lt=" + last_article.id)
+                    .then((res) => {
                         if (res.length > 0) {
                             this.data.latest_articles.push(...res);
                             const nodes = res.map((a) => DOM(this.feedT(a)));
@@ -81,8 +85,10 @@ class Index extends Page {
                         } else {
                             this.allArticlesLoaded = true;
                         }
-                    }
-                );
+                    })
+                    .catch((e) => {
+                        if (e.message == "blocked") return;
+                    });
             }
         }
     }

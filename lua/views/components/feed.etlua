@@ -12,7 +12,7 @@ local minutes = minutes
         <div class="footer">
             <div class="nickname"><%= author %></div>
             <% render("views/icons/star") %>
-            <span><%= string.format("%.1f", rating) %></span>
+            <div class="rating"><%= string.format("%.1f", rating) %></div>
             <div class="minutes">阅读需<%= minutes %>分钟</div>
         </div>
     </div>

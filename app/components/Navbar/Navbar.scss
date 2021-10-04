@@ -1,19 +1,20 @@
-.-navbar {
+.navbar {
     position: fixed;
     left: 0;
     right: 0;
     top: 0;
     height: 3rem;
     z-index: 100;
-    background-color: var(--white);
-    box-shadow: 0 0.1rem 0.1rem 0 rgba(0, 0, 0, 0.05);
-    color: var(--black);
+    background-color: $white;
+    box-shadow: 0 0 0.1rem 0 $light-shadow-color;
+    color: $black;
     user-select: none;
 
     > .container {
         @extend .flex;
         position: relative;
         width: 100%;
+        max-width: 1024px;
         margin: 0 auto;
 
         > .left,
@@ -23,13 +24,13 @@
         }
 
         > .center {
+            @extend .truncated;
             flex: 1;
+            max-width: 100%;
             text-align: center;
             line-height: 3.5rem;
             font-size: 1.25rem;
             font-weight: bold;
-            color: var(--black);
-            overflow: hidden;
         }
 
         button {
@@ -38,8 +39,7 @@
             padding: 0;
             appearance: none;
             background: none;
-
-            color: var(--black);
+            color: $black;
 
             svg {
                 width: 1.4rem;
@@ -62,29 +62,8 @@
     }
 }
 
-/* Tablet */
-@media screen and (min-width: 768px) and (max-width: 1023.9px) {
-    > .container {
-        max-width: 1024px;
-    }
-}
-
-/* Desktop */
-@media screen and (min-width: 1024px) {
-    .-navbar {
-        > .container {
-            max-width: 1280px;
-        }
-
-        button {
-            cursor: pointer;
-        }
-    }
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-    .-navbar {
-        color: var(--white);
-    }
+body.dark .navbar {
+    background-color: $black;
+    box-shadow: 0 0 0.1rem 0 $dark-shadow-color;
+    color: $white;
 }

@@ -1,15 +1,14 @@
 #root {
-    padding-bottom: 3.5rem;
+    padding: 3.5rem 0;
 }
 
 .swiper {
     width: 100%;
-    padding-top: 3.5rem;
     padding-bottom: 2rem;
 }
 
 .swiper-slide {
-    @extend .image-container;
+    @extend .img;
     width: 80%;
     padding-bottom: 50%;
     border-radius: 0.5rem;
@@ -20,14 +19,14 @@
         left: 0.5rem;
         bottom: 0.5rem;
         right: 0.5rem;
-        color: var(--white);
+        color: $white;
         font-size: 1.25rem;
         font-weight: normal;
     }
 }
 
 .swiper-pagination-bullet-active {
-    background-color: var(--black);
+    background-color: $black;
 }
 
 .recommended-tags {
@@ -35,12 +34,11 @@
     flex-wrap: wrap;
 
     .tag {
-        @extend .line-clamp;
-        -webkit-line-clamp: 1;
+        @extend .truncated;
         max-width: 9rem;
         margin: 0.3rem 0.5rem;
         padding: 0.2rem 0.8rem;
-        color: var(--white);
+        color: $white;
         font-size: 1rem;
         border-radius: 1rem;
     }
@@ -49,4 +47,48 @@
 .latest-authors {
     @extend .horizontal-scrolling;
     padding: 1rem 0;
+}
+
+/* Dark Theme */
+body.dark {
+    background-color: $dark-bg-color;
+    color: $dark-font-color-2;
+
+    .swiper-pagination-bullet {
+        background-color: $dark-font-color-2;
+    }
+
+    .swiper-pagination-bullet-active {
+        background-color: $dark-font-color-1;
+    }
+}
+/* Dark Theme Ends */
+
+/* Desktop */
+@media screen and (min-width: 1024px) {
+    #root {
+        width: 100%;
+        max-width: 1024px;
+        margin: auto;
+    }
+
+    .-navbar {
+        display: none;
+    }
+
+    .tabbar {
+        top: 0;
+        bottom: auto;
+        z-index: 1;
+    }
+
+    .latest-articles {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .feed {
+        width: 45%;
+    }
 }

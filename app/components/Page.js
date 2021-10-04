@@ -1,5 +1,5 @@
 import { $ } from "k-dom";
-import { at, View } from "k-util";
+import { View } from "k-util";
 import kxhr from "k-xhr";
 import immediatelyScrollTo from "../helpers/immediatelyScrollTo";
 import Container from "./Container";
@@ -63,7 +63,7 @@ export default class Page extends View {
         this.block();
 
         return kxhr(url)
-            .then((res) => parseJSON(res))
+            .then((res) => JSON.parse(res))
             .catch((e) => this.handleException(e))
             .finally(() => this.unblock());
     }

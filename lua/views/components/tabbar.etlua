@@ -5,7 +5,7 @@ local search_active = active_tab == "search" and "active" or ""
 local conversations_active = active_tab == "conversations" and "active" or ""
 local me_active = active_tab == "me" and "active" or ""
 %>
-<nav class="tabbar">
+<nav class="tabbar" data-view>
     <div class="container">
         <a href="/" class="<%= home_active %>" data-nopush>
             <% render("views/icons/home") %>

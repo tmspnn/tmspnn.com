@@ -6,7 +6,7 @@ export default class Navbar extends View {
     constructor(options) {
         super();
         this.name = "navbar";
-        this.element = $(".-navbar");
+        this.element = $(".navbar");
 
         const leftBtn = at(options, "leftBtn");
 

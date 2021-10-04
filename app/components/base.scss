@@ -1,24 +1,36 @@
 @import "normalize.css";
 
-:root {
-    --primary: #1cd4ac;
-    --black: hsl(0, 0%, 7%);
-    --black-grey: hsl(0, 0%, 30%);
-    --grey: hsl(0, 0%, 50%);
-    --grey-white: hsl(0, 0%, 70%);
-    --light-white: hsl(0, 0%, 90%);
-    --bg-white: hsl(0, 0%, 97%);
-    --white: hsl(0, 0%, 100%);
-    --light-blue: #9cecfb;
-    --blue: #65c7f7;
-    --dark-blue: #0052d4;
-    --green: #64f3bc;
-    --dark-green: #36c990;
-    --yellow: #fcba03;
-    --orange: hsl(28, 98%, 47%);
-    --red: #ff5f6d;
-}
+/* Colors */
+$primary: #1cd4ac;
+$secondary: #9cecfb;
+$blue: #65c7f7;
+$dark-blue: #0052d4;
+$green: #64f3bc;
+$dark-green: #36c990;
+$yellow: #fcba03;
+$orange: hsl(28, 98%, 47%);
+$red: #ff5f6d;
+$black: #212121;
+$white: #fff;
+/* Colors End */
 
+/* Themes */
+$light-bg-color: #fff;
+$light-shadow-color: rgba(0, 0, 0, 0.15);
+$light-font-color-1: #212121;
+$light-font-color-2: #565656;
+$light-font-color-3: #787878;
+$light-font-color-4: #9a9a9a;
+
+$dark-bg-color: #212121;
+$dark-shadow-color: rgba(255, 255, 255, 0.2);
+$dark-font-color-1: #fcfcfc;
+$dark-font-color-2: #cdcdcd;
+$dark-font-color-3: #ababab;
+$dark-font-color-4: #9a9a9a;
+/* Themes End */
+
+/* Buildin Elements */
 * {
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
@@ -29,13 +41,14 @@
 }
 
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
-        "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Microsoft YaHei", "Segoe UI", "Roboto", "Oxygen",
+        "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 }
 
 a {
     text-decoration: none;
     color: inherit;
+    cursor: pointer;
 }
 
 button {
@@ -45,9 +58,10 @@ button {
     padding: 0.5rem 1em;
     border: none;
     border-radius: 1.5rem;
-    background-image: linear-gradient(150deg, var(--primary), var(--blue));
-    color: var(--white);
+    background-image: linear-gradient(-90deg, var($primary), var($secondary));
+    color: $white;
     user-select: none;
+    cursor: pointer;
 }
 
 img {
@@ -55,10 +69,10 @@ img {
 }
 
 input {
-    outline: none;
-    cursor: pointer;
     padding: 0.4rem 1.5rem;
     border: none;
+    outline: none;
+
     &:hover,
     &:focus,
     &:active {
@@ -67,7 +81,7 @@ input {
 }
 
 input[type="file"] {
-    position: absolute;
+    position: fixed;
     left: -100%;
     top: -100%;
     width: 1px;
@@ -80,7 +94,6 @@ textarea {
     outline: none;
 }
 
-/* Remove autocomplete styles in Chrome */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -95,7 +108,6 @@ select:-webkit-autofill:focus {
 
 p,
 div {
-    line-height: 1.5;
     color: inherit;
     word-break: break-all;
 }
@@ -105,12 +117,15 @@ table {
     width: 100%;
 }
 
-ul {
+ul,
+ol {
     list-style: none;
     margin: 0;
     padding: 0;
 }
+/* Buildin Elements End */
 
+/* Helper Classes */
 .flex {
     display: flex;
     align-items: center;
@@ -131,12 +146,7 @@ ul {
     overflow: hidden;
 }
 
-.inline {
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.image-container {
+.img {
     position: relative;
     overflow: hidden;
     background-size: cover;
@@ -157,23 +167,19 @@ ul {
         display: inline-block;
     }
 }
+/* Helper Classes End */
 
 /* Tablet */
-@media screen and (min-width: 768px) and (max-width: 1023.9px) {
+@media screen and (min-width: 768px) and (max-width: 1023.99px) {
 }
+/* Tablet Ends */
 
 /* Desktop */
 @media screen and (min-width: 1024px) {
-    a,
-    button,
-    .button {
-        cursor: pointer;
-    }
 }
+/* Desktop Ends */
 
-/* Dark mode */
+/* Dark Mode */
 @media (prefers-color-scheme: dark) {
-    :root {
-        --dark-mode: 1;
-    }
 }
+/* Dark Mode Ends */
