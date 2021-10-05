@@ -14,7 +14,7 @@ local function search_article(tokens, start_id)
         where
             id < ?
             and ts_vector @@ to_tsquery(?)
-        order by id desc limit 10
+        order by id desc limit 20;
     ]], start_id or PG.MAX_INT, table.concat(tokens, " & "))
 end
 
@@ -24,13 +24,14 @@ local function search_users(tokens, start_id)
         where
             id < ?
             and ts_vector @@ to_tsquery(?)
-        order by id desc limit 10
+        order by id desc limit 20;
     ]], start_id or 2147483647, table.concat(tokens, " & "))
 end
 
 local function search(app)
     local text = assert(app.params.text, "text.required")
-    local start_id = tonumber(app.params.start_id) or PG.MAX_INT
+    local start_user_id = tonumber(app.params.start_user_id) or PG.MAX_INT
+    local start_article_id = tonumber(app.params.start_article_id) or PG.MAX_INT
 
     -- Tokenization
     ngx.req.set_header("Content-Type", "application/json")
@@ -45,8 +46,8 @@ local function search(app)
     assert(tok_res.status == 200, tok_res.body)
 
     local tokens = cjson.decode(tok_res.body)["tok/fine"][1]
-    local articles = search_article(tokens, start_id)
-    local users = search_users(tokens, start_id)
+    local users = search_users(tokens, start_user_id)
+    local articles = search_article(tokens, start_article_id)
 
     return {
         json = {

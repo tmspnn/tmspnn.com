@@ -12,6 +12,7 @@ export default class Feed extends View {
      * element: HTMLElement
      */
     constructor(data) {
+        super();
         this.data = data;
         this.element = DOM(t(data));
         this.element.destroy = this.destroy.bind(this);

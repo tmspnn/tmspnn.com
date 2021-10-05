@@ -1,16 +1,16 @@
 local cjson = require "cjson"
---
 local PG = require "services.PG"
+local redis_client = require "services.redis_client"
+
+local function get_feed_ids(uid, offset)
+    local client = redis_client:new()
+    return client:run("zrevrange", fmt("uid(%d):followings", uid), offset, offset + 19)
+end
 
 local function get_feeds(app)
     local ctx = app.ctx
-    local offset = assert(tonumber(app.params.offset), "offset.required")
-
-    local feed_ids = PG.query([[
-        select
-            feed_ids[createst(array_upper(feed_ids, 1) - ?, 1) : ?]
-        from "user" where id = ?;
-    ]], 19 + offset, offset, ctx.uid)[1].following_ids
+    local offset = tonumber(app.params.offset) or 0
+    local feed_ids = get_feed_ids(ctx.uid, offset)
 
     if #feed_ids == 0 then
         return {
@@ -21,7 +21,7 @@ local function get_feeds(app)
     local feeds = PG.query([[
         select
             id, title, author, cover, round(rating, 1) as rating,
-            obj->'tags' as tags, ceil(wordcount::float / 500) as minutes
+            ceil(wordcount::float / 500) as minutes
         from "article" where id in ?;
     ]], db.list(feed_ids))
 
