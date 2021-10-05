@@ -20,8 +20,8 @@ local function get_feeds(app)
 
     local feeds = PG.query([[
         select
-            id, title, author, cover, rating, obj->'tags' as tags,
-            ceil(wordcount::float / 500) as minutes
+            id, title, author, cover, round(rating, 1) as rating,
+            obj->'tags' as tags, ceil(wordcount::float / 500) as minutes
         from "article" where id in ?;
     ]], db.list(feed_ids))
 

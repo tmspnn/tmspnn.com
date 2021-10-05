@@ -30,6 +30,10 @@ export default class Page extends View {
         new Toast();
         new Container();
 
+        if (+localStorage.getItem("darkMode") == 1) {
+            document.body.addClass("dark");
+        }
+
         document.on("scroll", () => {
             if (document.scrollingElement == this.scrollingElement) {
                 this.scrollTop = this.scrollingElement.scrollTop;

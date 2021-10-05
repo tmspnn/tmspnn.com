@@ -1,20 +1,19 @@
-import { last, template } from "lodash";
-import { DOM } from "k-dom";
+import { last } from "lodash";
 import Swiper from "swiper/bundle";
 import "swiper/css/bundle";
 import "./index.scss";
 import "../../components/tabbar.scss";
-import "../../components/author.scss";
-import "../../components/feed.scss";
+import "../../components/Author/Author.scss";
+import "../../components/Feed/Feed.scss";
+import Feed from "../../components/Feed/Feed";
 import Page from "../../components/Page";
 import Navbar from "../../components/Navbar/Navbar";
-import FeedT from "./Feed.html";
+import appendBatch from "../../helpers/appendBatch";
 
 class Index extends Page {
     constructor() {
         super();
         this.allArticlesLoaded = false;
-        this.feedT = template(FeedT);
 
         new Navbar();
 
@@ -36,10 +35,6 @@ class Index extends Page {
                 el: ".swiper-pagination"
             }
         });
-
-        if (+localStorage.getItem("darkMode") == 1) {
-            document.body.addClass("dark");
-        }
 
         swiper.on("click", (s) => this.onSlideClick(s.clickedIndex));
         window.on("scroll", this.onScroll.bind(this));
@@ -78,10 +73,8 @@ class Index extends Page {
                     .then((res) => {
                         if (res.length > 0) {
                             this.data.latest_articles.push(...res);
-                            const nodes = res.map((a) => DOM(this.feedT(a)));
-                            const docFrag = document.createDocumentFragment();
-                            nodes.forEach((node) => docFrag.appendChild(node));
-                            this.refs.articlesSection.appendChild(docFrag);
+                            const nodes = res.map((a) => new Feed(a).element);
+                            appendBatch(this.refs.articlesSection, nodes);
                         } else {
                             this.allArticlesLoaded = true;
                         }

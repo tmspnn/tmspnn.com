@@ -54,7 +54,7 @@ local function get_latest_feeds(uid)
 
     local feeds = PG.query([[
         select
-            id, title, author, cover, rating,
+            id, title, author, cover, round(rating, 1) as rating,
             ceil(wordcount::float / 500) as minutes
         from "article" where id in ?;
     ]], db.list(feed_ids))

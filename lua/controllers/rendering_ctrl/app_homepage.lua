@@ -61,7 +61,8 @@ end
 local function get_latest_articles()
 
     local articles = PG.query([[
-        select id, title, author, cover, rating,
+        select
+            id, title, author, cover, round(rating, 1) as rating,
             ceil(wordcount::float / 500) as minutes
         from "article" order by id desc limit 20;
     ]], nil)
@@ -113,15 +114,20 @@ local function get_latest_feeds(uid)
     if uid == nil then
         return cjson.empty_array
     end
-    local feed_ids = PG.query(
-                         '\n        select feed_ids[array_upper(feed_ids, 1) - 19 : ?] from "user"\n        where id = ?;\n    ',
-                         PG.MAX_INT, uid)[1].feed_ids
+
+    local feed_ids = PG.query([[
+        select
+            feed_ids[array_upper(feed_ids, 1) - 19 : ?]
+        from "user" where id = ?;
+    ]], PG.MAX_INT, uid)[1].feed_ids
+
     if empty(feed_ids) then
         return cjson.empty_array
     end
+
     local feeds = PG.query([[
         select
-            id, title, author, cover, rating,
+            id, title, author, cover, round(rating, 1) as rating,
             ceil(wordcount::float / 500) as minutes
         from "article" where id in ?;
     ]], db.list(feed_ids))
@@ -140,8 +146,9 @@ local function get_latest_feeds(uid)
 end
 
 local function get_authors_of_the_week()
-    local famous_authors =
-        PG.query '\n        select id, profile, nickname from "user" order by fame desc limit 20;\n    '
+    local famous_authors = PG.query [[
+        select id, profile, nickname from "user" order by fame desc limit 20;
+    ]]
     --[[
 		{
 		int id,
@@ -154,10 +161,11 @@ end
 
 local function get_articles_of_the_week()
     local famous_articles = PG.query [[
-    select
-        id, title, author, cover, rating,
-        ceil(wordcount::float / 500) as minutes
-    from "article" order by fame desc limit 20;]]
+        select
+            id, title, author, cover, round(rating, 1) as rating,
+            ceil(wordcount::float / 500) as minutes
+        from "article" order by fame desc limit 20;
+    ]]
     --[[
 		{
 		int id,

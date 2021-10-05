@@ -154,6 +154,10 @@ local error_messages = {
     ["sign_in.required"] = {
         status = 401,
         message = "请先登录."
+    },
+    ["text.required"] = {
+        status = 400,
+        message = "text字段必传, 类型string."
     }
 }
 

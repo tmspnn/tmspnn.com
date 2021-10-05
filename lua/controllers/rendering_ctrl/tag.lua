@@ -11,7 +11,7 @@ local function search_article(tokens, start_id)
     local articles = PG.query([[
         select
             id, created_by, author, author_profile, title, summary,
-            cover, rating, created_at, wordcount, pageview
+            cover, round(rating, 1) as rating, created_at, wordcount, pageview
         from "article"
         where
             id < ?
@@ -31,22 +31,30 @@ local function tag(app)
 
     local tok_res = ngx.location.capture("/internal/nlp/tokenization", {
         method = ngx.HTTP_POST,
-        body = cjson.encode({text = tag_name})
+        body = cjson.encode({
+            text = tag_name
+        })
     })
 
-    if tok_res.status ~= 200 then error(tok_res.body) end
+    if tok_res.status ~= 200 then
+        error(tok_res.body)
+    end
 
     local tokens = cjson.decode(tok_res.body)["tok/fine"][1]
 
     local result = search_article(tokens)
 
-    ctx.data = {result = result}
+    ctx.data = {
+        result = result
+    }
 
     ctx.page_title = tag_name
     ctx.tags_in_head = {tags:css("tag")}
     ctx.tags_in_body = {tags:json(ctx.data), tags:js("tag")}
 
-    return {render = "pages.tag"}
+    return {
+        render = "pages.tag"
+    }
 end
 
 return tag

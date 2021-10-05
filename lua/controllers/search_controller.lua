@@ -8,7 +8,7 @@ local oss_path_to_url = require "util.oss_path_to_url"
 local function search_article(tokens, start_id)
     return PG.query([[
         select
-            id, title, author, cover, rating, obj->'tags' as tags,
+            id, title, author, cover, round(rating, 1) as rating,
             ceil(wordcount::float / 500) as minutes
         from "article"
         where
@@ -20,10 +20,7 @@ end
 
 local function search_users(tokens, start_id)
     return PG.query([[
-        select
-            id, nickname, profile, description, fame,
-            articles_count, followings_count, followers_count
-        from "user"
+        select id, profile, nickname from "user"
         where
             id < ?
             and ts_vector @@ to_tsquery(?)
@@ -32,7 +29,8 @@ local function search_users(tokens, start_id)
 end
 
 local function search(app)
-    local text = app.params.text
+    local text = assert(app.params.text, "text.required")
+    local start_id = tonumber(app.params.start_id) or PG.MAX_INT
 
     -- Tokenization
     ngx.req.set_header("Content-Type", "application/json")
@@ -47,8 +45,8 @@ local function search(app)
     assert(tok_res.status == 200, tok_res.body)
 
     local tokens = cjson.decode(tok_res.body)["tok/fine"][1]
-    local articles = search_article(tokens)
-    local users = search_users(tokens)
+    local articles = search_article(tokens, start_id)
+    local users = search_users(tokens, start_id)
 
     return {
         json = {

@@ -11,9 +11,9 @@ local redis_client = require "services.redis_client"
 local function get_article_by_id(id)
     local article = PG.query([[
         select
-            id, title, cover, rating, author, created_at, updated_at,
-            created_by, content, ceil(wordcount / 500)::integer as minutes,
-            pageview, state, author_profile
+            id, title, cover, round(rating, 1) as rating, author, created_at,
+            updated_at, created_by, ceil(wordcount / 500)::integer as minutes,
+            content, pageview, state, author_profile
         from "article" where id = ?;
     ]], id)[1]
     --[[

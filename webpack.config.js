@@ -1,21 +1,15 @@
-// Environment and Version
-const isProduction = process.env.NODE_ENV == "production";
-const version = require("./package.json").version;
-
-// Internal modules
 const fs = require("fs");
-
-// External modules
 const _ = require("lodash");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const version = require("./package.json").version;
 
-// Entries
+const isProduction = process.env.NODE_ENV == "production";
 const pages = fs.readdirSync("./app/pages");
 
 module.exports = {
     context: __dirname + "/app",
     mode: isProduction ? "production" : "development",
-    entry: _(["index"] || pages)
+    entry: _(["index", "search"] || pages)
         .keyBy()
         .mapValues((p) => `/pages/${p}/${p}.js`)
         .value(),

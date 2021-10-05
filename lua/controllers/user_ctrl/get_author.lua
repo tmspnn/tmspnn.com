@@ -23,7 +23,7 @@ end
 local function get_articles(author_id)
     return PG.query([[
         select
-            id, title, author, cover, rating,
+            id, title, author, cover, round(rating, 1) as rating,
             ceil(wordcount::float / 500) as minutes
         from "article" where created_by = ? order by id desc limit 20;
     ]], author_id)

@@ -21,7 +21,8 @@ end
 
 local function get_articles(uid)
     return PG.query([[
-        select id, title, author, cover, rating,
+        select
+            id, title, author, cover, round(rating, 1) as rating,
             ceil(wordcount::float / 500) as minutes
         from "article" where created_by = ? order by id desc limit 50;
     ]], uid)
@@ -31,17 +32,24 @@ local function me(app)
     local ctx = app.ctx
     local user = get_user(ctx.uid)
 
-    if not user then error("user.not.exists") end
+    if not user then
+        error("user.not.exists")
+    end
 
     user.articles = get_articles(ctx.uid)
 
-    ctx.data = {uid = ctx.uid, user = user}
+    ctx.data = {
+        uid = ctx.uid,
+        user = user
+    }
 
     ctx.page_title = "我的"
     ctx.tags_in_head = {tags:css("me")}
     ctx.tags_in_body = {tags:json(ctx.data), tags:js("me")}
 
-    return {render = "pages.me"}
+    return {
+        render = "pages.me"
+    }
 end
 
 return me
