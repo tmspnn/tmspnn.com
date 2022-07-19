@@ -1,0 +1,23 @@
+<%
+local oss_path_to_url = require "util.oss_path_to_url"
+local fmt = string.format
+--
+local followers = ctx.data.followers
+
+%>
+<div id="root">
+    <% for i, fl in ipairs(followers) do -%>
+    <a href="/users/<%= fl.id %>" class="fl">
+        <div class="profile" style="background-image: url(<%= oss_path_to_url(fl.profile) %>)"></div>
+        <div class="meta">
+            <div class="nickname"><%= fl.nickname %></div>
+            <div class="description"><%= #fl.description > 0 and fl.description or "这个人很懒, 什么都没有写..." %></div>
+        </div>
+        <div class="fame">
+            <% render("views.icons.flag") %>
+            <span>声望 <b><%= fmt("%d", fl.fame) %></b></span>
+        </div>
+    </a>
+    <% end %>
+</div>
+<% render("views.components.navbar", {title = ctx.page_title}) %>

@@ -1,0 +1,70 @@
+.feed {
+    @extend .flex;
+    padding: 0.5rem;
+    border-top: 1px solid #eee;
+
+    > .content {
+        position: relative;
+        flex: 1;
+        height: 5.5rem;
+
+        h1 {
+            @extend .line-clamp;
+            margin: 0 0.5rem 0 0;
+            line-height: 1.5;
+            font-size: 1.25rem;
+            color: $light-font-color-1;
+        }
+
+        .footer {
+            @extend .flex;
+            position: absolute;
+            left: 0;
+            right: 0.5rem;
+            bottom: 0;
+            color: $light-font-color-3;
+
+            svg {
+                margin-left: auto;
+                width: 1.3rem;
+                height: 1.3rem;
+                color: $yellow;
+            }
+
+            .nickname {
+                @extend .truncated;
+                font-size: 0.8rem;
+            }
+
+            .rating {
+                font-size: 0.9rem;
+            }
+
+            .minutes {
+                font-size: 0.8rem;
+                margin-left: 1rem;
+            }
+        }
+    }
+
+    > .cover {
+        @extend .img;
+        width: 6rem;
+        height: 6rem;
+        border-radius: 0.5rem;
+    }
+}
+
+/* Dark Theme */
+body.dark .feed {
+    border-top: 1px solid #333;
+
+    h1 {
+        color: $dark-font-color-1;
+    }
+
+    .footer {
+        color: $dark-font-color-2;
+    }
+}
+/* Dark Theme Ends */

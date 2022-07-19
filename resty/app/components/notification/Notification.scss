@@ -1,0 +1,16 @@
+.-notification {
+    position: fixed;
+    left: 2rem;
+    right: 2rem;
+    top: 1rem;
+    padding: 0.5rem 1rem;
+    transform: translate3d(0, 0, 0);
+    transition: transform 200ms ease;
+    background-color: var(--white);
+    border-radius: 0.4rem;
+    box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.05);
+
+    &.folded {
+        transform: translate3d(0, -100%, 0);
+    }
+}

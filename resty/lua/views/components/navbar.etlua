@@ -1,0 +1,26 @@
+<% local title = title or "" %>
+<nav class="navbar" data-view>
+    <div class="container">
+        <div class="left">
+            <button class="back" data-ref="backBtn" data-click="stepBack" hidden>
+                <% render("views/icons/chevron_left") %>
+            </button>
+            <button class="close" data-ref="closeBtn" data-click="close" hidden>
+                <% render("views/icons/x") %>
+            </button>
+        </div>
+        <div class="center"><%= title %></div>
+        <div class="right">
+            <button class="share" data-ref="shareBtn" data-click="share" hidden>
+                <% render("views/icons/share") %>
+            </button>
+            <button class="settings" data-ref="settingsBtn" data-click="settings" hidden>
+                <% render("views/icons/cog") %>
+            </button>
+            <button class="publish" data-ref="publishBtn" data-click="publish" hidden>
+                <% render("views/icons/upload") %>
+                <span>发布</span>
+            </button>
+        </div>
+    </div>
+</nav>

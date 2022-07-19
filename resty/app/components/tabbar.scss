@@ -1,0 +1,63 @@
+.tabbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3.5rem;
+    background-color: $light-bg-color;
+    box-shadow: 0 0rem 0.1rem 0 $light-shadow-color;
+    user-select: none;
+
+    > .container {
+        @extend .flex;
+        width: 100%;
+        max-width: 1024px;
+        margin: 0 auto;
+        justify-content: space-around;
+
+        > a {
+            @extend .flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 3.5rem;
+            height: 3.5rem;
+            font-size: 0.8rem;
+            color: $light-font-color-2;
+
+            &.active {
+                div {
+                    color: $primary;
+                }
+                svg {
+                    color: $primary;
+                }
+            }
+
+            svg {
+                margin-bottom: 0.1rem;
+                width: 1.6rem;
+                height: 1.6rem;
+                color: $light-font-color-2;
+            }
+
+            div {
+                line-height: 1.5;
+            }
+        }
+    }
+}
+
+/* Dark Theme */
+body.dark .tabbar {
+    background-color: $dark-bg-color;
+    box-shadow: 0 0rem 0.1rem 0 $dark-shadow-color;
+
+    a {
+        color: $dark-font-color-2;
+
+        svg {
+            color: $dark-font-color-2;
+        }
+    }
+}
+/* Dark Theme Ends */

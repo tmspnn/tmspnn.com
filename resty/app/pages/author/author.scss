@@ -1,0 +1,110 @@
+.bg {
+    @extend ._img;
+    width: 100%;
+    padding-bottom: 56.25%;
+    background-color: var(--light-white);
+}
+
+.row {
+    @extend ._flex;
+    @extend ._with-icon;
+    padding: 1rem;
+
+    &:nth-child(2) {
+        height: 5rem;
+    }
+
+    .profile {
+        @extend ._img;
+        position: relative;
+        top: -2.5rem;
+        width: 10rem;
+        height: 10rem;
+        border-radius: 0.2rem;
+        background-color: var(--grey);
+    }
+}
+
+.nickname {
+    @extend ._line-clamp;
+    align-self: flex-start;
+    margin-left: auto;
+    max-width: 10.5rem;
+    -webkit-line-clamp: 2;
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--black);
+}
+
+button.follow {
+    width: 10rem;
+
+    svg {
+        position: relative;
+        top: -1px;
+    }
+}
+
+.fame {
+    @extend ._flex;
+    margin-left: auto;
+
+    svg {
+        color: var(--red);
+    }
+
+    span {
+        @extend ._inline;
+        @extend ._truncated;
+    }
+}
+
+blockquote {
+    padding: 2rem;
+    background-color: var(--light-white);
+    border-radius: 0;
+    font-style: italic;
+    font-size: 1.1rem;
+}
+
+ul.btns {
+    @extend ._flex;
+    margin: 2rem 0;
+
+    li {
+        @extend ._flex;
+        @extend ._with-icon;
+
+        flex: 1;
+        justify-content: center;
+        font-size: 1.1rem;
+
+        svg {
+            margin: 0;
+            vertical-align: middle;
+            position: relative;
+            top: -2px;
+        }
+
+        b {
+            @extend ._inline;
+            padding-left: 0.5rem;
+            color: var(--dark-green);
+        }
+    }
+}
+
+.articles {
+    padding: 0 1rem;
+}
+
+.send-message {
+    position: fixed;
+    right: -1rem;
+    bottom: 1rem;
+
+    svg {
+        position: relative;
+        top: -1px;
+    }
+}

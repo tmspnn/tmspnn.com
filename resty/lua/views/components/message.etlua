@@ -1,0 +1,37 @@
+<%
+local date = require "date"
+--
+local oss_path_to_url = require "util.oss_path_to_url"
+--
+local fmt = string.format
+--
+local sent_by_self = sent_by_self
+local profile = fmt("url(%s)", oss_path_to_url(profile))
+local timestamp = date(created_at):fmt("%m/%d %H:%M")
+local text_class = "text " .. (sent_by_self and "to-left" or "to-right")
+local resource_url = oss_path_to_url(file)
+%>
+<div class="-message">
+    <% if sent_by_self then %>
+    <div class="profile" style="background-image: <%= profile %>"></div>
+    <% end %>
+    <div class="content">
+        <% if type == 0 then %>
+        <div class="<%= text_class %>">
+            <%= text %>
+        </div>
+        <% elseif type == 1 then %>
+        <div class="<%= text_class %>">
+            <img src="<%= resource_url %>" alt="">
+        </div>
+        <% elseif type == 2 then %>
+        <div class="<%= text_class %>">
+            <video src="<%= resource_url %>" alt=""></video>>
+        </div>
+        <% end %>
+        <div class="timestamp"><%= timestamp %></div>
+    </div>
+    <% if not sent_by_self then %>
+    <div class="profile" style="background-image: <%= profile %>"></div>
+    <% end %>
+</div>

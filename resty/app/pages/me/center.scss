@@ -1,0 +1,72 @@
+.main {
+    position: absolute;
+    left: 20%;
+    top: 0;
+    width: 60%;
+    height: 100%;
+    overflow: hidden auto;
+    transition-delay: 500ms;
+    &.invisible {
+        transform: translate3d(0, 4rem, 0);
+    }
+
+    .bg-container {
+        position: relative;
+        overflow: hidden;
+        background-color: $grey-lighter;
+        width: 100%;
+        padding-bottom: 56.25%; /* 16:9 */
+        cursor: pointer;
+
+        &:after {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            content: "";
+            background: linear-gradient(
+                0deg,
+                hsla(0, 0%, 0%, 0.8),
+                transparent
+            );
+        }
+
+        img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            max-width: 100%;
+            min-height: 100%;
+            max-height: 100%;
+            transition: transform 100ms;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    .profile-container {
+        height: 5rem;
+        max-height: 5rem;
+        .profile {
+            position: relative;
+            left: 5rem;
+            top: -5rem;
+            width: 10rem;
+            height: 10rem;
+            line-height: 10rem;
+            font-size: 4rem;
+            text-align: center;
+            color: $grey-dark;
+            border-radius: 50%;
+            background-size: cover;
+            background-color: $grey-lighter;
+            box-shadow: 0 0 5px $grey;
+            cursor: pointer;
+        }
+    }
+
+    .events {
+        padding: 0 2rem;
+    }
+}
