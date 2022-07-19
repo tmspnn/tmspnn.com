@@ -1,0 +1,63 @@
+name: tmspnn_com
+
+services:
+    resty:
+        build:
+            context: resty
+            labels: Gateway, API, Web
+        network_mode: "host"
+        ports:
+            - 80:80
+            - 433:433
+        volumes:
+            - ./static:/srv/www/static
+        restart: always
+
+    rds:
+        build:
+            context: rds
+            labels: Cache, Messaging, Redis
+        network_mode: "host"
+        ports:
+            - 6379:6379
+        volumes:
+            - ./rds_persistance:/etc/backup/rds
+        restart: always
+
+    pg:
+        build:
+            context: pg
+            labels: Database, Postgres
+        network_mode: "host"
+        ports:
+            - 5432:5432
+        volumes:
+            - ./pg_data:/var/lib/postgresql/data
+        restart: always
+
+    lang_processing:
+        build:
+            context: lang_processing
+            label: Language Processing, Word Splitting
+        network_mode: "host"
+        ports:
+            - 9000:9000
+        restart: on-failure
+
+    py:
+        build:
+            context: py_services
+            label: Python, Service
+        network_mode: "host"
+        ports:
+            - 9001:9001
+        restart: on-failure
+
+    nodejs:
+        build:
+            context: node_services
+            label: Node.js, Service
+        network_mode: "host"
+        ports:
+            - 9002:9002
+        restart: on-failure
