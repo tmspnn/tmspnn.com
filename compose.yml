@@ -11,53 +11,100 @@ services:
             - 433:433
         volumes:
             - ./static:/srv/www/static
+        deploy:
+            mode: global
         restart: always
 
     rds:
         build:
             context: rds
-            labels: Cache, Messaging, Redis
+            labels:
+                - Cache
+                - Messaging
+                - Redis
         network_mode: "host"
         ports:
             - 6379:6379
         volumes:
             - ./rds_persistance:/etc/backup/rds
+        deploy:
+            mode: global
         restart: always
 
-    pg:
+    pg_primary:
         build:
-            context: pg
-            labels: Database, Postgres
+            context: pg_primary
+            labels:
+                - Database
+                - Postgres
+                - Primary
         network_mode: "host"
         ports:
             - 5432:5432
         volumes:
             - ./pg_data:/var/lib/postgresql/data
+        deploy:
+            mode: global
+        restart: always
+
+    pg_standby:
+        build:
+            context: pg_standby
+            labels:
+                - Database
+                - Postgres
+                - Standby
+        network_mode: "host"
+        ports:
+            - 5432:5432
+            - 5433:5433
+            - 5434:5434
+            - 5435:5435
+        volumes:
+            - ./pg_data_replica:/var/lib/postgresql/data
+        deploy:
+            mode: replicated
+            replicas: 4
         restart: always
 
     lang_processing:
         build:
             context: lang_processing
-            label: Language Processing, Word Splitting
+            labels:
+                - Language Processing
+                - Word Splitting
         network_mode: "host"
         ports:
             - 9000:9000
+        deploy:
+            mode: replicated
+            replicas: 2
         restart: on-failure
 
     py:
         build:
             context: py_services
-            label: Python, Service
+            labels:
+                - Python
+                - Service
         network_mode: "host"
         ports:
             - 9001:9001
+        deploy:
+            mode: replicated
+            replicas: 2
         restart: on-failure
 
     nodejs:
         build:
             context: node_services
-            label: Node.js, Service
+            labels:
+                - Node.js
+                - Service
         network_mode: "host"
         ports:
             - 9002:9002
+        deploy:
+            mode: replicated
+            replicas: 2
         restart: on-failure
