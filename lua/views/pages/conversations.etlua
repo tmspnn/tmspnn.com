@@ -1,3 +1,0 @@
-<div id="root"></div>
-<% render("views/components/navbar", {title = ctx.page_title}) %>
-<% render("views/components/tabbar", {active_tab = "conversations"}) %>

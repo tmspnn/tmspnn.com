@@ -47,7 +47,3 @@ build
 
 # MacOS
 .DS_Store
-
-# Frontend dependency repo
-node_modules
-package-lock.json
