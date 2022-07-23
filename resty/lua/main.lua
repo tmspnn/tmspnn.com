@@ -1,4 +1,4 @@
-ngx.say("Hello from Thomas~")
+ngx.say("Hello from Thomas!!")
 
 -- local date = require "date"
 -- local lapis = require "lapis"

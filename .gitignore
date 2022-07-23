@@ -2,6 +2,6 @@
 
 secrets
 
-resty/cert
-resty/static
+ngx/cert
+
 resty/node_modules
