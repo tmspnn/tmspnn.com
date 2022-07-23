@@ -28,8 +28,12 @@ services:
 
   # OpenResty servers
   resty:
-    build:
-      context: resty
+    image: openresty/openresty:alpine-fat
+    command: sh -c "
+        apk add openssl-dev &&
+        luarocks install lapis &&
+        /usr/local/openresty/bin/openresty -g 'daemon off;'
+      "
     ports:
       - 8000:80
     volumes:

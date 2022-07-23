@@ -1,5 +1,5 @@
-local a = os.getenv("PG_HOST")
-ngx.say(a)
+local lapis = require "lapis"
+ngx.say("lapis: " .. type(lapis) .. " pg_host: " .. ngx.var.pg_host)
 
 -- local date = require "date"
 -- local lapis = require "lapis"
