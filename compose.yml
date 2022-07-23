@@ -1,5 +1,12 @@
 name: tmspnn_com
 
+# Ports 5432... Postgres
+# Port 6379... Redis
+# Ports 8000... OpenResty services
+# Ports 9000... Python services
+# Ports 10000... Node.js services
+# Ports 11000... C/C++ services
+
 services:
   # The Nginx server for load balancing and serving static files
   ngx:
@@ -9,66 +16,27 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./ngx/nginx.conf:/etc/nginx/nginx.conf
+      - ./ngx/nginx.conf:/etc/nginx/templates/nginx.conf.template
       - ./ngx/cert:/etc/nginx/cert
+    environment:
+      - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
+      - RESTY_HOST=${RESTY_HOST}
     deploy:
       mode: global
     restart: always
 
   # OpenResty servers
-  resty_1:
-    image: openresty/openresty:alpine-fat
+  resty:
+    build:
+      context: resty
     ports:
-      - 9000:80
+      - 8000:80
     volumes:
-      - ./resty/conf:/etc/nginx/conf.d
+      - ./resty/conf/tmspnn_com.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ./resty:/opt/resty
     restart: "always"
-    secrets:
-      - pg_host
-      - pg_port
-      - pg_user
-      - pg_password
-      - pg_database
-      - redis_host
-      - redis_port
-      - redis_password
     environment:
-      PG_HOST: /run/secrets/pg_host
-      PG_PORT: /run/secrets/pg_port
-      PG_USER: /run/secrets/pg_user
-      PG_PASSWORD: /run/secrets/pg_password
-      PG_DATABASE: /run/secrets/pg_database
-      REDIS_HOST: /run/secrets/redis_host
-      REDIS_PORT: /run/secrets/redis_port
-      REDIS_PASSWORD: /run/secrets/redis_password
-
-  resty_2:
-    image: openresty/openresty:alpine-fat
-    ports:
-      - 9001:80
-    volumes:
-      - ./resty/conf:/etc/nginx/conf.d
-      - ./resty:/opt/resty
-    restart: "always"
-    secrets:
-      - pg_host
-      - pg_port
-      - pg_user
-      - pg_password
-      - pg_database
-      - redis_host
-      - redis_port
-      - redis_password
-    environment:
-      PG_HOST: /run/secrets/pg_host
-      PG_PORT: /run/secrets/pg_port
-      PG_USER: /run/secrets/pg_user
-      PG_PASSWORD: /run/secrets/pg_password
-      PG_DATABASE: /run/secrets/pg_database
-      REDIS_HOST: /run/secrets/redis_host
-      REDIS_PORT: /run/secrets/redis_port
-      REDIS_PASSWORD: /run/secrets/redis_password
+      - PG_HOST=${PG_HOST}
 
   #  rds:
   #    build:

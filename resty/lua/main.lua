@@ -1,4 +1,5 @@
-ngx.say("Hello from Thomas!!")
+local a = os.getenv("PG_HOST")
+ngx.say(a)
 
 -- local date = require "date"
 -- local lapis = require "lapis"
