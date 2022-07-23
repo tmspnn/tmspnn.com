@@ -17,6 +17,7 @@ services:
       - 443:443
     volumes:
       - ./ngx/nginx.conf:/etc/nginx/templates/nginx.conf.template
+      - ./ngx/well_known.conf:/etc/nginx/well_known.conf
       - ./ngx/cert:/etc/nginx/cert
     environment:
       - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
