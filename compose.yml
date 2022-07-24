@@ -19,6 +19,7 @@ services:
       - ./ngx/nginx.conf:/etc/nginx/templates/nginx.conf.template
       - ./ngx/well_known.conf:/etc/nginx/well_known.conf
       - ./ngx/cert:/etc/nginx/cert
+      - ./static:/srv/www
     environment:
       - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
       - RESTY_HOST=${RESTY_HOST}
@@ -30,9 +31,9 @@ services:
   resty:
     image: openresty/openresty:alpine-fat
     command: sh -c "
-        apk add openssl-dev &&
-        luarocks install lapis &&
-        /usr/local/openresty/bin/openresty -g 'daemon off;'
+      apk add openssl-dev &&
+      luarocks install lapis &&
+      /usr/local/openresty/bin/openresty -g 'daemon off;'
       "
     ports:
       - 8000:80
