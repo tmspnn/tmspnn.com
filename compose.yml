@@ -40,6 +40,7 @@ services:
     volumes:
       - ./resty/conf/tmspnn_com.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ./resty:/opt/resty
+    working_dir: /opt/resty
     restart: "always"
     environment:
       - PG_HOST=${PG_HOST}

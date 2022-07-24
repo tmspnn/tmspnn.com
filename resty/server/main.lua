@@ -1,5 +1,9 @@
 local lapis = require "lapis"
+
+local each = require "server.util.each"
+
 ngx.say("lapis: " .. type(lapis) .. " pg_host: " .. ngx.var.pg_host)
+ngx.say("each: "..type(each))
 
 -- local date = require "date"
 -- local lapis = require "lapis"
