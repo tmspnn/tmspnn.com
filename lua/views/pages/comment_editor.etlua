@@ -1,4 +1,0 @@
-<div id="root" data-on="input: saveContent">
-    <div id="editorjs" spellcheck="false" oncontextmenu="return false;"></div>
-</div>
-<% render("views/components/navbar", {title = ctx.page_title}) %>

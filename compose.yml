@@ -1,110 +1,82 @@
 name: tmspnn_com
-
+version: "3.8"
 services:
-    resty:
+    gateway:
         build:
-            context: resty
-            labels: Gateway, API, Web
+            context: ./gateway
+            dockerfile: Dockerfile-gateway
         network_mode: "host"
         ports:
-            - 80:80
-            - 433:433
+            - "80:80"
+            - "433:433"
         volumes:
-            - ./static:/srv/www/static
+            - ./web/dist:/srv/www/static
         deploy:
             mode: global
-        restart: always
+            restart_policy:
+              condition: on-failure
+              delay: 2s
+              max_attempts: 3
+              window: 10s
 
-    rds:
-        build:
-            context: rds
-            labels:
-                - Cache
-                - Messaging
-                - Redis
-        network_mode: "host"
-        ports:
-            - 6379:6379
-        volumes:
-            - ./rds_persistance:/etc/backup/rds
-        deploy:
-            mode: global
-        restart: always
+    postgresql-master:
+      image: "bitnami/postgresql:latest"
+      network_mode: "host"
+      ports:
+        - "5432:5432"
+      volumes:
+        - pg_master_data:/bitnami/postgresql
+      deploy:
+        mode: global
+        restart_policy:
+          condition: on-failure
+          delay: 2s
+          max_attempts: 3
+          window: 10s
+      environment:
+        - POSTGRESQL_REPLICATION_MODE: master
+        - POSTGRESQL_REPLICATION_USER: /run/secrets/pg_repl_user
+        - POSTGRESQL_REPLICATION_PASSWORD: /run/secrets/pg_repl_password
+        - POSTGRESQL_USERNAME: /run/secrets/pg_username
+        - POSTGRESQL_PASSWORD: /run/secrets/pg_password
+        - POSTGRESQL_DATABASE: /run/secrets/pg_database
 
-    pg_primary:
-        build:
-            context: pg_primary
-            labels:
-                - Database
-                - Postgres
-                - Primary
-        network_mode: "host"
-        ports:
-            - 5432:5432
-        volumes:
-            - ./pg_data:/var/lib/postgresql/data
-        deploy:
-            mode: global
-        restart: always
+    postgresql-slave:
+      image: "bitnami/postgresql:latest"
+      network_mode: "host"
+      ports:
+        - "5433:5432"
+      volumes:
+        - pg_slave_data:/bitnami/postgresql
+      depends_on:
+        - postgresql-master
+      deploy:
+        mode: replicated
+        replicas: 2
+        restart_policy:
+          condition: on-failure
+          delay: 1s
+          max_attempts: 1
+      environment:
+        - POSTGRESQL_REPLICATION_MODE: slave
+        - POSTGRESQL_REPLICATION_USER: /run/secrets/pg_repl_user
+        - POSTGRESQL_REPLICATION_PASSWORD: /run/secrets/pg_repl_password
+        - POSTGRESQL_MASTER_HOST: postgresql-master
+        - POSTGRESQL_PASSWORD: /run/secrets/pg_password
+        - POSTGRESQL_MASTER_PORT_NUMBER: 5432
 
-    pg_standby:
-        build:
-            context: pg_standby
-            labels:
-                - Database
-                - Postgres
-                - Standby
-        network_mode: "host"
-        ports:
-            - 5432:5432
-            - 5433:5433
-            - 5434:5434
-            - 5435:5435
-        volumes:
-            - ./pg_data_replica:/var/lib/postgresql/data
-        deploy:
-            mode: replicated
-            replicas: 4
-        restart: always
-
-    lang_processing:
-        build:
-            context: lang_processing
-            labels:
-                - Language Processing
-                - Word Splitting
-        network_mode: "host"
-        ports:
-            - 9000:9000
-        deploy:
-            mode: replicated
-            replicas: 2
-        restart: on-failure
-
-    py:
-        build:
-            context: py_services
-            labels:
-                - Python
-                - Service
-        network_mode: "host"
-        ports:
-            - 9001:9001
-        deploy:
-            mode: replicated
-            replicas: 2
-        restart: on-failure
-
-    nodejs:
-        build:
-            context: node_services
-            labels:
-                - Node.js
-                - Service
-        network_mode: "host"
-        ports:
-            - 9002:9002
-        deploy:
-            mode: replicated
-            replicas: 2
-        restart: on-failure
+volumes:
+  pg_master_data: /mnt/sdc/pg/master_data
+  pg_slave_data: /mnt/sdc/pg/slave_data
+    
+secrets:
+  pg_repl_user:
+    file: ./secrets/pg_repl_user.txt
+  pg_repl_password:
+    file: ./secrets/pg_repl_password.txt
+  pg_username:
+    file: ./secrets/pg_username.txt
+  pg_password:
+    file: ./secrets/pg_password.txt
+  pg_database:
+    file: ./secrets/pg_database.txt

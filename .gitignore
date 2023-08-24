@@ -40,14 +40,15 @@ luac.out
 *.hex
 
 # SSL certificates
-certs
+gateway/certs
 
-# Static assets
-build
+# Web
+web/package-lock.json
+web/node_modules
+web/dist
 
 # MacOS
 .DS_Store
 
-# Frontend dependency repo
-node_modules
-package-lock.json
+# Secrets
+secrets
