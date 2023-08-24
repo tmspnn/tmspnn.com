@@ -1,69 +1,68 @@
 name: tmspnn_com
 version: "3.8"
 services:
-    gateway:
-        build:
-            context: ./gateway
-            dockerfile: Dockerfile-gateway
-        network_mode: "host"
-        ports:
-            - "80:80"
-            - "433:433"
-        volumes:
-            - ./web/dist:/srv/www/static
-        deploy:
-            mode: global
-            restart_policy:
-              condition: on-failure
-              delay: 2s
-              max_attempts: 3
-              window: 10s
-
-    postgresql-master:
-      image: "bitnami/postgresql:latest"
-      network_mode: "host"
-      ports:
-        - "5432:5432"
-      volumes:
-        - pg_master_data:/bitnami/postgresql
-      deploy:
+  gateway:
+    image: openresty/openresty:alpine-fat
+    network_mode: "host"
+    ports:
+      - "80:80"
+      - "433:433"
+    volumes:
+      - ./conf_templates:/etc/nginx/templates
+      - ./web/dist:/srv/www/static
+    deploy:
         mode: global
         restart_policy:
           condition: on-failure
           delay: 2s
           max_attempts: 3
           window: 10s
-      environment:
-        - POSTGRESQL_REPLICATION_MODE: master
-        - POSTGRESQL_REPLICATION_USER: /run/secrets/pg_repl_user
-        - POSTGRESQL_REPLICATION_PASSWORD: /run/secrets/pg_repl_password
-        - POSTGRESQL_USERNAME: /run/secrets/pg_username
-        - POSTGRESQL_PASSWORD: /run/secrets/pg_password
-        - POSTGRESQL_DATABASE: /run/secrets/pg_database
 
-    postgresql-slave:
-      image: "bitnami/postgresql:latest"
-      network_mode: "host"
-      ports:
-        - "5433:5432"
-      volumes:
-        - pg_slave_data:/bitnami/postgresql
-      depends_on:
-        - postgresql-master
-      deploy:
-        mode: replicated
-        replicas: 2
-        restart_policy:
-          condition: on-failure
-          delay: 1s
-          max_attempts: 1
-      environment:
-        - POSTGRESQL_REPLICATION_MODE: slave
-        - POSTGRESQL_REPLICATION_USER: /run/secrets/pg_repl_user
-        - POSTGRESQL_REPLICATION_PASSWORD: /run/secrets/pg_repl_password
-        - POSTGRESQL_MASTER_HOST: postgresql-master
-        - POSTGRESQL_PASSWORD: /run/secrets/pg_password
-        - POSTGRESQL_MASTER_PORT_NUMBER: 5432
+  postgresql-master:
+    image: "bitnami/postgresql:latest"
+    network_mode: "host"
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_master_data:/bitnami/postgresql
+    environment:
+      - POSTGRESQL_REPLICATION_MODE: master
+      - POSTGRESQL_REPLICATION_USER: /run/secrets/pg_repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD: /run/secrets/pg_repl_password
+      - POSTGRESQL_USERNAME: /run/secrets/pg_username
+      - POSTGRESQL_PASSWORD: /run/secrets/pg_password
+      - POSTGRESQL_DATABASE: /run/secrets/pg_database
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 2s
+        max_attempts: 3
+        window: 10s
+  
+  postgresql-slave:
+    image: "bitnami/postgresql:latest"
+    network_mode: "host"
+    ports:
+      - "5433:5432"
+    volumes:
+      - pg_slave_data:/bitnami/postgresql
+    depends_on:
+      - postgresql-master
+    environment:
+      - POSTGRESQL_REPLICATION_MODE: slave
+      - POSTGRESQL_REPLICATION_USER: /run/secrets/pg_repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD: /run/secrets/pg_repl_password
+      - POSTGRESQL_MASTER_HOST: postgresql-master
+      - POSTGRESQL_PASSWORD: /run/secrets/pg_password
+      - POSTGRESQL_MASTER_PORT_NUMBER: 5432
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 1s
+        max_attempts: 1
 
 volumes:
   pg_master_data: /mnt/sdc/pg/master_data
