@@ -10,7 +10,6 @@ server {
     ssl_certificate /home/thomas/tmspnn.com/certs/_.tmspnn.com_fullchain.pem;
     ssl_certificate_key /home/thomas/tmspnn.com/certs/_.tmspnn.com.key;
 
-
     limit_req zone=one burst=10;
     limit_conn addr 100;
 
