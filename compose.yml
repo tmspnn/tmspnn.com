@@ -10,7 +10,9 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./conf.d:/etc/nginx/templates
-      - ./web/dist:/srv/www/static
+      - ssl_certificates:/etc/nginx/ssl
+      - web_static:/srv/www/static
+      - ./resty:/resty_app
     deploy:
         mode: global
         restart_policy:
@@ -68,6 +70,8 @@ services:
 volumes:
   pg_master_data: /mnt/sdc/pg/master_data
   pg_slave_data: /mnt/sdc/pg/slave_data
+  ssl_certificates: ./certs
+  web_static: ./web/dist
     
 secrets:
   pg_repl_user:

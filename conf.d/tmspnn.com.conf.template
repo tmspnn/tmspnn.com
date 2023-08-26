@@ -7,55 +7,23 @@ upstream nlp_backend {
 server {
     listen 443 ssl reuseport;
     server_name tmspnn.com www.tmspnn.com;
-    ssl_certificate /home/thomas/tmspnn.com/certs/_.tmspnn.com_fullchain.pem;
-    ssl_certificate_key /home/thomas/tmspnn.com/certs/_.tmspnn.com.key;
 
-    limit_req zone=one burst=10;
-    limit_conn addr 100;
+    ssl_certificate /etc/nginx/ssl/_.tmspnn.com_fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/_.tmspnn.com.key;
 
-    root /home/thomas/tmspnn.com/build;
+    limit_req zone=one burst=100;
+    limit_conn addr 1000;
 
-    set $app_root "/home/thomas/tmspnn.com";
+    root /srv/www/static;
 
-    set_by_lua_block $oss_secret_key {
-        return os.getenv("OSS_SECRET_KEY")
-    }
-
-    set_by_lua_block $oss_access_key {
-        return os.getenv("OSS_ACCESS_KEY")
-    }
-
-    set_by_lua_block $oss_auth_key {
-        return os.getenv("OSS_AUTH_KEY")
-    }
-
-    set_by_lua_block $pg_host {
-        return os.getenv("PG_HOST")
-    }
-
-    set_by_lua_block $pg_user {
-        return os.getenv("PG_USER")
-    }
-
-    set_by_lua_block $pg_password {
-        return os.getenv("PG_PASSWORD")
-    }
-
-    set_by_lua_block $redis_host {
-        return os.getenv("REDIS_HOST")
-    }
-
-    set_by_lua_block $customer_service_mail {
-        return os.getenv("CUSTOMER_SERVICE_MAIL")
-    }
-
-    set_by_lua_block $customer_service_mail_host {
-        return os.getenv("CUSTOMER_SERVICE_MAIL_HOST")
-    }
-
-    set_by_lua_block $customer_service_mail_password {
-        return os.getenv("CUSTOMER_SERVICE_MAIL_PASSWORD")
-    }
+    set $app_root "/resty_app";
+    set $oss_secret_key ${OSS_SECRET_KEY}
+    set $oss_access_key ${OSS_ACCESS_KEY}
+    set $oss_auth_key ${OSS_AUTH_KEY}
+    set $pg_host ${PG_HOST}
+    set $pg_user ${PG_USER}
+    set $pg_password ${PG_PASSWORD}
+    set $redis_host ${REDIS_HOST}
 
     location /internal/nlp/ {
         internal;

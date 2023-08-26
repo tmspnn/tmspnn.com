@@ -40,7 +40,7 @@ luac.out
 *.hex
 
 # SSL certificates
-gateway/certs
+certs
 
 # Web
 web/package-lock.json
