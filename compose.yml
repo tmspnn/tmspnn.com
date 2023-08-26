@@ -6,7 +6,7 @@ services:
     network_mode: "host"
     ports:
       - "80:80"
-      - "433:433"
+      - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./conf.d:/etc/nginx/templates
@@ -67,7 +67,7 @@ services:
       - POSTGRESQL_REPLICATION_MODE=slave
       - POSTGRESQL_REPLICATION_USER=/run/secrets/pg_repl_user
       - POSTGRESQL_REPLICATION_PASSWORD=/run/secrets/pg_repl_password
-      - POSTGRESQL_MASTER_HOST=postgresql-master
+      - POSTGRESQL_MASTER_HOST=127.0.0.1
       - POSTGRESQL_PASSWORD=/run/secrets/pg_password
       - POSTGRESQL_MASTER_PORT_NUMBER=5432
     deploy:
