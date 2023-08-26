@@ -6,15 +6,55 @@ upstream nlp_backend {
 
 server {
     listen 443 ssl reuseport;
+    listen [::]:443 ssl reuseport;
     server_name tmspnn.com www.tmspnn.com;
 
     ssl_certificate /etc/nginx/ssl/_.tmspnn.com_fullchain.pem;
     ssl_certificate_key /etc/nginx/ssl/_.tmspnn.com.key;
+	ssl_trusted_certificate /etc/nginx/ssl/_.tmspnn.com_fullchain.pem;
 
-    limit_req zone=one burst=100;
+	limit_req zone=one burst=100;
     limit_conn addr 1000;
 
-    root /srv/www/static;
+	# security headers
+	add_header X-XSS-Protection          "1; mode=block" always;
+	add_header X-Content-Type-Options    "nosniff" always;
+	add_header Referrer-Policy           "no-referrer-when-downgrade" always;
+	add_header Content-Security-Policy   "default-src 'self' http: https: ws: wss: data: blob: 'unsafe-inline'; frame-ancestors 'self';" always;
+	add_header Permissions-Policy        "interest-cohort=()" always;
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+	# . files
+	location ~ /\.(?!well-known) {
+	    deny all;
+	}
+
+	# favicon.ico
+	location = /favicon.ico {
+	    log_not_found off;
+	}
+	
+	# robots.txt
+	location = /robots.txt {
+	    log_not_found off;
+	}
+
+	# assets, media
+	location ~* \.(?:css(\.map)?|js(\.map)?|jpe?g|png|gif|ico|cur|heic|webp|tiff?|mp3|m4a|aac|ogg|midi?|wav|mp4|mov|webm|mpe?g|avi|ogv|flv|wmv)$ {
+	    expires 7d;
+	    access_log off;
+	}
+	
+	# svg, fonts
+	location ~* \.(?:svgz?|ttf|ttc|otf|eot|woff2?)$ {
+	    add_header Access-Control-Allow-Origin "*";
+	    expires 7d;
+	    access_log off;
+	}
+
+	location /web/ {
+    	root /srv/www/static;
+	}
 
     set $app_root "/resty_app";
     set $oss_secret_key ${OSS_SECRET_KEY}
@@ -25,11 +65,29 @@ server {
     set $pg_password ${PG_PASSWORD}
     set $redis_host ${REDIS_HOST}
 
+	# reverse proxy
     location /internal/nlp/ {
         internal;
+        proxy_pass http://nlp_backend;
+        proxy_set_header Host $host;
         proxy_http_version 1.1;
-        proxy_pass_header content-type;
-        proxy_pass http://nlp_backend/;
+		proxy_cache_bypass $http_upgrade;
+        proxy_pass_header Content-Type;
+
+		# Proxy headers
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection $connection_upgrade;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header Forwarded $proxy_add_forwarded;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_set_header X-Forwarded-Host $host;
+		proxy_set_header X-Forwarded-Port $server_port;
+		
+		# Proxy timeouts
+		proxy_connect_timeout 60s;
+		proxy_send_timeout 60s;
+		proxy_read_timeout 60s;
     }
 
     location /ws/ {
@@ -40,11 +98,4 @@ server {
         default_type text/html;
         content_by_lua_file $app_root/lua/main.lua;
     }
-
-    location /harmony-fab {
-        alias /home/thomas/tmspnn.com/build/harmony-fab;
-        index index.html;
-    }
-
-    include /home/thomas/tmspnn.com/conf/well_known.conf;
 }

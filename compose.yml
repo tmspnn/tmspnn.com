@@ -10,9 +10,18 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./conf.d:/etc/nginx/templates
-      - ssl_certificates:/etc/nginx/ssl
-      - web_static:/srv/www/static
+      - ./certs:/etc/nginx/ssl
+      - ./web/dist:/srv/www/static
       - ./resty:/resty_app
+    environment:
+      - OSS_SECRET_KEY=/run/secrets/oss_secret_key
+      - OSS_ACCESS_KEY=/run/secrets/oss_access_key
+      - OSS_AUTH_KEY=/run/secrets/oss_auth_key
+      - PG_HOST=127.0.0.1:5432
+      - PG_USER=/run/secrets/pg_username
+      - PG_PASSWORD=/run/secrets/pg_password
+      - PG_DATABASE=/run/secrets/pg_database
+      - REDIS_HOST=127.0.0.1:6379
     deploy:
         mode: global
         restart_policy:
@@ -27,14 +36,15 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pg_master_data:/bitnami/postgresql
+      - /mnt/sdc/pg/master_data:/bitnami/postgresql
+    user: root
     environment:
-      - POSTGRESQL_REPLICATION_MODE: master
-      - POSTGRESQL_REPLICATION_USER: /run/secrets/pg_repl_user
-      - POSTGRESQL_REPLICATION_PASSWORD: /run/secrets/pg_repl_password
-      - POSTGRESQL_USERNAME: /run/secrets/pg_username
-      - POSTGRESQL_PASSWORD: /run/secrets/pg_password
-      - POSTGRESQL_DATABASE: /run/secrets/pg_database
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=/run/secrets/pg_repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=/run/secrets/pg_repl_password
+      - POSTGRESQL_USERNAME=/run/secrets/pg_username
+      - POSTGRESQL_PASSWORD=/run/secrets/pg_password
+      - POSTGRESQL_DATABASE=/run/secrets/pg_database
     deploy:
       mode: global
       restart_policy:
@@ -49,16 +59,17 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - pg_slave_data:/bitnami/postgresql
+      - /mnt/sdc/pg/slave_data:/bitnami/postgresql
+    user: root
     depends_on:
       - postgresql-master
     environment:
-      - POSTGRESQL_REPLICATION_MODE: slave
-      - POSTGRESQL_REPLICATION_USER: /run/secrets/pg_repl_user
-      - POSTGRESQL_REPLICATION_PASSWORD: /run/secrets/pg_repl_password
-      - POSTGRESQL_MASTER_HOST: postgresql-master
-      - POSTGRESQL_PASSWORD: /run/secrets/pg_password
-      - POSTGRESQL_MASTER_PORT_NUMBER: 5432
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=/run/secrets/pg_repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=/run/secrets/pg_repl_password
+      - POSTGRESQL_MASTER_HOST=postgresql-master
+      - POSTGRESQL_PASSWORD=/run/secrets/pg_password
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
     deploy:
       mode: replicated
       replicas: 2
@@ -66,14 +77,14 @@ services:
         condition: on-failure
         delay: 1s
         max_attempts: 1
-
-volumes:
-  pg_master_data: /mnt/sdc/pg/master_data
-  pg_slave_data: /mnt/sdc/pg/slave_data
-  ssl_certificates: ./certs
-  web_static: ./web/dist
     
 secrets:
+  oss_secret_key:
+    file: ./secrets/oss_secret_key.txt
+  oss_access_key:
+    file: ./secrets/oss_access_key.txt
+  oss_auth_key:
+    file: ./secrets/oss_auth_key.txt
   pg_repl_user:
     file: ./secrets/pg_repl_user.txt
   pg_repl_password:
