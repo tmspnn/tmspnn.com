@@ -1,0 +1,62 @@
+.-message {
+    @extend ._flex;
+    position: relative;
+    box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.05);
+    padding: 0.8rem 0.5rem;
+    background-color: var(--white);
+    font-size: 0.9rem;
+    user-select: none;
+
+    &:before {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 1px;
+        content: "";
+        background-color: var(--light-white);
+        transform: scaleY(0.5);
+    }
+
+    .profile {
+        position: relative;
+        width: 4rem;
+        min-width: 4rem;
+        height: 3rem;
+
+        > .img {
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--light-white);
+
+            width: 3rem;
+            height: 3rem;
+            left: 0;
+            top: 0;
+            background-size: cover;
+
+            &:nth-child(2) {
+                left: 0.5rem;
+            }
+
+            &:nth-child(3) {
+                left: 1rem;
+            }
+        }
+    }
+
+    .meta {
+        flex: 1;
+        padding: 0 0.5rem;
+
+        .conversation-name {
+            font-weight: bold;
+            color: var(--black);
+        }
+    }
+
+    .last-updated {
+        font-size: 0.8rem;
+    }
+}

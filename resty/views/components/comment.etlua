@@ -1,0 +1,64 @@
+<%
+local cjson = require "cjson"
+local date = require "date"
+local utf8 = require "utf8"
+--
+local fmt = string.format
+--
+local created_at = date(created_at):fmt("%m/%d %H:%M")
+local has_profile = author_profile and #author_profile > 0
+local has_reference = refer_to > 0
+local hidden_if_no_reference = has_reference and "" or "hidden"
+local profile_bg = has_profile
+    and fmt("url(%s)", author_profile)
+    or "linear-gradient(135deg, var(--grey), var(--black))"
+local profile_text = has_profile and "" or utf8.sub(author, 1, 1)
+local author_link = "/users/" .. created_by
+local active_if_advocated = advocated and "active" or ""
+%>
+<li class="-comment">
+    <div class="head">
+        <a href="<%= author_link %>">
+            <div class="profile" style="background-image: <%= profile_bg %>">
+                <%= profile_text %>
+            </div>
+        </a>
+        <a href="<%= author_link %>" class="author">
+            <%= author %>
+        </a>
+        <div class="date">
+            <% render("views.icons.clock") %>
+            <%= created_at %>
+        </div>
+    </div>
+    <div class="body">
+        <div class="reference" data-ref="reference" <%= hidden_if_no_reference %>>
+            <p class="reply-to">
+                回复 <b><%= reference_author %></b>:
+            </p>
+            <div class="reference-content folded" data-ref="referenceContent">
+                <% render("views.components.editor_content", {content = reference_content}) %>
+                <div class="arrow" data-ref="arrow" data-click="clickArrow" hidden>
+                    <% render("views.icons.chevron_double_up") %>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <% render("views.components.editor_content", {content = content}) %>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="advocate <%= active_if_advocated %>" data-ref="advocateBtn" data-click="clickAdvocateBtn">
+            <% render("views.icons.thumb_up") %>
+            <span data-ref="advocatorsCount"><%= advocators_count %></span>
+        </div>
+        <a href="/comment-editor?article_id=<%= article_id %>&refer_to=<%= id %>" class="reply">
+            <% render("views.icons.reply") %>
+            <span>回复</span>
+        </a>
+        <div class="report-abuse" data-click="clickReportAbuseBtn">
+            <% render("views.icons.exclamation") %>
+            <span>举报</span>
+        </div>
+    </div>
+</li>

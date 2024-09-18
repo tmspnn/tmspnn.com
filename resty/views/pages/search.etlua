@@ -1,0 +1,33 @@
+<%
+local search_placeholder = ctx.data.search_placeholder
+local latest_followings = ctx.data.latest_followings
+local latest_feeds = ctx.data.latest_feeds
+%>
+<div id="root">
+    <section class="search-bar">
+        <input type="text" spellcheck="false" placeholder="<%= search_placeholder or "搜索" %>" data-ref="searchInput"
+            data-on="input:onInput">
+        <% render("views/icons/search") %>
+        <% render("views/icons/x") %>
+    </section>
+
+    <section class="followings" data-ref="followings">
+        <% for i, t in ipairs(latest_followings) do %>
+        <% render("views/components/author", t) %>
+        <% end %>
+    </section>
+
+    <section class="feeds" data-ref="feeds">
+        <% for i, t in ipairs(latest_feeds) do %>
+        <% render("views/components/feed", t) %>
+        <% end %>
+    </section>
+
+    <section class="users" data-ref="users" hidden></section>
+
+    <section class="articles" data-ref="articles" hidden></section>
+
+    <section class="empty" data-ref="empty" hidden>找不到任何结果</section>
+</div>
+<% render("views.components.navbar", {title = ctx.page_title}) %>
+<% render("views.components.tabbar", {active_tab = "search"}) %>

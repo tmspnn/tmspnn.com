@@ -1,0 +1,5 @@
+<footer>
+	<p>沪ICP备20017830号</p>
+	<p>Copyright <% render("views/icons/at_symbol") %>2020 tmspnn</p>
+	<p>All Rights Reserved</p>
+</footer>

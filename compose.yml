@@ -1,12 +1,11 @@
-name: tmspnn_com
-version: "3.8"
+name: tmspnn
 services:
   gateway:
     image: openresty/openresty:alpine-fat
     network_mode: "host"
     volumes:
       - ./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
-      - ./conf.d:/usr/local/openresty/nginx/conf.d
+      - ./conf.d:/etc/nginx/conf.d
       - ./certs:/usr/local/openresty/nginx/ssl
       - ./web/dist:/srv/www/static
       - ./resty:/resty_app
@@ -19,27 +18,22 @@ services:
       - PG_PASSWORD=/run/secrets/pg_password
       - PG_DATABASE=/run/secrets/pg_database
       - REDIS_HOST=127.0.0.1:6379
-    command: bash -c "
-      /usr/local/bin/envsubst
-        '${OSS_SECRET_KEY},${OSS_ACCESS_KEY},${OSS_AUTH_KEY},${PG_HOST},${PG_USER},${PG_PASSWORD},${REDIS_HOST}'
-        < /usr/local/openresty/nginx/conf.d/tmspnn.com.conf
-        > /etc/nginx/conf.d/tmspnn.com.conf
-      && /usr/local/openresty/bin/openresty -g 'daemon off;'"
+    command: bash -c "openresty -g 'daemon off;'"
     deploy:
-        mode: global
-        restart_policy:
-          condition: on-failure
-          delay: 2s
-          max_attempts: 3
-          window: 10s
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 2s
+        max_attempts: 3
+        window: 10s
 
   postgresql-master:
     image: "bitnami/postgresql:latest"
     ports:
-      - "5432"
+      - "5432:5432"
     volumes:
-      - /mnt/sdc/pg/master_data:/bitnami/postgresql
-    user: root
+      - /mnt/sdc/pg/conf/pg_hba.conf:/bitnami/postgresql/conf/pg_hba.conf
+      - /mnt/sdc/pg/primary_data:/bitnami/postgresql
     environment:
       - POSTGRESQL_REPLICATION_MODE=master
       - POSTGRESQL_REPLICATION_USER=/run/secrets/pg_repl_user
@@ -51,17 +45,17 @@ services:
       mode: global
       restart_policy:
         condition: on-failure
-        delay: 2s
-        max_attempts: 3
-        window: 10s
+        delay: 1s
+        max_attempts: 2
+        window: 8s
   
   postgresql-slave:
     image: "bitnami/postgresql:latest"
     ports:
       - "5432"
     volumes:
-      - /mnt/sdc/pg/slave_data:/bitnami/postgresql
-    user: root
+      - /mnt/sdc/pg/conf/pg_hba_replica.conf:/bitnami/postgresql/conf/pg_hba.conf
+      - /mnt/sdc/pg/replica_data:/bitnami/postgresql
     depends_on:
       - postgresql-master
     environment:
@@ -72,12 +66,12 @@ services:
       - POSTGRESQL_PASSWORD=/run/secrets/pg_password
       - POSTGRESQL_MASTER_PORT_NUMBER=5432
     deploy:
-      mode: replicated
-      replicas: 2
+      mode: global
       restart_policy:
         condition: on-failure
         delay: 1s
-        max_attempts: 1
+        max_attempts: 2
+        window: 8s
     
 secrets:
   oss_secret_key:

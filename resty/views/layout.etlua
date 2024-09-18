@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="一刻阅读 | 尊重创作的价值" />
+    <% if ctx.tags_in_head then -%>
+    <% for i, el in ipairs(ctx.tags_in_head) do -%>
+    <% render("views.components.html_tag", el) %>
+    <% end -%>
+    <% end -%>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <title><%= "一刻阅读 | " .. (ctx.page_title or "") %></title>
+</head>
+
+<body>
+    <% content_for("inner") %>
+    <% if ctx.tags_in_body then -%>
+    <% for i, el in ipairs(ctx.tags_in_body) do -%>
+    <% render("views.components.html_tag", el) %>
+    <% end -%>
+    <% end -%>
+</body>
+
+</html>

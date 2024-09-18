@@ -1,0 +1,90 @@
+#root {
+    padding: 3rem 0 3.5rem;
+}
+
+.header,
+li {
+    @extend .flex;
+    border-bottom: 1px solid var(--light-white);
+}
+
+.header {
+    .profile {
+        @extend .img;
+        margin: 1rem;
+        width: 6rem;
+        height: 6rem;
+        border-radius: 1rem;
+    }
+
+    .center {
+        .nickname {
+            @extend .line-clamp;
+            -webkit-line-clamp: 1;
+            max-width: 8rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .name-card {
+            @extend .flex;
+            position: relative;
+            left: -0.2rem;
+
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--grey);
+
+            svg {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+    }
+
+    .arrow {
+        @extend .flex;
+        margin: 0 1rem 0 auto;
+        font-size: 0.9rem;
+
+        svg {
+            width: 1.6rem;
+            height: 1.6rem;
+        }
+    }
+}
+
+li > a {
+    @extend .flex;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1.1rem;
+
+    svg {
+        position: relative;
+        top: -0.1rem;
+        width: 1.3rem;
+        height: 1.3rem;
+
+        &:first-child {
+            margin-right: 0.5rem;
+        }
+
+        &:last-child {
+            margin-left: auto;
+        }
+    }
+}
+
+button {
+    margin: 1.5rem auto 0;
+    width: 15rem;
+    font-weight: bold;
+
+    svg {
+        position: relative;
+        top: -0.1rem;
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+}

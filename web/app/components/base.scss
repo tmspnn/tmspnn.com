@@ -1,0 +1,185 @@
+@import "normalize.css";
+
+/* Colors */
+$primary: #1cd4ac;
+$secondary: #9cecfb;
+$blue: #65c7f7;
+$dark-blue: #0052d4;
+$green: #64f3bc;
+$dark-green: #36c990;
+$yellow: #fcba03;
+$orange: hsl(28, 98%, 47%);
+$red: #ff5f6d;
+$black: #212121;
+$white: #fff;
+/* Colors End */
+
+/* Themes */
+$light-bg-color: #fff;
+$light-shadow-color: rgba(0, 0, 0, 0.15);
+$light-font-color-1: #212121;
+$light-font-color-2: #565656;
+$light-font-color-3: #787878;
+$light-font-color-4: #9a9a9a;
+
+$dark-bg-color: #212121;
+$dark-shadow-color: rgba(255, 255, 255, 0.2);
+$dark-font-color-1: #fcfcfc;
+$dark-font-color-2: #cdcdcd;
+$dark-font-color-3: #ababab;
+$dark-font-color-4: #9a9a9a;
+/* Themes End */
+
+/* Buildin Elements */
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Microsoft YaHei", "Segoe UI", "Roboto", "Oxygen",
+        "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1em;
+    border: none;
+    border-radius: 1.5rem;
+    background-image: linear-gradient(-90deg, var($primary), var($secondary));
+    color: $white;
+    user-select: none;
+    cursor: pointer;
+}
+
+img {
+    max-width: 100%;
+}
+
+input {
+    padding: 0.4rem 1.5rem;
+    border: none;
+    outline: none;
+
+    &:hover,
+    &:focus,
+    &:active {
+        outline: none;
+    }
+}
+
+input[type="file"] {
+    position: fixed;
+    left: -100%;
+    top: -100%;
+    width: 1px;
+    height: 1px;
+    z-index: -1;
+}
+
+textarea {
+    border: none;
+    outline: none;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    box-shadow: 0 0 0px 1000px transparent inset;
+}
+
+p,
+div {
+    color: inherit;
+    word-break: break-all;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+ul,
+ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+/* Buildin Elements End */
+
+/* Helper Classes */
+.flex {
+    display: flex;
+    align-items: center;
+}
+
+.truncated {
+    white-space: nowrap;
+    max-width: 6rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.line-clamp {
+    display: -webkit-box;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.img {
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.horizontal-scrolling {
+    white-space: nowrap;
+    overflow: auto hidden;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    > * {
+        display: inline-block;
+    }
+}
+/* Helper Classes End */
+
+/* Tablet */
+@media screen and (min-width: 768px) and (max-width: 1023.99px) {
+}
+/* Tablet Ends */
+
+/* Desktop */
+@media screen and (min-width: 1024px) {
+}
+/* Desktop Ends */
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+}
+/* Dark Mode Ends */
