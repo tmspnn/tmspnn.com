@@ -37,14 +37,14 @@ services:
       - /mnt/sdc/pg/primary_data:/bitnami/postgresql
     environment:
       POSTGRESQL_REPLICATION_MODE: master
-      POSTGRESQL_REPLICATION_USER: pg_repl
+      POSTGRESQL_REPLICATION_USER: replica_user
       POSTGRESQL_REPLICATION_PASSWORD_FILE: /run/secrets/pg_repl_password
       POSTGRESQL_PASSWORD_FILE: /run/secrets/pg_password
       POSTGRESQL_USERNAME: tms
       POSTGRESQL_DATABASE: tmspnn
     secrets:
-      - pg_repl_password
       - pg_password
+      - pg_repl_password
     deploy:
       mode: global
       restart_policy:
@@ -64,14 +64,14 @@ services:
       - postgresql-primary
     environment:
       POSTGRESQL_REPLICATION_MODE: slave
-      POSTGRESQL_REPLICATION_USER: pg_repl
-      POSTGRESQL_REPLICATION_PASSWORD: /run/secrets/pg_repl_password
+      POSTGRESQL_REPLICATION_USER: replica_user
+      POSTGRESQL_REPLICATION_PASSWORD_FILE: /run/secrets/pg_repl_password
       POSTGRESQL_MASTER_HOST: postgresql-primary
       POSTGRESQL_PASSWORD_FILE: /run/secrets/pg_password
       POSTGRESQL_MASTER_PORT_NUMBER: 5432
     secrets:
-      - pg_repl_password
       - pg_password
+      - pg_repl_password
     deploy:
       mode: global
       restart_policy:
