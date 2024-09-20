@@ -9,16 +9,17 @@ services:
       - ./certs:/usr/local/openresty/nginx/ssl
       - ./web/dist:/srv/www/static
       - ./resty:/resty_app
-    environment:
-      - OSS_SECRET_KEY=/run/secrets/oss_secret_key
-      - OSS_ACCESS_KEY=/run/secrets/oss_access_key
-      - OSS_AUTH_KEY=/run/secrets/oss_auth_key
-      - PG_HOST=127.0.0.1:5432
-      - PG_USER=/run/secrets/pg_username
-      - PG_PASSWORD=/run/secrets/pg_password
-      - PG_DATABASE=/run/secrets/pg_database
-      - REDIS_HOST=127.0.0.1:6379
-    command: bash -c "openresty -g 'daemon off;'"
+    secrets:
+      - oss_access_key
+      - oss_secret_key
+      - oss_auth_key
+      - redis_password
+    command: bash -c "
+      export OSS_ACCESS_KEY=$(cat /run/secrets/oss_access_key)
+      && export OSS_SECRET_KEY=$(cat /run/secrets/oss_secret_key)
+      && export OSS_AUTH_KEY=$(cat /run/secrets/oss_auth_key)
+      && export REDIS_PASSWORD=$(cat /run/secrets/redis_password)
+      && openresty -g 'daemon off;'"
     deploy:
       mode: global
       restart_policy:
@@ -27,20 +28,23 @@ services:
         max_attempts: 3
         window: 10s
 
-  postgresql-master:
-    image: "bitnami/postgresql:latest"
+  postgresql-primary:
+    image: bitnami/postgresql:latest
     ports:
       - "5432:5432"
     volumes:
       - /mnt/sdc/pg/conf/pg_hba.conf:/bitnami/postgresql/conf/pg_hba.conf
       - /mnt/sdc/pg/primary_data:/bitnami/postgresql
     environment:
-      - POSTGRESQL_REPLICATION_MODE=master
-      - POSTGRESQL_REPLICATION_USER=/run/secrets/pg_repl_user
-      - POSTGRESQL_REPLICATION_PASSWORD=/run/secrets/pg_repl_password
-      - POSTGRESQL_USERNAME=/run/secrets/pg_username
-      - POSTGRESQL_PASSWORD=/run/secrets/pg_password
-      - POSTGRESQL_DATABASE=/run/secrets/pg_database
+      POSTGRESQL_REPLICATION_MODE: master
+      POSTGRESQL_REPLICATION_USER: pg_repl
+      POSTGRESQL_REPLICATION_PASSWORD_FILE: /run/secrets/pg_repl_password
+      POSTGRESQL_PASSWORD_FILE: /run/secrets/pg_password
+      POSTGRESQL_USERNAME: tms
+      POSTGRESQL_DATABASE: tmspnn
+    secrets:
+      - pg_repl_password
+      - pg_password
     deploy:
       mode: global
       restart_policy:
@@ -49,22 +53,25 @@ services:
         max_attempts: 2
         window: 8s
   
-  postgresql-slave:
-    image: "bitnami/postgresql:latest"
+  postgresql-replica:
+    image: bitnami/postgresql:latest
     ports:
       - "5432"
     volumes:
       - /mnt/sdc/pg/conf/pg_hba_replica.conf:/bitnami/postgresql/conf/pg_hba.conf
       - /mnt/sdc/pg/replica_data:/bitnami/postgresql
     depends_on:
-      - postgresql-master
+      - postgresql-primary
     environment:
-      - POSTGRESQL_REPLICATION_MODE=slave
-      - POSTGRESQL_REPLICATION_USER=/run/secrets/pg_repl_user
-      - POSTGRESQL_REPLICATION_PASSWORD=/run/secrets/pg_repl_password
-      - POSTGRESQL_MASTER_HOST=postgresql-master
-      - POSTGRESQL_PASSWORD=/run/secrets/pg_password
-      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+      POSTGRESQL_REPLICATION_MODE: slave
+      POSTGRESQL_REPLICATION_USER: pg_repl
+      POSTGRESQL_REPLICATION_PASSWORD: /run/secrets/pg_repl_password
+      POSTGRESQL_MASTER_HOST: postgresql-primary
+      POSTGRESQL_PASSWORD_FILE: /run/secrets/pg_password
+      POSTGRESQL_MASTER_PORT_NUMBER: 5432
+    secrets:
+      - pg_repl_password
+      - pg_password
     deploy:
       mode: global
       restart_policy:
@@ -72,7 +79,35 @@ services:
         delay: 1s
         max_attempts: 2
         window: 8s
-    
+
+  redis-primary:
+    image: bitnami/redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - /mnt/sdc/redis/persistence:/bitnami/redis
+    environment:
+      REDIS_REPLICATION_MODE: master
+      REDIS_PASSWORD_FILE: /run/secrets/redis_password
+    secrets:
+      - redis_password
+
+  redis-replica:
+    image: bitnami/redis:latest
+    ports:
+      - "6379"
+    depends_on:
+      - redis-primary
+    environment:
+      REDIS_REPLICATION_MODE: slave
+      REDIS_MASTER_HOST: redis-primary
+      REDIS_MASTER_PORT_NUMBER: 6379
+      REDIS_MASTER_PASSWORD_FILE: /run/secrets/redis_password
+      REDIS_PASSWORD_FILE: /run/secrets/redis_repl_password
+    secrets:
+      - redis_password
+      - redis_repl_password
+ 
 secrets:
   oss_secret_key:
     file: ./secrets/oss_secret_key.txt
@@ -80,13 +115,11 @@ secrets:
     file: ./secrets/oss_access_key.txt
   oss_auth_key:
     file: ./secrets/oss_auth_key.txt
-  pg_repl_user:
-    file: ./secrets/pg_repl_user.txt
   pg_repl_password:
     file: ./secrets/pg_repl_password.txt
-  pg_username:
-    file: ./secrets/pg_username.txt
   pg_password:
     file: ./secrets/pg_password.txt
-  pg_database:
-    file: ./secrets/pg_database.txt
+  redis_password:
+    file: ./secrets/redis_password.txt
+  redis_repl_password:
+    file: ./secrets/redis_repl_password.txt
