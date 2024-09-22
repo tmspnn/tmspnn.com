@@ -19,7 +19,9 @@ services:
       && export OSS_SECRET_KEY=$(cat /run/secrets/oss_secret_key)
       && export OSS_AUTH_KEY=$(cat /run/secrets/oss_auth_key)
       && export REDIS_PASSWORD=$(cat /run/secrets/redis_password)
-      && openresty -g 'daemon off;'"
+      && luarocks install lapis CRYPTO_DIR=/usr/local/openresty/openssl OPENSSL_DIR=/usr/local/openresty/openssl
+      && openresty -g 'daemon off;'
+      "
     deploy:
       mode: global
       restart_policy:

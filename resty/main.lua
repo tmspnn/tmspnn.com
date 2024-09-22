@@ -1,6 +1,6 @@
+local empty = require "util.empty"
 
-
-ngx.say(os.getenv("REDIS_HOST"))
+ngx.say(empty({}))
 
 -- local date = require "date"
 -- local lapis = require "lapis"

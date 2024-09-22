@@ -33,7 +33,7 @@ local function get_uid()
     local cookie = assert(ck:new())
     local user_token = assert(cookie:get("user_token"))
     local uid = nil
-
+ 
     if user_token then
         local client = redis_client:new()
         uid = client:run("get", fmt("user_token(%s):uid", unescape(user_token)))
