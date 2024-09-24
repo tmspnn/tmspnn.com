@@ -1,6 +1,6 @@
 name: tmspnn
 services:
-  gateway:
+  openresty:
     image: openresty/openresty:alpine-fat
     network_mode: "host"
     volumes:
@@ -20,6 +20,7 @@ services:
       && export OSS_AUTH_KEY=$(cat /run/secrets/oss_auth_key)
       && export REDIS_PASSWORD=$(cat /run/secrets/redis_password)
       && luarocks install lapis CRYPTO_DIR=/usr/local/openresty/openssl OPENSSL_DIR=/usr/local/openresty/openssl
+      && luarocks install penlight
       && openresty -g 'daemon off;'
       "
     deploy:

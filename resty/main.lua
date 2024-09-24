@@ -1,6 +1,6 @@
-local empty = require "util.empty"
+local lapis = require "lapis"
 
-ngx.say(empty({}))
+ngx.say("Hello world!")
 
 -- local date = require "date"
 -- local lapis = require "lapis"
